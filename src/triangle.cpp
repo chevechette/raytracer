@@ -1,11 +1,12 @@
+#include "structs.h"
 #include "object.h"
 
 Triangle::Triangle(Coordinates a, Coordinates b, Coordinates c) :
-    Object(a, Color{0, 0, 0, 0}) {
+    Object(Triangle::getCenter(a, b, c), Color{1, 1, 1, 1}) {
 }
 
 Triangle::Triangle(Coordinates a, Coordinates b, Coordinates c, Color col) :
-    Object(a, col) {
+    Object(Triangle::getCenter(a, b, c), col) {
 }
 
 Triangle::~Triangle() {
@@ -16,7 +17,7 @@ void    Triangle::setVertexA(float x, float y, float z) {
 }
 
 void    Triangle::setVertexA(Coordinates vertex) {
-    this->setVertex(this->a, vertex);
+    Triangle::setVertex(this->a, vertex);
 }
 
 void    Triangle::setVertexB(float x, float y, float z) {
@@ -24,7 +25,7 @@ void    Triangle::setVertexB(float x, float y, float z) {
 }
 
 void    Triangle::setVertexB(Coordinates vertex) {
-    this->setVertex(this->b, vertex);
+    Triangle::setVertex(this->b, vertex);
 }
 
 void    Triangle::setVertexC(float x, float y, float z) {
@@ -32,11 +33,17 @@ void    Triangle::setVertexC(float x, float y, float z) {
 }
 
 void    Triangle::setVertexC(Coordinates vertex) {
-    this->setVertex(this->c, vertex);
+    Triangle::setVertex(this->c, vertex);
 }
 
 void    Triangle::setVertex(Coordinates &ref, Coordinates &point) {
     ref = point;
+}
+
+Coordinates Triangle::getCenter(Coordinates a, Coordinates b, Coordinates c) {
+    return Coordinates{
+        ((a.x + b.x + c.x) / 3.0f), ((a.y + b.y + c.y) / 3.0f), ((a.z + b.z + c.z) / 3.0f)
+    };
 }
 
 Coordinates Triangle::getVertexA() const {
@@ -52,5 +59,5 @@ Coordinates Triangle::getVertexC() const {
 }
 
 Coordinates Triangle::intersect(Ray ray) const {
-    return Coordinates{0, 0, 0}; // TODO: Triangle interesect place holder
+    return Coordinates{0, 0, 0, false}; // TODO: Triangle interesect place holder
 }

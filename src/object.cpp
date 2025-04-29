@@ -47,12 +47,5 @@ Coordinates   Object::getOrigin() const {
     return this->origin;
 }
 
-
-class Plane : public Object {
-    private:
-        Coordinates origin;
-        Coordinates normalVec;
-};
-
 class ObjectAggregation : public Object {
 };

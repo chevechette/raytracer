@@ -2,7 +2,7 @@
 #include "object.h"
 
 Sphere::Sphere(Coordinates pos, float radius) :
-    Object(pos, Color{0, 0, 0, 0}) {
+    Object(pos, Color{1, 1, 1, 1}) {
 }
 
 Sphere::Sphere(Coordinates pos, float radius, Color col) :
@@ -24,5 +24,5 @@ float   Sphere::getRadius() const {
 }
 
 Coordinates Sphere::intersect(Ray ray) const {
-    return Coordinates{0, 0, 0}; // TODO: Sphere interesect place holder
+    return Coordinates{0, 0, 0, false}; // TODO: Sphere interesect place holder
 }

@@ -13,4 +13,5 @@ struct Coordinates {
     float   x;
     float   y;
     float   z;
+    bool    exists = true;
 };
