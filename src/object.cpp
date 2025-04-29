@@ -48,4 +48,25 @@ Coordinates   Object::getOrigin() const {
 }
 
 class ObjectAggregation : public Object {
+    private:
+        // vector of objects
+    public:
+        ObjectAggregation();
+        ~ObjectAggregation();
+
+        Coordinates     intersect(Ray ray) const;
+        //         virtual Coordinates intersect(Ray) const = 0;
 };
+
+ObjectAggregation::ObjectAggregation() :
+    Object(Coordinates{0, 0, 0, false}, Color{1, 1, 1, 1}) {
+
+}
+
+ObjectAggregation::~ObjectAggregation() {
+
+}
+
+Coordinates ObjectAggregation::intersect(Ray ray) const {
+    return Coordinates{0, 0, 0, false}; // TODO: Plane interesect place holder
+}

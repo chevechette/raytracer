@@ -15,3 +15,5 @@ struct Coordinates {
     float   z;
     bool    exists = true;
 };
+
+// Create a new struct for intersections with distance and other data ?
