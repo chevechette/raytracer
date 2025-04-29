@@ -1,0 +1,14 @@
+{
+  "name": "helloraytracer",
+  "version": "0.0.1",
+  "dependencies": [
+    "fmt",
+    "glfw3",
+    "glad",
+    "opengl",
+    {
+      "name" : "imgui",
+      "features": ["glfw-binding", "opengl3-binding"]
+    }
+  ]
+}

@@ -1,0 +1,9 @@
+
+#ifndef DEFINE_CMAKE_VERSION
+
+#define RAYTRACER_VERSION_MAJOR @HelloRaytracer_VERSION_MAJOR@
+#define RAYTRACER_VERSION_MINOR @HelloRaytracer_VERSION_MINOR@
+
+#endif
+
+#define DEFINE_CMAKE_VERSION

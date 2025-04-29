@@ -1,0 +1,6 @@
+.git
+.vscode
+build/*
+CMakePresets.json
+vcpkg-configuration.json
+vcpkg_installed
