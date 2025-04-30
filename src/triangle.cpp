@@ -58,6 +58,6 @@ Coordinates Triangle::getVertexC() const {
     return this->c;
 }
 
-Coordinates Triangle::intersect(Ray ray) const {
-    return Coordinates{0, 0, 0, false}; // TODO: Triangle interesect place holder
+Interesction Triangle::intersect(Ray ray) const {
+    return Interesction{}; // TODO: Plane interesect place holder
 }

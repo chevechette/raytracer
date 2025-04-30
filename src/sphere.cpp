@@ -23,6 +23,6 @@ float   Sphere::getRadius() const {
     return this->radius;
 }
 
-Coordinates Sphere::intersect(Ray ray) const {
-    return Coordinates{0, 0, 0, false}; // TODO: Sphere interesect place holder
+Interesction Sphere::intersect(Ray ray) const {
+    return Interesction{}; // TODO: Plane interesect place holder
 }

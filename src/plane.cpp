@@ -59,6 +59,6 @@ float       Plane::getwidth(float x) const {
     return this->width;
 }
 
-Coordinates Plane::intersect(Ray ray) const {
-    return Coordinates{0, 0, 0, false}; // TODO: Plane interesect place holder
+Interesction Plane::intersect(Ray ray) const {
+    return Interesction{}; // TODO: Plane interesect place holder
 }
