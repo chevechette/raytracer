@@ -18,9 +18,10 @@ struct Coordinates {
 
 struct Interesction {
     Object      *obj = nullptr;
+    float       dist = -1;
+    Coordinates point = {0, 0, 0};
 
     explicit    operator bool() const;
-
 };
 
 // Create a new struct for intersections with distance and other data ?

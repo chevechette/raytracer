@@ -17,10 +17,7 @@
 
 
 #include "renderer.h"
-// TODO : Sync up with github
-// TODO : Set up defines
 // TODO : Find C++ 23 tutorial to update
-// TODO : Copilot set up ??
 // TODO : CUDA upgrade for raytracing
 
 // TODO : make a rendering point fucntion

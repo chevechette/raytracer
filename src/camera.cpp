@@ -8,6 +8,7 @@ class Camera {
     private:
         Coordinates position;
         Coordinates direction;
+        // TODO add POV distance
     public:
         Camera(Coordinates pos, Coordinates dir);
         ~Camera();
@@ -16,12 +17,14 @@ class Camera {
         void    setDirection(Coordinates vec);
         Coordinates getPosition() const;
         Coordinates setDirection() const;
+
+        //TODO : Launch ray within the window parameter
 };
 
 Camera::Camera(Coordinates pos, Coordinates dir) :
 position{pos}, direction{dir} {}
 
-Camera:~Camera() {}
+Camera::~Camera() {}
 
 void    Camera::setPosition(Coordinates pos) {
     this->position = pos;
