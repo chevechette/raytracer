@@ -4,6 +4,7 @@
 #include <fmt/core.h>
 // For stderr and faster better printing
 #include <cstdio> 
+#include <ctime>
 
 #include "opengl_include.h"
 
@@ -63,6 +64,7 @@ void imguiSetUp() {
 }
 
 int librarySetUp() {
+    std::srand(std::time({}));
     if (!glfwInit())
         return EXIT_FAILURE;
     glfwSetUp(); // Includes OpenGL

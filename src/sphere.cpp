@@ -2,7 +2,7 @@
 #include "object.h"
 
 Sphere::Sphere(Coordinates pos, float radius) :
-    Object(pos, Color{1, 1, 1, 1}) {
+    Object(pos, Color::random()) {
 }
 
 Sphere::Sphere(Coordinates pos, float radius, Color col) :

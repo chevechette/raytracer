@@ -8,6 +8,6 @@
 
 // };
 
-explicit    Interesction::operator bool() const {
+Interesction::operator bool() const {
     return (this->obj != nullptr);
 }

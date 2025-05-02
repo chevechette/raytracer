@@ -2,7 +2,13 @@
 // multiple cameras, swtich
 // adjustable cameras according to gui
 
+#include "graphic_presets.h" // Temporary import the 
 #include "structs.h"
+
+#define FIELD_DEPTH     100.0;
+#define VISION_ANGLE    80.0;
+
+// How do fisheye work anyway ? I remember doing that
 
 class Camera {
     private:
@@ -16,7 +22,9 @@ class Camera {
         void    setPosition(Coordinates pos);
         void    setDirection(Coordinates vec);
         Coordinates getPosition() const;
-        Coordinates setDirection() const;
+        Coordinates getDirection() const;
+
+        //CreateRay...
 
         //TODO : Launch ray within the window parameter
 };
@@ -38,8 +46,8 @@ Coordinates     Camera::getPosition() const {
     return this->position;
 }
 
-Coordinates     Camera::getPosition() const {
-    return this->position;
+Coordinates     Camera::getDirection() const {
+    return this->direction;
 }
 
 // default light is a sunlike thing

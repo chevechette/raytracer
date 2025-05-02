@@ -60,7 +60,7 @@ class ObjectAggregation : public Object {
 };
 
 ObjectAggregation::ObjectAggregation() :
-    Object(Coordinates{0, 0, 0}, Color{1, 1, 1, 1}) {
+    Object(Coordinates{0, 0, 0}, Color::random()) {
 
 }
 
