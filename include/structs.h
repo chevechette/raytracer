@@ -43,13 +43,18 @@ struct Coordinates {
     inline  Coordinates operator-(const Coordinates &v) const {
         return Coordinates{this->x - v.x, this->y -  v.y, this->z - v.z};
     }
+
+    inline  Coordinates operator*(const float coef) const {
+        return Coordinates{this->x * coef, this->y * coef, this->z * coef};
+    }
 };
 
 // Given all operators, maybe it should become a class;
+// No normal, or rebound calculation yet
 struct Interesction {
-    Object      *obj = nullptr;
-    float       dist = -1;
-    Coordinates point = {0, 0, 0};
+    const Object        *obj = nullptr;
+    double              dist = -1;
+    Coordinates         point = {0, 0, 0};
 
     explicit    operator bool() const;
 

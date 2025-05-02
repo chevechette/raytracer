@@ -32,6 +32,17 @@ Interesction Sphere::intersect(Ray ray) const {
     double      b = movedOrigin * ray.getVector() * 2.0;
     double      c = movedOrigin * movedOrigin - this->radius * this->radius;
 
-    auto [x0, x1] = boost::math::tools::quadratic_roots(a, b, c);
+    try {
+        auto [x0, x1] = boost::math::tools::quadratic_roots(a, b, c);
+        // check which is shorter
+        if (x0 > 0 && x0 <= x1) {
+            return Interesction{this, x0, ray.getOrigin() + ray.getVector() * x0};
+        } else if (x1 > 0 && x1 <= x0) {
+            return Interesction{this, x1, ray.getOrigin() + ray.getVector() * x1};
+        }
+    } catch (const std::domain_error&) {
+        // no solution
+        return Interesction{}; // TODO: Plane interesect place holder
+    }
     return Interesction{}; // TODO: Plane interesect place holder
 }
