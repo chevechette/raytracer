@@ -1,4 +1,5 @@
 #include <cmath>
+#include "boost/math/tools/roots.hpp"
 #include "object.h"
 
 Sphere::Sphere(Coordinates pos, float radius) :
@@ -24,5 +25,7 @@ float   Sphere::getRadius() const {
 }
 
 Interesction Sphere::intersect(Ray ray) const {
+    // auto [x0, x1] = boost::math::tools::quadratic_roots(a, b, c);
+
     return Interesction{}; // TODO: Plane interesect place holder
 }

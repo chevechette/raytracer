@@ -35,8 +35,17 @@ struct Coordinates {
         res += this->z * v.z;
         return res;
     }
+
+    inline  Coordinates operator+(const Coordinates &v) const {
+        return Coordinates{this->x + v.x, this->y +  v.y, this->z * v.z};
+    }
+    
+    inline  Coordinates operator-(const Coordinates &v) const {
+        return Coordinates{this->x - v.x, this->y -  v.y, this->z - v.z};
+    }
 };
 
+// Given all operators, maybe it should become a class;
 struct Interesction {
     Object      *obj = nullptr;
     float       dist = -1;
@@ -44,7 +53,12 @@ struct Interesction {
 
     explicit    operator bool() const;
 
-    //.TODO: Add a comp operator
+    // Logical operators to compare distance quickly
+    bool operator<(const Interesction &i) const;
+    bool operator>(const Interesction &i) const;
+    bool operator==(const Interesction &i) const;
+    bool operator>=(const Interesction &i) const;
+    bool operator<=(const Interesction &i) const;
 };
 
 // Create a new struct for intersections with distance and other data ?
