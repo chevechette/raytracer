@@ -27,7 +27,7 @@ struct Coordinates {
 
     // double or float ? what is better for precision ?
     // dot operator
-    inline    double operator*(Coordinates &v) const {
+    inline    double operator*(const Coordinates &v) const {
         double  res = 0;
 
         res += this->x * v.x;
