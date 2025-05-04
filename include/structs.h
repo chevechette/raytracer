@@ -20,13 +20,30 @@ struct Color {
     }
 };
 
+// this is soon eight going to be an hpp file or a class
 struct Coordinates {
     float   x;
     float   y;
     float   z;
 
-    // double or float ? what is better for precision ?
-    // dot operator
+    inline  Coordinates operator+(const Coordinates &v) const {
+        return Coordinates{this->x + v.x, this->y +  v.y, this->z * v.z};
+    }
+
+    inline  Coordinates operator-() const {
+        return Coordinates{- this->x, - this->y, - this->z};
+    }
+    
+    inline  Coordinates operator-(const Coordinates &v) const {
+        return Coordinates{this->x - v.x, this->y -  v.y, this->z - v.z};
+    }
+
+    // Scalar product
+    inline  Coordinates operator*(const float coef) const {
+        return Coordinates{this->x * coef, this->y * coef, this->z * coef};
+    }
+
+    // dot product
     inline    double operator*(const Coordinates &v) const {
         double  res = 0;
 
@@ -36,22 +53,19 @@ struct Coordinates {
         return res;
     }
 
-    inline  Coordinates operator+(const Coordinates &v) const {
-        return Coordinates{this->x + v.x, this->y +  v.y, this->z * v.z};
-    }
-    
-    inline  Coordinates operator-(const Coordinates &v) const {
-        return Coordinates{this->x - v.x, this->y -  v.y, this->z - v.z};
-    }
-
-    inline  Coordinates operator*(const float coef) const {
-        return Coordinates{this->x * coef, this->y * coef, this->z * coef};
+    // Cross product
+    inline  Coordinates operator^(const Coordinates &v) const {
+        return Coordinates{
+            this->y * v.z - this->z * v.y,
+            this->z * v.x - this->x * v.z,
+            this->x * v.y - this->y * v.x
+        };
     }
 };
 
 // Given all operators, maybe it should become a class;
 // No normal, or rebound calculation yet
-struct Interesction {
+struct Intersection {
     const Object        *obj = nullptr;
     double              dist = -1;
     Coordinates         point = {0, 0, 0};
@@ -59,11 +73,11 @@ struct Interesction {
     explicit    operator bool() const;
 
     // Logical operators to compare distance quickly
-    bool operator<(const Interesction &i) const;
-    bool operator>(const Interesction &i) const;
-    bool operator==(const Interesction &i) const;
-    bool operator>=(const Interesction &i) const;
-    bool operator<=(const Interesction &i) const;
+    bool operator<(const Intersection &i) const;
+    bool operator>(const Intersection &i) const;
+    bool operator==(const Intersection &i) const;
+    bool operator>=(const Intersection &i) const;
+    bool operator<=(const Intersection &i) const;
 };
 
 // Create a new struct for intersections with distance and other data ?

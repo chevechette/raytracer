@@ -12,7 +12,7 @@ class Object {
     public :
         virtual ~Object();
 
-        virtual Interesction intersect(Ray) const = 0;
+        virtual Intersection intersect(const Ray &ray) const = 0;
 
         void        setColor(Color col);
         void        setOrigin(Coordinates origin);
@@ -33,7 +33,7 @@ class Sphere : public Object {
         void        setRadius(float radius);
         float       getRadius() const;
 
-        Interesction intersect(Ray) const;
+        Intersection intersect(Ray) const;
 };
 
 class Triangle : public Object {
@@ -60,7 +60,7 @@ class Triangle : public Object {
         Coordinates getVertexB() const;
         Coordinates getVertexC() const;
 
-        Interesction intersect(Ray) const;
+        Intersection intersect(const Ray &ray) const;
 };
 
 
@@ -68,8 +68,12 @@ class Triangle : public Object {
 class Plane : public Object {
     private:
         Coordinates normalVec;
-        float       height;
+        float       height;  
         float       width;
+        Coordinates h;
+        Coordinates w;
+
+        void        setVectors();
 
     public:    
         Plane(Coordinates origin, Coordinates normal);
@@ -85,5 +89,9 @@ class Plane : public Object {
         float       getHeight(float x) const;
         float       getwidth(float x) const;
 
-        Interesction intersect(Ray) const;
+        
+        bool    checkHeight(const Coordinates &v) const;
+        bool    checkWidth(const Coordinates &v) const;
+
+        Intersection intersect(const Ray &ray) const;
 };

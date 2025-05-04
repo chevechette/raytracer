@@ -55,7 +55,7 @@ class ObjectAggregation : public Object {
         ObjectAggregation();
         ~ObjectAggregation();
 
-        Interesction     intersect(Ray ray) const;
+        Intersection     intersect(Ray ray) const;
         //         virtual Coordinates intersect(Ray) const = 0;
 };
 
@@ -68,6 +68,6 @@ ObjectAggregation::~ObjectAggregation() {
 
 }
 
-Interesction ObjectAggregation::intersect(Ray ray) const {
-    return Interesction{}; // TODO: Plane interesect place holder
+Intersection ObjectAggregation::intersect(Ray ray) const {
+    return Intersection{}; // TODO: Plane interesect place holder
 }

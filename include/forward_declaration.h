@@ -3,7 +3,7 @@
 
 struct Color;
 struct Coordinates;
-struct Interesction;
+struct Intersection;
 
 class Object;
 
