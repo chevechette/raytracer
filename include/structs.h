@@ -71,6 +71,7 @@ struct Coordinates {
         this->y = this->y / length;
         this->z = this->z / length;
         // how to normalize a vector?
+        return *this;
     }
 };
 
