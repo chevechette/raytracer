@@ -42,8 +42,11 @@ class Triangle : public Object {
         Coordinates b;
         Coordinates c;
 
+        Coordinates normal;
+
         static void        setVertex(Coordinates &ref, Coordinates &point);
         static Coordinates getCenter(Coordinates a, Coordinates b, Coordinates c);
+        void    setNormal();
     
     public:
         Triangle(Coordinates a, Coordinates b, Coordinates c);

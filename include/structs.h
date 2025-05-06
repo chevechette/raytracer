@@ -1,9 +1,12 @@
 #pragma once
 
 #include <cstdlib>
+#include <cmath>
 
 // TODO: Default constructors ? 
 #include "forward_declaration.h"
+
+// TODO : check all normalisation for vectors
 
 struct Color {
     float  r;
@@ -60,6 +63,14 @@ struct Coordinates {
             this->z * v.x - this->x * v.z,
             this->x * v.y - this->y * v.x
         };
+    }
+
+    inline  Coordinates &normalize() {
+        auto length = sqrt(this->x * this->x + this->y * this->y + this->z * this->z);
+        this->x = this->x / length;
+        this->y = this->y / length;
+        this->z = this->z / length;
+        // how to normalize a vector?
     }
 };
 
