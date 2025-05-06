@@ -4,6 +4,7 @@
 #include <fmt/core.h>
 // For stderr and faster better printing
 #include <cstdio> 
+#include <ctime>
 
 #include "opengl_include.h"
 
@@ -17,10 +18,7 @@
 
 
 #include "renderer.h"
-// TODO : Sync up with github
-// TODO : Set up defines
 // TODO : Find C++ 23 tutorial to update
-// TODO : Copilot set up ??
 // TODO : CUDA upgrade for raytracing
 
 // TODO : make a rendering point fucntion
@@ -66,6 +64,7 @@ void imguiSetUp() {
 }
 
 int librarySetUp() {
+    std::srand(std::time({}));
     if (!glfwInit())
         return EXIT_FAILURE;
     glfwSetUp(); // Includes OpenGL

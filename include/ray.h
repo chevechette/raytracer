@@ -1,5 +1,5 @@
-#include "structs.h"
 #pragma once
+#include "structs.h"
 
 #define RAY_LIGHT_THRESHOLD 0.1 // This is a test threshold can go be set up as define or variable later
 // how much does light intensity gets diffused or weakened with distance ?

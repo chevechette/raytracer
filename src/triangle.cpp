@@ -3,13 +3,19 @@
 
 Triangle::Triangle(Coordinates a, Coordinates b, Coordinates c) :
     Object(Triangle::getCenter(a, b, c), Color{1, 1, 1, 1}) {
+        this->setNormal();
 }
 
 Triangle::Triangle(Coordinates a, Coordinates b, Coordinates c, Color col) :
     Object(Triangle::getCenter(a, b, c), col) {
+        this->setNormal();
 }
 
 Triangle::~Triangle() {
+}
+
+void    Triangle::setNormal() {
+    this->normal = (this->b - this->a) ^ (this->c - this->a);
 }
 
 void    Triangle::setVertexA(float x, float y, float z) {
@@ -58,6 +64,22 @@ Coordinates Triangle::getVertexC() const {
     return this->c;
 }
 
-Coordinates Triangle::intersect(Ray ray) const {
-    return Coordinates{0, 0, 0, false}; // TODO: Triangle interesect place holder
+// maybe this should be using some inheritance from Plane
+Intersection Triangle::intersect(const Ray &ray) const {    
+    double dot = this->normal * ray.getVector();
+    if (dot == 0)
+        return Intersection{};
+        
+    Coordinates p0 = this->getOrigin() - ray.getOrigin();
+    double  coef = p0 * this->normal / dot; // this is the multiplier of the vector
+
+    // edges
+    Coordinates e = this->b - this->a;
+    Coordinates f = this->c - this->a;
+    // barocentric ponderation
+    double u = (p0 * (ray.getVector() ^ f)) / dot;
+    double v = (p0 * (ray.getVector() ^ e)) / dot;
+    if (u < 0.0 || u > 1.0 || v < 0.0 || (u + v) > 1)
+        return Intersection{};
+    return Intersection{this, coef, ray.getOrigin() + ray.getVector() * coef};
 }
