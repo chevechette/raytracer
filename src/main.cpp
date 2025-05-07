@@ -16,7 +16,7 @@
 #include "version_config.h"
 #include "graphic_presets.h"
 
-
+#include "managers.h"
 #include "renderer.h"
 // TODO : Find C++ 23 tutorial to update
 // TODO : CUDA upgrade for raytracing
@@ -28,89 +28,41 @@
 // TODO : Upgrade the error handling to exceptions
 // TODO : CHECK ALL CONST !!
 
-// Catching events 
-void glfwErrorCallback(int error, const char* description) {
-    fmt::println(stderr, "GLFW Err code {} : {}", error, description);
-}
-
-// UI events
-static void guiKeyCallback(
-    GLFWwindow* window, int key, int scancode, int action, int mods) {
-    //TODO : set up all one key triggers
-    if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS) {
-        glfwSetWindowShouldClose(window, GLFW_TRUE);
-        fmt::println(stdout, "GO THERE\n");
-
-    }
-}
-
-// Library load and unload
-void glfwSetUp() {
-    // TODO : Upgrade Error handling 
-    glfwSetErrorCallback(glfwErrorCallback);
-    
-    //TODO : set the GLFW_CONTEXT variables to request a specifc version of openGL 4.1 here
-    glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
-    glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 1);
-    //document yourself on those two set ups
-    glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GLFW_TRUE);
-    glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
-}
-
-void imguiSetUp() {
-
-    IMGUI_CHECKVERSION(); // TODO : Check what does this do ?
-    ImGui::CreateContext();
-}
-
-int librarySetUp() {
-    std::srand(std::time({}));
-    if (!glfwInit())
-        return EXIT_FAILURE;
-    glfwSetUp(); // Includes OpenGL
-    imguiSetUp();
-    
-    // Maybe set up the window creation here ?
-    return EXIT_SUCCESS;
-}
-
-void librarySetDown() {
-    ImGui_ImplOpenGL3_Shutdown();
-    ImGui_ImplGlfw_Shutdown();
-    ImGui::DestroyContext();
-    glfwTerminate();
-}
-
-//TODO verbose messagibg
+//TODO verbose messaging
 //TODO logging correctly
 int main(int argc, char* argv[]) {
     /// TODO : write all disclaimer and starting information
     fmt::print(stdout, "{} Version {}.{}\n", argv[0], RAYTRACER_VERSION_MAJOR, RAYTRACER_VERSION_MINOR);
 
-    if (librarySetUp() != EXIT_SUCCESS)
-        return EXIT_FAILURE;
-
-    // TODO : SET UP VARIABLES window parameters
-    GLFWwindow* window = glfwCreateWindow(
-        GRAPHIC_PRESET_GUI_WIDTH,
-        GRAPHIC_PRESET_GUI_HEIGHT,
-        GRAPHIC_PRESET_GUI_NAME, nullptr, nullptr);
-
-    if (!window) {
-        // TODO : error handling
-        librarySetDown();
+    GUIManager  &gui = GUIManager::getInstance();
+    if (gui.load() != EXIT_SUCCESS) {
+        GUIManager::release();
         return EXIT_FAILURE;
     }
+
+    // TODO : SET UP VARIABLES window parameters
+    // GLFWwindow* window = glfwCreateWindow(
+    //     GRAPHIC_PRESET_GUI_WIDTH,
+    //     GRAPHIC_PRESET_GUI_HEIGHT,
+    //     GRAPHIC_PRESET_GUI_NAME, nullptr, nullptr);
+
+    // if (!window) {
+    //     // TODO : error handling
+    //     gui.unload();
+    //     GUIManager::release();
+    //     return EXIT_FAILURE;
+    // }
 
     Renderer    renderer = Renderer();
 
-    if (!renderer.loadWindow(window)) {
-        librarySetDown();
+    if (!renderer.loadWindow(gui.window)) {
+        gui.unload();
+        GUIManager::release();
         return EXIT_FAILURE;
     }
 
-    ImGui_ImplGlfw_InitForOpenGL(window, true); // true ports all glfw triggers to ImGUI 
-    ImGui_ImplOpenGL3_Init(); // Can specify some version here
+    // ImGui_ImplGlfw_InitForOpenGL(gui.window, true); // true ports all glfw triggers to ImGUI 
+    // ImGui_ImplOpenGL3_Init(); // Can specify some version here
 
 
     // // Try to call some OpenGL functions, and print some more version info.
@@ -121,7 +73,7 @@ int main(int argc, char* argv[]) {
 
     // glfw parameterts setting up
     glfwSwapInterval(1);
-    glfwSetKeyCallback(renderer.getWindow(), guiKeyCallback);
+    glfwSetKeyCallback(renderer.getWindow(), GUIManager::guiKeyCallback);
     // 9) In your application's input logic: you can poll
     // ImGui::GetIO().WantCaptureMouse/WantCaptureKeyboard
     // to check if Dear ImGui wants to obstruct mouse/keyboard
@@ -160,8 +112,9 @@ int main(int argc, char* argv[]) {
         // Add MORE rendering there
         renderer.render();
     }
-    renderer.unloadWindow();
+    // renderer.unloadWindow();
 
-    librarySetDown();
+    gui.unload();
+    GUIManager::release();
     return EXIT_SUCCESS;
 }

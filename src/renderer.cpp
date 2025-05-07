@@ -1,4 +1,25 @@
 
+
+#include <iostream>
+// Faster printing and formating
+#include <fmt/core.h>
+// For stderr and faster better printing
+#include <cstdio> 
+#include <ctime>
+
+#include "opengl_include.h"
+
+#include <vector>
+#include <cmath>
+// TODO : Extension loader library to then make it compatible with different GPU library
+
+#include "main.h"
+#include "version_config.h"
+#include "graphic_presets.h"
+
+
+#include "renderer.h"
+
 #include <vector>
 #include <cmath>
 
@@ -23,6 +44,8 @@
 
 // This could have been inheritance but I see no logical connection
 // and never want to bother with mixing those two nor bother with casting
+
+#include "managers.h"
 
 class ObjectManager {
     private:
@@ -53,6 +76,14 @@ class ObjectManager {
             }
         }
 
+        void    loadLibraries() {
+
+        }
+
+        void    unloadLibraries() {
+
+        }
+
         // add(); // push
         // remove(); // pop
         // binary tree structure... later
@@ -63,65 +94,106 @@ class ObjectManager {
 
 };
 
-class GUIManager {
-    private:
-        static  GUIManager   *instance;
+void GUIManager::glfwErrorCallback(int error, const char* description) {
+    fmt::println(stderr, "GLFW Err code {} : {}", error, description);
+}
 
-        GUIManager(const ObjectManager&) = delete;
-        GUIManager   &operator=(const ObjectManager&) = delete;
-        
-        GUIManager() {
-        }
 
-        ~GUIManager() {
+void GUIManager::guiKeyCallback(
+    GLFWwindow* window, int key, int scancode, int action, int mods) {
+    //TODO : set up all one key triggers
+    if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS) {
+        glfwSetWindowShouldClose(window, GLFW_TRUE);
+        fmt::println(stdout, "GO THERE\n");
 
-        }
+    }
+}
 
-    public:
-        static  GUIManager &getInstance() {
-            if (GUIManager::instance == nullptr) {
-                GUIManager::instance = new GUIManager();
-        }
-            return *GUIManager::instance;
-        }
 
-        static  void    release() {
-            if (GUIManager::instance != nullptr) {
-                delete GUIManager::instance;
-                GUIManager::instance = nullptr;
+int GUIManager::load() {
+    
+    std::srand(std::time({}));
+    if (!glfwInit())
+        return EXIT_FAILURE;
+    
+    // TODO : Upgrade Error handling 
+    glfwSetErrorCallback(GUIManager::glfwErrorCallback); // TODO should be changed for other repository of functions ?
+    
+    //TODO : set the GLFW_CONTEXT variables to request a specifc version of openGL 4.1 here
+    glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
+    glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 1);
+    //document yourself on those two set ups
+    glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GLFW_TRUE);
+    glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
+
+    IMGUI_CHECKVERSION(); // TODO : Check what does this do ?
+    ImGui::CreateContext();
+
+    // TODO : SET UP VARIABLES window parameters
+    this->window = glfwCreateWindow(
+        GRAPHIC_PRESET_GUI_WIDTH,
+        GRAPHIC_PRESET_GUI_HEIGHT,
+        GRAPHIC_PRESET_GUI_NAME, nullptr, nullptr);
+    if (!window) {
+        this->unload();
+        return EXIT_FAILURE;
+    }
+
+    glfwMakeContextCurrent(window);
+    if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress)) {
+        // Handle initialization error
+        this->unloadWindow();
+        return EXIT_FAILURE;
+    }
+
+    ImGui_ImplGlfw_InitForOpenGL(this->window, true); // true ports all glfw triggers to ImGUI 
+    ImGui_ImplOpenGL3_Init(); // Can specify some version here
+
+    return EXIT_SUCCESS;
+}
+
+void    GUIManager::unloadWindow() {
+
+    if (this->window && this->window != nullptr) {
+        glfwDestroyWindow(window);
+        this->window = nullptr;
+    }
+}
+
+void    GUIManager::unload() {
+    this->unloadWindow();
+    ImGui_ImplOpenGL3_Shutdown();
+    ImGui_ImplGlfw_Shutdown();
+    ImGui::DestroyContext();
+    glfwTerminate();
+    
+}
+
+
+
+void    GUIManager::renderFromCamera() {
+    const ImGuiViewport*    main_viewport = ImGui::GetMainViewport();
+
+    std::vector<int> objectList(0, 0); // should be up
+
+    for (int i = 0; i < main_viewport->Size.x ; i++) {
+        for (int j = 0; j < main_viewport->Size.y ; j++) {
+            float dist = -1;
+            for (auto elem : objectList) {
+                // Test interesec
+                // auto raydist = raycast();
+                // if (dist == -1 || dist > raydist) {
+                //     dist = raydist;
+                //     // this should update some object reference
+                //     //pixel[i, j] = object.color;
+                // }
+                // if (auto dist = raycast >=0) {
+                // }
+
             }
         }
-
-        //event ?
-
-        //render options (full or partial to quick render)
-        // launch the rendering
-
-        void    renderFromCamera() {
-            const ImGuiViewport*    main_viewport = ImGui::GetMainViewport();
-
-            std::vector<int> objectList(0, 0);
-
-            for (int i = 0; i < main_viewport->Size.x ; i++) {
-                for (int j = 0; j < main_viewport->Size.y ; j++) {
-                    float dist = -1;
-                    for (auto elem : objectList) {
-                        // Test interesec
-                        // auto raydist = raycast();
-                        // if (dist == -1 || dist > raydist) {
-                        //     dist = raydist;
-                        //     // this should update some object reference
-                        //     //pixel[i, j] = object.color;
-                        // }
-                        // if (auto dist = raycast >=0) {
-                        // }
-
-                    }
-                }
-            }
-        }
-};
-
+    }
+}
 
 // should be made a singleton
 
@@ -130,8 +202,6 @@ Renderer::Renderer() {
 }
 
 Renderer::~Renderer() {
-    this->unloadWindow();
-
 }
 
 GLFWwindow  *Renderer::getWindow() {
@@ -139,24 +209,8 @@ GLFWwindow  *Renderer::getWindow() {
 }
 
 bool Renderer::loadWindow(GLFWwindow *window) {
-    if (!window) {
-        return false; // TODO : error  handling
-    }
     this->window = window;
-    glfwMakeContextCurrent(window);
-    if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress)) {
-        // Handle initialization error
-        this->unloadWindow();
-        return false;
-    }
     return true;
-}
-
-void Renderer::unloadWindow() {
-    if (this->hasValidWindow()) {
-        glfwDestroyWindow(window);
-    }
-    this->window = nullptr;
 }
 
 const bool    Renderer::hasValidWindow() {
@@ -238,12 +292,6 @@ void renderGUI() {
         }
     }
     ImGui::End();
-}
-
-// Params : camera, pixel data coordinate, object
-float    raycast() {
-    // actually, this should return the distance
-    return -1;
 }
 
 void renderRaytracer() {

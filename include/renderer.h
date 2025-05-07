@@ -15,7 +15,6 @@ class Renderer {
         GLFWwindow  *getWindow();
 
         bool loadWindow(GLFWwindow *window);
-        void unloadWindow();
         const bool    hasValidWindow();
 
         // OPENGL
