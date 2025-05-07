@@ -15,6 +15,7 @@
 
 #include <iostream>         // Faster printing and formating
 #include <fmt/core.h>       // For stderr and faster better printing
+#include <exception>
 
 #include "main.h" // This is a co2 wasting that should fall into the abyss
 #include "version_config.h" // Disclaimer and stuff should go there
@@ -24,17 +25,19 @@
 int main(int argc, char* argv[]) {
     fmt::print(stdout, "{} Version {}.{}\n", argv[0], RAYTRACER_VERSION_MAJOR, RAYTRACER_VERSION_MINOR);
 
-    GUIManager  &gui = GUIManager::getInstance();
-    if (gui.load() != EXIT_SUCCESS) {
+    try {
+        GUIManager  &gui = GUIManager::getInstance();
+        gui.load(); // if load failure, the load unloads what has been init so far 
+            
+        gui.guiVarSetUp(); // TODO : Init the menu variables
+
+        gui.mainloop();
+        gui.unload();
         GUIManager::release();
+
+    } catch (const std::exception &) {
+        GUIManager::release(); // maybe release should be part withing the inner throwing of the singleton thant to share_ptr
         return EXIT_FAILURE;
     }
-
-    gui.guiVarSetUp(); // TODO : Init the menu variables
-
-    gui.mainloop();
-
-    gui.unload();
-    GUIManager::release();
     return EXIT_SUCCESS;
 }

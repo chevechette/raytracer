@@ -31,6 +31,7 @@ class GUIManager {
         }
 
         static  void    release() {
+            // TODO : add unload if already init
             if (GUIManager::instance != nullptr) {
                 delete GUIManager::instance;
                 GUIManager::instance = nullptr;

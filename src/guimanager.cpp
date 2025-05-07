@@ -23,6 +23,8 @@
 #include <vector>
 #include <cmath>
 
+#include <exception>
+
 #include "graphic_presets.h"
 #include "structs.h"
 #include "renderer.h"
@@ -32,6 +34,7 @@
 #include "forward_declaration.h"
 #include "structs.h"
 #include "object.h"
+#include "messages.h"
 
 //TODO : Relocate what can be from render to GUIManager
 //TODO : Setup a list of cameras with appropriate GUI
@@ -119,19 +122,19 @@ void GUIManager::guiKeyCallback(
 void GUIManager::guiVarSetUp() {
     // TODO : Change it to set up the variables kept in memory for GUI setup
 
-    int     sliderSamplePP = 100;
-    float   sliderMaxBouncDepth = 100;
-    int     lastRenderTime = 0;
-    int     backgroundColor = 0;
-    bool    renderButtonClicked = false;
-    bool    debug = false;
+    // int     sliderSamplePP = 100;
+    // float   sliderMaxBouncDepth = 100;
+    // int     lastRenderTime = 0;
+    // int     backgroundColor = 0;
+    // bool    renderButtonClicked = false;
+    // bool    debug = false;
 
-    GLuint textureID; // is this lost ?
-    glGenTextures(1, &textureID);
-    glBindTexture(GL_TEXTURE_2D, textureID);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, 800, 600, 0, GL_RGBA, GL_UNSIGNED_BYTE, nullptr);
+    // GLuint textureID; // is this lost ?
+    // glGenTextures(1, &textureID);
+    // glBindTexture(GL_TEXTURE_2D, textureID);
+    // glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+    // glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+    // glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, 800, 600, 0, GL_RGBA, GL_UNSIGNED_BYTE, nullptr);
 }
 
 // void
@@ -162,6 +165,7 @@ int GUIManager::load() {
         GRAPHIC_PRESET_GUI_NAME, nullptr, nullptr);
     if (!window) {
         this->unload();
+        throw std::exception();
         return EXIT_FAILURE;
     }
 
@@ -239,7 +243,7 @@ void    GUIManager::mainloop() {
     }
 }
 
-
+// TODO : Complete rework
 void    GUIManager::renderFromCamera() {
     const ImGuiViewport*    main_viewport = ImGui::GetMainViewport();
 
@@ -264,7 +268,7 @@ void    GUIManager::renderFromCamera() {
     }
 }
 
-// To port withing the class
+// To port within the class
 void renderBackground() {
     const ImGuiViewport* main_viewport = ImGui::GetMainViewport();
 
@@ -301,7 +305,9 @@ void renderBackground() {
     ImVec2 viewportSize = ImGui::GetIO().DisplaySize;
     ImGui::SetNextWindowPos(ImVec2(0, 0));
     ImGui::SetNextWindowSize(viewportSize);
-    ImGui::Begin("Window With Background", nullptr, ImGuiWindowFlags_NoTitleBar);
+    ImGui::SetItemAllowOverlap();
+
+    ImGui::Begin("Window With Background", nullptr, ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoBringToFrontOnFocus );
 
     // // Get current window size
     ImVec2 windowSize = ImGui::GetContentRegionAvail();
@@ -318,6 +324,8 @@ void renderGUI() {
     const ImGuiViewport* main_viewport = ImGui::GetMainViewport();
     ImGui::SetNextWindowPos(ImVec2(main_viewport->WorkPos.x + 15, main_viewport->WorkPos.y + 15));
     ImGui::SetNextWindowSize(ImVec2(main_viewport->Size.x * 0.30, main_viewport->Size.y * 0.90));
+
+     
 
     if (ImGui::Begin("Render Menu")) {
         //     ImGui::PushItemWidth(ImGui::GetFontSize() * -12);
