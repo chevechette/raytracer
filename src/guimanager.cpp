@@ -105,6 +105,111 @@ class ObjectManager {
 
 };
 
+// Is basically the image in the background for the GUI
+
+class RenderBufferPixelProxy { // assuming format GL_RGBA
+    private :
+        unsigned char   &r;
+        unsigned char   &g;
+        unsigned char   &b;
+        unsigned char   &a;
+    public :
+        RenderBufferPixelProxy(unsigned char &r, unsigned char &g, unsigned char &b, unsigned char &a) :
+        r(r), g(g), b(b), a(a) {
+        }
+        ~RenderBufferPixelProxy() {}
+
+        RenderBufferPixelProxy  &operator=(const RenderBufferPixelProxy &pix) {
+            if (this == &pix)
+                return *this;
+            r = pix.r;
+            g = pix.g;
+            b = pix.b;
+            a = pix.a;
+            return *this;
+        }
+
+        RenderBufferPixelProxy  &operator=(const Color &col) {
+            r = col.r * 0xFF;
+            g = col.g * 0xFF;
+            b = col.b * 0xFF;
+            a = col.a * 0xFF;
+            return *this;
+        }
+};
+
+
+class RenderBufferRowProxy { // assuming format GL_RGBA
+    private :
+    public :
+        RenderBufferRowProxy() {}
+        ~RenderBufferRowProxy() {}
+
+
+};
+
+class   Render {
+    private:
+        	int width;
+            int height;
+
+    public: // TODO : TMP
+            std::vector<unsigned char>  buffer;
+
+            // other GL variables
+
+    protected:
+        class RenderBufferRowProxy {};
+
+    public:
+        Render(int w, int h) : width(w), height(h), buffer(w * h * 4) {
+        }
+        ~Render() {}
+
+        void adjustRenderSize(int w, int h) {
+            this->width = w;
+            this->height = h;
+            this->buffer.resize(width * height * 4);
+        } // set width height will change buffer size..
+
+        int getWidth() {
+            return this->width;
+        }
+        int getHeight() {
+            return this->height;
+        }
+
+        void renderPoint(int x, int y, Color col) {}
+
+        // TODO: implement a [][] operator
+        // maybe add a tuple for quick access ?
+        RenderBufferPixelProxy operator[](int i)  { 
+            if (i < 0 || i >= height * width) {
+                // TODO : log this
+                throw std::out_of_range(RT_MESSAGE_ERR_PIXEL_OOB);
+            }
+            return RenderBufferPixelProxy(this->buffer[i * 4], this->buffer[i * 4 + 1], this->buffer[i * 4 + 2], this->buffer[i * 4 + 3]);
+        }
+        
+        void    renderBackgroundSin() {
+            for (int i = 0 ; i < this->width * this->height ; i++) {
+                double colsin = (i / (this->width) / 20.0) + (fmod(i, this->width) / 20.0);
+                colsin = std::fmod(colsin, 180.0);
+                // fmt::println(colsin);
+                try {
+                    this->operator[](i) = Color{
+                        static_cast<float>(sin(colsin) * 0.5 + 0.5),
+                        static_cast<float>(sin(colsin) * 0.5 + 0.5),
+                        static_cast<float>(sin(colsin) * 0.5 + 0.5),
+                        };
+                } catch (std::exception &) {
+                    continue;
+                }
+            }
+        }
+
+};
+
 void GUIManager::glfwErrorCallback(int error, const char* description) {
     fmt::println(stderr, "GLFW Err code {} : {}", error, description);
 }
@@ -137,13 +242,14 @@ void GUIManager::guiVarSetUp() {
     // glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, 800, 600, 0, GL_RGBA, GL_UNSIGNED_BYTE, nullptr);
 }
 
-// void
-
+// exception safe unloading before throwing
 int GUIManager::load() {
-    
-    std::srand(std::time({}));
-    if (!glfwInit())
+    // TODO : Clean up later
+    std::srand(std::time({})); // TODO : check if randomness is used
+    if (!glfwInit()) {
+        throw std::runtime_error(RT_MESSAGE_ERR_LIBRARY_GUI);
         return EXIT_FAILURE;
+    }
     
     // TODO : Upgrade Error handling 
     glfwSetErrorCallback(GUIManager::glfwErrorCallback); // TODO should be changed for other repository of functions ?
@@ -164,15 +270,16 @@ int GUIManager::load() {
         GRAPHIC_PRESET_GUI_HEIGHT,
         GRAPHIC_PRESET_GUI_NAME, nullptr, nullptr);
     if (!window) {
-        this->unload();
-        throw std::exception();
+        this->unload(); 
+        throw std::runtime_error(RT_MESSAGE_ERR_LIBRARY_GUI_WINDOW);
         return EXIT_FAILURE;
     }
 
     glfwMakeContextCurrent(window);
     if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress)) {
+        this->unload(); // unload contains conditional unloadwindow
+        throw std::runtime_error(RT_MESSAGE_ERR_LIBRARY_GUI);
         // Handle initialization error
-        this->unloadWindow();
         return EXIT_FAILURE;
     }
 
@@ -197,9 +304,8 @@ int GUIManager::load() {
 
     return EXIT_SUCCESS;
 }
-
+// called by the unload
 void    GUIManager::unloadWindow() {
-
     if (this->window && this->window != nullptr) {
         glfwDestroyWindow(window);
         this->window = nullptr;
@@ -214,9 +320,8 @@ void    GUIManager::unload() {
     glfwTerminate();
 }
 
-
 void    GUIManager::mainloop() {
-    // return ;
+    // TODO : exception handling
     // TODO :  add check to make sure everything is loaded up before hand
     while (!glfwWindowShouldClose(this->window)) {
         //Clear
@@ -230,7 +335,6 @@ void    GUIManager::mainloop() {
         ImGui::NewFrame();
 
         // Add MORE rendering there
-        
         renderBackground();
         renderRaytracer();
         renderGUI();
@@ -239,7 +343,6 @@ void    GUIManager::mainloop() {
         ImGui::Render();
         ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
         glfwSwapBuffers(this->window);
-        // renderer.render();
     }
 }
 
@@ -269,23 +372,17 @@ void    GUIManager::renderFromCamera() {
 }
 
 // To port within the class
-void renderBackground() {
-    const ImGuiViewport* main_viewport = ImGui::GetMainViewport();
-
-    std::vector<unsigned char> background(main_viewport->Size.x * main_viewport->Size.y * 4);
-
-    for (int i = 0 ; i < main_viewport->Size.x * main_viewport->Size.y ; i++) {
-        double colsin = (i / (main_viewport->Size.x) / 20.0) + (fmod(i,main_viewport->Size.x) / 20.0);
-        colsin = std::fmod(colsin, 180.0);
-        // fmt::println(colsin);
-        background[i * 4] = 0xFF * (sin(colsin) * 0.5 + 0.5);
-        background[i * 4 + 1] = 0xFF * (sin(colsin) * 0.5 + 0.5);
-        background[i * 4 + 2] = 0xFF * (sin(colsin) * 0.5 + 0.5);
-        background[i * 4 + 3] = 0xFF;
+void    GUIManager::renderBackground() {
+    const ImGuiViewport     *main_viewport = ImGui::GetMainViewport();
+    if (main_viewport == NULL || main_viewport == nullptr) {
+        // throw exception ?
+        return ;
     }
-    GLuint  g_TextureID = 0;
 
-    
+    Render  bckgrnd = Render(main_viewport->Size.x, main_viewport->Size.y); // TODO : make this into property
+    bckgrnd.renderBackgroundSin();
+
+    GLuint  g_TextureID = 0;
     glGenTextures(1, &g_TextureID);
     glBindTexture(GL_TEXTURE_2D, g_TextureID);
     
@@ -295,8 +392,8 @@ void renderBackground() {
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
 
-    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, main_viewport->Size.x, 
-        main_viewport->Size.y, 0, GL_RGBA, GL_UNSIGNED_BYTE, background.data());
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, bckgrnd.getWidth(), 
+    bckgrnd.getHeight(), 0, GL_RGBA, GL_UNSIGNED_BYTE, bckgrnd.buffer.data());
 
 
     // ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(0, 0));

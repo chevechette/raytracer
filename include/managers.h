@@ -1,5 +1,6 @@
 #pragma once
 
+#include <memory> // shared_ptr usage
 #include <vector>
 #include "opengl_include.h"
 
@@ -7,10 +8,12 @@
 class GUIManager {
     private:
         static  GUIManager   *instance; // TODO switch for shared ptr for thread safety
+        // static std::shared_ptr<GUIManager>   instance;
+        // to do rework instance mecanism once i'm done with the rest
 
         GUIManager(const GUIManager&) = delete;
         GUIManager   &operator=(const GUIManager&) = delete;
-        
+
         GUIManager() : window(nullptr) {
         }
 
@@ -51,6 +54,7 @@ class GUIManager {
         //event ?
 
         //render options (full or partial to quick render)
+        void    renderBackground();
         // launch the rendering
         void    renderFromCamera();
 };
