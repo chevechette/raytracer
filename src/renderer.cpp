@@ -8,6 +8,121 @@
 #include "ray.h"
 
 
+#include "forward_declaration.h"
+#include "structs.h"
+#include "object.h"
+
+//TODO : Relocate what can be from render to GUIManager
+//TODO : Setup a list of cameras with appropriate GUI
+//TODO : For each camera, create the parameters
+//TODO : Go update the camera functions
+//TODO : (static) add a few objects at a specific distance
+//TODO : incorporate libraries initialisation into GUIManger
+//TODO : Object manager with lists of obj
+//TODO : Objectmanager with a binary tree (could be another class of obj leaf)
+
+// This could have been inheritance but I see no logical connection
+// and never want to bother with mixing those two nor bother with casting
+
+class ObjectManager {
+    private:
+        static  ObjectManager   *instance;
+
+        ObjectManager(const ObjectManager&) = delete;
+        ObjectManager   &operator=(const ObjectManager&) = delete;
+        
+        ObjectManager() {
+        }
+
+        ~ObjectManager() {
+
+        }
+
+    public:
+        static  ObjectManager &getInstance() {
+            if (ObjectManager::instance == nullptr) {
+                ObjectManager::instance == new ObjectManager();
+        }
+            return *ObjectManager::instance;
+        }
+
+        static  void    release() {
+            if (ObjectManager::instance != nullptr) {
+                delete ObjectManager::instance;
+                ObjectManager::instance = nullptr;
+            }
+        }
+
+        // add(); // push
+        // remove(); // pop
+        // binary tree structure... later
+
+        // cameras map for edition
+
+        // 
+
+};
+
+class GUIManager {
+    private:
+        static  GUIManager   *instance;
+
+        GUIManager(const ObjectManager&) = delete;
+        GUIManager   &operator=(const ObjectManager&) = delete;
+        
+        GUIManager() {
+        }
+
+        ~GUIManager() {
+
+        }
+
+    public:
+        static  GUIManager &getInstance() {
+            if (GUIManager::instance == nullptr) {
+                GUIManager::instance = new GUIManager();
+        }
+            return *GUIManager::instance;
+        }
+
+        static  void    release() {
+            if (GUIManager::instance != nullptr) {
+                delete GUIManager::instance;
+                GUIManager::instance = nullptr;
+            }
+        }
+
+        //event ?
+
+        //render options (full or partial to quick render)
+        // launch the rendering
+
+        void    renderFromCamera() {
+            const ImGuiViewport*    main_viewport = ImGui::GetMainViewport();
+
+            std::vector<int> objectList(0, 0);
+
+            for (int i = 0; i < main_viewport->Size.x ; i++) {
+                for (int j = 0; j < main_viewport->Size.y ; j++) {
+                    float dist = -1;
+                    for (auto elem : objectList) {
+                        // Test interesec
+                        // auto raydist = raycast();
+                        // if (dist == -1 || dist > raydist) {
+                        //     dist = raydist;
+                        //     // this should update some object reference
+                        //     //pixel[i, j] = object.color;
+                        // }
+                        // if (auto dist = raycast >=0) {
+                        // }
+
+                    }
+                }
+            }
+        }
+};
+
+
 // should be made a singleton
 
 Renderer::Renderer() {
@@ -125,18 +240,6 @@ void renderGUI() {
     ImGui::End();
 }
 
-float   intersectTriangle() {
-    return -1;
-}
-
-float   intersectSphere() {
-    return -1;
-}
-
-float   intersectPlane() {
-    return -1;
-}
-
 // Params : camera, pixel data coordinate, object
 float    raycast() {
     // actually, this should return the distance
@@ -144,27 +247,8 @@ float    raycast() {
 }
 
 void renderRaytracer() {
-    const ImGuiViewport*    main_viewport = ImGui::GetMainViewport();
-
-    std::vector<int> objectList(0, 0);
-
-    for (int i = 0; i < main_viewport->Size.x ; i++) {
-        for (int j = 0; j < main_viewport->Size.y ; j++) {
-            float dist = -1;
-            for (auto elem : objectList) {
-                // Test interesec
-                // auto raydist = raycast();
-                // if (dist == -1 || dist > raydist) {
-                //     dist = raydist;
-                //     // this should update some object reference
-                //     //pixel[i, j] = object.color;
-                // }
-                // if (auto dist = raycast >=0) {
-                // }
-
-            }
-        }
-    }
+    GUIManager  &guiinstance = GUIManager::getInstance();
+    guiinstance.renderFromCamera();
 }
 
 
@@ -178,3 +262,8 @@ void Renderer::render() {
     ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
     glfwSwapBuffers(this->getWindow());
 }
+
+
+GUIManager      *GUIManager::instance = nullptr;
+ObjectManager   *ObjectManager::instance = nullptr;
+
