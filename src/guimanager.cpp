@@ -41,12 +41,20 @@
 //TODO : incorporate libraries initialisation into GUIManger
 //TODO : Object manager with lists of obj
 //TODO : Objectmanager with a binary tree (could be another class of obj leaf)
+//TODO : Error throwing in all classes
+//TODO : Error throwing from GUI Manager
 
+// TODO : In GUIManager, make a render point funciton
 // This could have been inheritance but I see no logical connection
 // and never want to bother with mixing those two nor bother with casting
 
 #include "managers.h"
 
+void renderBackground();
+void renderRaytracer();
+void renderGUI();
+
+// TODO : finish the Object Manager
 class ObjectManager {
     private:
         static  ObjectManager   *instance;
@@ -98,7 +106,6 @@ void GUIManager::glfwErrorCallback(int error, const char* description) {
     fmt::println(stderr, "GLFW Err code {} : {}", error, description);
 }
 
-
 void GUIManager::guiKeyCallback(
     GLFWwindow* window, int key, int scancode, int action, int mods) {
     //TODO : set up all one key triggers
@@ -109,6 +116,25 @@ void GUIManager::guiKeyCallback(
     }
 }
 
+void GUIManager::guiVarSetUp() {
+    // TODO : Change it to set up the variables kept in memory for GUI setup
+
+    int     sliderSamplePP = 100;
+    float   sliderMaxBouncDepth = 100;
+    int     lastRenderTime = 0;
+    int     backgroundColor = 0;
+    bool    renderButtonClicked = false;
+    bool    debug = false;
+
+    GLuint textureID; // is this lost ?
+    glGenTextures(1, &textureID);
+    glBindTexture(GL_TEXTURE_2D, textureID);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, 800, 600, 0, GL_RGBA, GL_UNSIGNED_BYTE, nullptr);
+}
+
+// void
 
 int GUIManager::load() {
     
@@ -149,6 +175,22 @@ int GUIManager::load() {
     ImGui_ImplGlfw_InitForOpenGL(this->window, true); // true ports all glfw triggers to ImGUI 
     ImGui_ImplOpenGL3_Init(); // Can specify some version here
 
+    // // Try to call some OpenGL functions, and print some more version info.
+    // printf( "Renderer: %s.\n", glGetString( GL_RENDERER ) );
+    // printf( "OpenGL version supported %s.\n", glGetString( GL_VERSION ) );
+
+    //refresh and swapping setting up, actually should the swap really be that much updated when we are working with a ray tracer ? 
+    // TODO : for readability, should move event stuff into their own function
+    glfwSwapInterval(1);
+    glfwSetKeyCallback(this->window, GUIManager::guiKeyCallback);
+    
+    // 9) In your application's input logic: you can poll
+    // ImGui::GetIO().WantCaptureMouse/WantCaptureKeyboard
+    // to check if Dear ImGui wants to obstruct mouse/keyboard
+    // inputs from underlying apps.
+    // e.g. when hovering a window WantCaptureMouse will be set to true,
+    // one possible strategy would be to stop passing mouse events to your main application.
+
     return EXIT_SUCCESS;
 }
 
@@ -166,9 +208,36 @@ void    GUIManager::unload() {
     ImGui_ImplGlfw_Shutdown();
     ImGui::DestroyContext();
     glfwTerminate();
-    
 }
 
+
+void    GUIManager::mainloop() {
+    // return ;
+    // TODO :  add check to make sure everything is loaded up before hand
+    while (!glfwWindowShouldClose(this->window)) {
+        //Clear
+        glClear(GL_COLOR_BUFFER_BIT  | GL_DEPTH_BUFFER_BIT);
+
+        //  Poll events
+        glfwPollEvents(); // Can be changed for  glfwWaitEvents ?
+        // BOTH NEED TO BE HERE. I am unsure if order is important.
+        ImGui_ImplOpenGL3_NewFrame();
+        ImGui_ImplGlfw_NewFrame();
+        ImGui::NewFrame();
+
+        // Add MORE rendering there
+        
+        renderBackground();
+        renderRaytracer();
+        renderGUI();
+
+        // Careful to avoid conflicts here
+        ImGui::Render();
+        ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
+        glfwSwapBuffers(this->window);
+        // renderer.render();
+    }
+}
 
 
 void    GUIManager::renderFromCamera() {
@@ -193,38 +262,6 @@ void    GUIManager::renderFromCamera() {
             }
         }
     }
-}
-
-// should be made a singleton
-
-Renderer::Renderer() {
-    this->window = nullptr;
-}
-
-Renderer::~Renderer() {
-}
-
-GLFWwindow  *Renderer::getWindow() {
-    return this->window;
-}
-
-bool Renderer::loadWindow(GLFWwindow *window) {
-    this->window = window;
-    return true;
-}
-
-const bool    Renderer::hasValidWindow() {
-    if (this->window && this->window != nullptr)
-        return true;
-    return false;
-}
-
-void Renderer::setUpBackground() {
-
-}
-
-void Renderer::updateBackground() {
-
 }
 
 // To port withing the class
@@ -298,19 +335,6 @@ void renderRaytracer() {
     GUIManager  &guiinstance = GUIManager::getInstance();
     guiinstance.renderFromCamera();
 }
-
-
-void Renderer::render() {
-    renderBackground();
-    renderRaytracer();
-    renderGUI();
-
-    // Careful to avoid conflicts here
-    ImGui::Render();
-    ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
-    glfwSwapBuffers(this->getWindow());
-}
-
 
 GUIManager      *GUIManager::instance = nullptr;
 ObjectManager   *ObjectManager::instance = nullptr;

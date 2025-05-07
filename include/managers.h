@@ -6,7 +6,7 @@
 //TODO : throw errors EVERYWHERE
 class GUIManager {
     private:
-        static  GUIManager   *instance;
+        static  GUIManager   *instance; // TODO switch for shared ptr for thread safety
 
         GUIManager(const GUIManager&) = delete;
         GUIManager   &operator=(const GUIManager&) = delete;
@@ -41,9 +41,11 @@ class GUIManager {
         static void glfwErrorCallback(int error, const char* description);
         static void guiKeyCallback(GLFWwindow* window, int key, int scancode, int action, int mods);
 
+        void guiVarSetUp(); // TODO : rename
         int load(); // TODO rename these loading functions
         void unloadWindow();
         void unload();
+        void mainloop();
 
         //event ?
 
