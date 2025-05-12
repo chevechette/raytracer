@@ -13,19 +13,17 @@
 #include <vector>
 // TODO : Extension loader library to then make it compatible with different GPU
 // library
+#include "forward_declaration.h"
 #include "graphic_presets.h"
 #include "main.h"
-#include "version_config.h"
-#include <cmath>
-#include <vector>
-#include <exception>
-#include "graphic_presets.h"
-#include "ray.h"
-#include "structs.h"
-#include "forward_declaration.h"
 #include "messages.h"
 #include "object.h"
+#include "ray.h"
 #include "structs.h"
+#include "version_config.h"
+#include <cmath>
+#include <exception>
+#include <vector>
 
 // TOCO : Clean up the includes, this is a mess
 
@@ -40,12 +38,11 @@
 // TODO : Error throwing in all classes
 // TODO : Error throwing from GUI Manager
 
-// TODO : In GUIManager, make a render point funciton
 // This could have been inheritance but I see no logical connection
 // and never want to bother with mixing those two nor bother with casting
-
 #include "managers.h"
 #include "render.h"
+
 void renderBackground();
 void renderRaytracer();
 void renderGUI();
@@ -94,7 +91,9 @@ class ObjectManager {
 
 GUIManager::GUIManager()
     : window(nullptr),
-      background(GRAPHIC_PRESET_GUI_WIDTH, GRAPHIC_PRESET_GUI_HEIGHT) {}
+      background(GRAPHIC_PRESET_GUI_WIDTH, GRAPHIC_PRESET_GUI_HEIGHT) {
+    background.renderBackgroundSin();
+}
 
 GUIManager::~GUIManager() {}
 
@@ -252,10 +251,10 @@ void GUIManager::renderBackground() {
         return;
     }
 
-    Render bckgrnd =
-        Render(main_viewport->Size.x,
-               main_viewport->Size.y); // TODO : make this into property
-    bckgrnd.renderBackgroundSin();
+    // Render bckgrnd =
+    //     Render(main_viewport->Size.x,
+    //            main_viewport->Size.y); // TODO : make this into property
+    // bckgrnd.renderBackgroundSin();
 
     GLuint g_TextureID = 0;
     glGenTextures(1, &g_TextureID);
@@ -267,9 +266,9 @@ void GUIManager::renderBackground() {
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
 
-    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, bckgrnd.getWidth(),
-                 bckgrnd.getHeight(), 0, GL_RGBA, GL_UNSIGNED_BYTE,
-                 bckgrnd.buffer.data());
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, this->background.getWidth(),
+                 this->background.getHeight(), 0, GL_RGBA, GL_UNSIGNED_BYTE,
+                 this->background.buffer.data());
 
     // ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(0, 0));
     // ImGui::PushStyleVar(ImGuiStyleVar_WindowBorderSize, 0.0f);
