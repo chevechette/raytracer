@@ -89,6 +89,10 @@ class ObjectManager {
 
 // Is basically the image in the background for the GUI
 
+
+GUIManager *GUIManager::instance = nullptr;
+ObjectManager *ObjectManager::instance = nullptr;
+
 GUIManager::GUIManager()
     : window(nullptr),
       background(GRAPHIC_PRESET_GUI_WIDTH, GRAPHIC_PRESET_GUI_HEIGHT) {
@@ -108,6 +112,13 @@ void GUIManager::guiKeyCallback(GLFWwindow *window, int key, int scancode,
         glfwSetWindowShouldClose(window, GLFW_TRUE);
         fmt::println(stdout, "GO THERE\n");
     }
+}
+
+void GUIManager::guiResizeCallback(GLFWwindow* window, int width, int height) {
+    GUIManager  &gui = GUIManager::getInstance();
+
+    gui.background.adjustRenderSize(width, height); // should I keep it if it is bigger ?
+    gui.background.renderBackgroundSin();
 }
 
 void GUIManager::guiVarSetUp() {
@@ -142,6 +153,7 @@ int GUIManager::load() {
     glfwSetErrorCallback(
         GUIManager::glfwErrorCallback); // TODO should be changed for other
                                         // repository of functions ?
+
 
     // TODO : set the GLFW_CONTEXT variables to request a specifc version of
     // openGL 4.1 here
@@ -185,6 +197,7 @@ int GUIManager::load() {
     //  TODO : for readability, should move event stuff into their own function
     glfwSwapInterval(1);
     glfwSetKeyCallback(this->window, GUIManager::guiKeyCallback);
+    glfwSetWindowSizeCallback(this->window, GUIManager::guiResizeCallback);
 
     // 9) In your application's input logic: you can poll
     // ImGui::GetIO().WantCaptureMouse/WantCaptureKeyboard
@@ -316,6 +329,3 @@ void renderRaytracer() {
     GUIManager &guiinstance = GUIManager::getInstance();
     guiinstance.renderFromCamera();
 }
-
-GUIManager *GUIManager::instance = nullptr;
-ObjectManager *ObjectManager::instance = nullptr;

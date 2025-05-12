@@ -9,7 +9,8 @@
 class GUIManager {
   private:
     static GUIManager *instance; // TODO switch for shared ptr for thread safety
-    
+  
+  public: // TMP SHIT
     Render background;
 
   private:
@@ -46,6 +47,7 @@ class GUIManager {
     static void glfwErrorCallback(int error, const char *description);
     static void guiKeyCallback(GLFWwindow *window, int key, int scancode,
                                int action, int mods);
+    static void guiResizeCallback(GLFWwindow* window, int width, int height);
 
     void guiVarSetUp(); // TODO : rename
     int load();         // TODO rename these loading functions

@@ -1,4 +1,5 @@
 #pragma once
+// #pragma clang diagnostic ignored "-Wc++23-extensions"
 
 #include "renderbufferpixelproxy.h"
 #include <cstddef> // size_t
