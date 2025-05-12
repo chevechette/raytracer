@@ -17,7 +17,7 @@
 #include "graphic_presets.h"
 #include "main.h"
 #include "messages.h"
-#include "object.h"
+#include "rtobject.h"
 #include "ray.h"
 #include "structs.h"
 #include "version_config.h"
@@ -37,61 +37,17 @@
 // TODO : Objectmanager with a binary tree (could be another class of obj leaf)
 // TODO : Error throwing in all classes
 // TODO : Error throwing from GUI Manager
+// TODO : Check the unloads and memory leaks
 
 // This could have been inheritance but I see no logical connection
 // and never want to bother with mixing those two nor bother with casting
 #include "managers.h"
 #include "render.h"
 
-void renderBackground();
-void renderRaytracer();
-void renderGUI();
+// void renderBackground();
+// void renderRaytracer();
+// void renderGUI();
 
-// TODO : finish the Object Manager
-class ObjectManager {
-  private:
-    static ObjectManager *instance;
-
-    ObjectManager(const ObjectManager &) = delete;
-    ObjectManager &operator=(const ObjectManager &) = delete;
-
-    ObjectManager() {}
-
-    ~ObjectManager() {}
-
-  public:
-    static ObjectManager &getInstance() {
-        if (ObjectManager::instance == nullptr) {
-            ObjectManager::instance == new ObjectManager();
-        }
-        return *ObjectManager::instance;
-    }
-
-    static void release() {
-        if (ObjectManager::instance != nullptr) {
-            delete ObjectManager::instance;
-            ObjectManager::instance = nullptr;
-        }
-    }
-
-    void loadLibraries() {}
-
-    void unloadLibraries() {}
-
-    // add(); // push
-    // remove(); // pop
-    // binary tree structure... later
-
-    // cameras map for edition
-
-    //
-};
-
-// Is basically the image in the background for the GUI
-
-
-GUIManager *GUIManager::instance = nullptr;
-ObjectManager *ObjectManager::instance = nullptr;
 
 GUIManager::GUIManager()
     : window(nullptr),
@@ -99,7 +55,27 @@ GUIManager::GUIManager()
     background.renderBackgroundSin();
 }
 
-GUIManager::~GUIManager() {}
+GUIManager::~GUIManager() {
+    if (this->loaded) {
+        this->unload();
+    }
+}
+
+GUIManager &GUIManager::getInstance() {
+    static GUIManager instance = GUIManager();
+
+    return instance;
+}
+
+void GUIManager::release() {
+    // TODO: add unload if already init
+    // GUIManager &instance::
+    // if (GUIManager::get)
+    // if (GUIManager::instance != nullptr) {
+    //     delete GUIManager::instance;
+    //     GUIManager::instance = nullptr;
+    // }
+}
 
 void GUIManager::glfwErrorCallback(int error, const char *description) {
     fmt::println(stderr, "GLFW Err code {} : {}", error, description);
@@ -114,10 +90,11 @@ void GUIManager::guiKeyCallback(GLFWwindow *window, int key, int scancode,
     }
 }
 
-void GUIManager::guiResizeCallback(GLFWwindow* window, int width, int height) {
-    GUIManager  &gui = GUIManager::getInstance();
+void GUIManager::guiResizeCallback(GLFWwindow *window, int width, int height) {
+    GUIManager &gui = GUIManager::getInstance();
 
-    gui.background.adjustRenderSize(width, height); // should I keep it if it is bigger ?
+    gui.background.adjustRenderSize(
+        width, height); // should I keep it if it is bigger ?
     gui.background.renderBackgroundSin();
 }
 
@@ -141,19 +118,17 @@ void GUIManager::guiVarSetUp() {
 }
 
 // exception safe unloading before throwing
-int GUIManager::load() {
+void GUIManager::load() {
     // TODO : Clean up later
     std::srand(std::time({})); // TODO : check if randomness is used
     if (!glfwInit()) {
         throw std::runtime_error(RT_MESSAGE_ERR_LIBRARY_GUI);
-        return EXIT_FAILURE;
     }
 
     // TODO : Upgrade Error handling
     glfwSetErrorCallback(
         GUIManager::glfwErrorCallback); // TODO should be changed for other
                                         // repository of functions ?
-
 
     // TODO : set the GLFW_CONTEXT variables to request a specifc version of
     // openGL 4.1 here
@@ -173,7 +148,6 @@ int GUIManager::load() {
     if (!window) {
         this->unload();
         throw std::runtime_error(RT_MESSAGE_ERR_LIBRARY_GUI_WINDOW);
-        return EXIT_FAILURE;
     }
 
     glfwMakeContextCurrent(window);
@@ -181,7 +155,6 @@ int GUIManager::load() {
         this->unload(); // unload contains conditional unloadwindow
         throw std::runtime_error(RT_MESSAGE_ERR_LIBRARY_GUI);
         // Handle initialization error
-        return EXIT_FAILURE;
     }
 
     ImGui_ImplGlfw_InitForOpenGL(this->window,
@@ -198,6 +171,7 @@ int GUIManager::load() {
     glfwSwapInterval(1);
     glfwSetKeyCallback(this->window, GUIManager::guiKeyCallback);
     glfwSetWindowSizeCallback(this->window, GUIManager::guiResizeCallback);
+    this->loaded = true;
 
     // 9) In your application's input logic: you can poll
     // ImGui::GetIO().WantCaptureMouse/WantCaptureKeyboard
@@ -206,23 +180,24 @@ int GUIManager::load() {
     // e.g. when hovering a window WantCaptureMouse will be set to true,
     // one possible strategy would be to stop passing mouse events to your main
     // application.
-
-    return EXIT_SUCCESS;
 }
 // called by the unload
 void GUIManager::unloadWindow() {
     if (this->window && this->window != nullptr) {
-        glfwDestroyWindow(window);
+        glfwDestroyWindow(this->window);
         this->window = nullptr;
     }
 }
 
 void GUIManager::unload() {
-    this->unloadWindow();
+    if (this->loaded == false)
+        return;
     ImGui_ImplOpenGL3_Shutdown();
     ImGui_ImplGlfw_Shutdown();
+    this->unloadWindow();
     ImGui::DestroyContext();
     glfwTerminate();
+    this->loaded = false;
 }
 
 void GUIManager::mainloop() {
@@ -304,7 +279,7 @@ void GUIManager::renderBackground() {
 }
 
 // Can be a method within the class...
-void renderGUI() {
+void GUIManager::renderGUI() {
     // TODO : add custom colors and design ? Not a priority
 
     const ImGuiViewport *main_viewport = ImGui::GetMainViewport();
@@ -325,7 +300,7 @@ void renderGUI() {
     ImGui::End();
 }
 
-void renderRaytracer() {
+void GUIManager::renderRaytracer() {
     GUIManager &guiinstance = GUIManager::getInstance();
     guiinstance.renderFromCamera();
 }

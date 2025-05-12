@@ -5,13 +5,28 @@
 #include <memory> // shared_ptr usage
 #include <vector>
 
+class Singleton
+{
+private:
+  Singleton() { };
+
+public:
+  Singleton& Get()
+  {
+    static Singleton the_singleton;
+    return the_singleton;
+  }
+};
+
 // TODO : throw errors EVERYWHERE
 class GUIManager {
-  private:
-    static GUIManager *instance; // TODO switch for shared ptr for thread safety
+  // private:
+  //   static GUIManager *instance; // TODO switch for shared ptr for thread safety
   
-  public: // TMP SHIT
+  public: // TODO: TMP SHIT
     Render background;
+    GLFWwindow *window;
+    bool  loaded = false;
 
   private:
     // static std::shared_ptr<GUIManager>   instance;
@@ -23,25 +38,9 @@ class GUIManager {
     GUIManager();
     ~GUIManager();
 
-    // Temporary public
   public:
-    GLFWwindow *window;
-
-  public:
-    static GUIManager &getInstance() {
-        if (GUIManager::instance == nullptr) {
-            GUIManager::instance = new GUIManager();
-        }
-        return *GUIManager::instance;
-    }
-
-    static void release() {
-        // TODO : add unload if already init
-        if (GUIManager::instance != nullptr) {
-            delete GUIManager::instance;
-            GUIManager::instance = nullptr;
-        }
-    }
+    static GUIManager &getInstance();
+    static void release();
 
     // event shit
     static void glfwErrorCallback(int error, const char *description);
@@ -50,10 +49,14 @@ class GUIManager {
     static void guiResizeCallback(GLFWwindow* window, int width, int height);
 
     void guiVarSetUp(); // TODO : rename
-    int load();         // TODO rename these loading functions
+    void load();         // TODO rename these loading functions
     void unloadWindow();
     void unload();
     void mainloop();
+
+    void renderGUI();
+    void renderRaytracer();
+    // void render
 
     // event ?
 
@@ -61,4 +64,6 @@ class GUIManager {
     void renderBackground();
     // launch the rendering
     void renderFromCamera();
+
+    // bool isloaded() const; ?
 };

@@ -1,5 +1,5 @@
 #include "structs.h"
-#include "object.h"
+#include "rtobject.h"
 
 Plane::Plane(Coordinates origin, Coordinates normal) :
     Object(origin, Color{1, 1, 1, 1}), normalVec{normal}, height{-1}, width{-1} {

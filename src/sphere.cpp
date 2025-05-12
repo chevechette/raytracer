@@ -1,6 +1,6 @@
 #include <cmath>
 #include "boost/math/tools/roots.hpp"
-#include "object.h"
+#include "rtobject.h"
 
 Sphere::Sphere(Coordinates pos, float radius) :
     Object(pos, Color::random()) {

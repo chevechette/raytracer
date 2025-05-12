@@ -1,5 +1,5 @@
 #include "structs.h"
-#include "object.h"
+#include "rtobject.h"
 
 Triangle::Triangle(Coordinates a, Coordinates b, Coordinates c) :
     Object(Triangle::getCenter(a, b, c), Color{1, 1, 1, 1}) {

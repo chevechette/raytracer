@@ -1,5 +1,5 @@
 // IDK if struct or class tbh
-#include "object.h"
+#include "rtobject.h"
 
 // struct Intersection {
 //     Object      *obj = nullptr;

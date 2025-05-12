@@ -32,11 +32,9 @@ int main(int argc, char* argv[]) {
         gui.guiVarSetUp(); // TODO : Init the menu variables
 
         gui.mainloop();
-        gui.unload();
-        GUIManager::release();
-
+        gui.unload(); // SEGFAULT IF NOT UNLOADED
     } catch (const std::exception &) {
-        GUIManager::release(); // maybe release should be part withing the inner throwing of the singleton thant to share_ptr
+        // GUIManager::release(); // maybe release should be part withing the inner throwing of the singleton thant to share_ptr
         return EXIT_FAILURE;
     }
     return EXIT_SUCCESS;
