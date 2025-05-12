@@ -33,7 +33,7 @@ class Sphere : public Object {
         void        setRadius(float radius);
         float       getRadius() const;
 
-        Intersection intersect(Ray) const;
+        Intersection intersect(const Ray &ray) const;
 };
 
 class Triangle : public Object {

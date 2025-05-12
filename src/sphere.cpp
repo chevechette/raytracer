@@ -24,7 +24,7 @@ float   Sphere::getRadius() const {
     return this->radius;
 }
 
-Intersection Sphere::intersect(Ray ray) const {
+Intersection Sphere::intersect(const Ray &ray) const {
     Coordinates movedOrigin = ray.getOrigin() - this->getOrigin();
     double      a = ray.getVector() * ray.getVector(); // Should  == 1 be ray vector normalised // TODO: Normalise all vectors on init;
     double      b = movedOrigin * ray.getVector() * 2.0;

@@ -8,11 +8,15 @@
 
 // };
 
+
+// TODO: check booleans
 Intersection::operator bool() const {
-    return (this->obj != nullptr);
+    return (this->obj != nullptr && this->dist > 20); // TODO: check the distance
 }
 
 bool Intersection::operator<(const Intersection &i) const {
+    if (this->obj != nullptr && this->dist > 20)
+        return false;
     if (this->obj == nullptr)
         return false;
     if (i)
@@ -25,6 +29,9 @@ bool Intersection::operator>(const Intersection &i) const {
 }
 
 bool Intersection::operator==(const Intersection &i) const {
+    
+    if (this->obj != nullptr && this->dist > 20)
+        return false;
     if (this->obj != nullptr && i) {
         return (this->dist == i.dist);
     }
