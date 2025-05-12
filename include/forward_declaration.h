@@ -6,4 +6,5 @@ struct Coordinates;
 struct Intersection;
 
 class Object;
+class Sphere;
 

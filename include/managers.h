@@ -1,21 +1,44 @@
 #pragma once
+#include <vector>
+#include <memory> // shared_ptr usage
 
 #include "opengl_include.h"
 #include "render.h"
-#include <memory> // shared_ptr usage
-#include <vector>
+#include "ray.h"
 
-class Singleton
-{
-private:
-  Singleton() { };
+// TODO: Add camera storage, link them with GUI ?
+class ObjectManager {
 
-public:
-  Singleton& Get()
-  {
-    static Singleton the_singleton;
-    return the_singleton;
-  }
+  public:                                      // TMP PUBLIC VARIABLES
+                                               // would be the full libraries
+    std::vector<std::shared_ptr<Object>> objs; // shared pointer ? optional ?
+
+  private:
+    ObjectManager(const ObjectManager &) = delete;
+    ObjectManager &operator=(const ObjectManager &) = delete;
+
+    ObjectManager();
+
+    ~ObjectManager();
+
+  public:
+    static ObjectManager &getInstance();
+
+    static void release();
+    // remove(); // pop
+    // binary tree structure... later
+
+    // cameras map for edition
+    void addObject(std::shared_ptr<Object> obj);
+
+    void removeObjects();
+
+    void createSphere(Coordinates coord, float radius, Color col);
+    // TODO: add other objs
+
+    Intersection intersectAllObjects(const Ray &ray);
+
+    // TODO: override some fmt for printability
 };
 
 // TODO : throw errors EVERYWHERE

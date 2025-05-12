@@ -22,7 +22,7 @@ class Object {
 
 class Sphere : public Object {
     private:
-        Coordinates origin;
+        // Coordinates origin;
         float       radius;
 
     public:
