@@ -3,6 +3,15 @@
 // adjustable cameras according to gui
 #include "camera.h"
 
+Camera::Camera()
+    : position(
+          Coordinates{CAMERA_DEFAULT_X, CAMERA_DEFAULT_Y, CAMERA_DEFAULT_Z}),
+      direction(Coordinates{CAMERA_DIR_DEFAULT_X, CAMERA_DIR_DEFAULT_Y,
+                            CAMERA_DIR_DEFAULT_Z}) {
+          this->projectedPos =
+              this->position + (this->direction.normalize() * (-fov));
+}
+
 Camera::Camera(Coordinates pos, Coordinates dir)
     : position{pos}, direction{dir.normalize()},
       projectedPos{pos + (dir.normalize() * (-fov))} {}
@@ -28,6 +37,14 @@ Coordinates Camera::getPosition() const {
 }
 
 Coordinates Camera::getDirection() const {
+    return this->direction;
+}
+
+Coordinates &Camera::getPositionRef() {
+    return this->position;
+}
+
+Coordinates &Camera::getDirectionRef() {
     return this->direction;
 }
 

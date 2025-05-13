@@ -42,13 +42,6 @@ class ObjectManager {
     // TODO: override some fmt for printability
 };
 
-#define CAMERA_DEFAULT_X 0
-#define CAMERA_DEFAULT_Y 0
-#define CAMERA_DEFAULT_Z -100
-
-#define CAMERA_DIR_DEFAULT_X 0
-#define CAMERA_DIR_DEFAULT_Y 0
-#define CAMERA_DIR_DEFAULT_Z 1
 
 // TODO : throw errors EVERYWHERE
 class GUIManager {
@@ -61,7 +54,7 @@ class GUIManager {
     //   safety
 
   public:       // TODO: TMP SHIT
-    Camera cam; // TODO: Make it into an array of 3 cameras for switching
+    Camera cams[3]; // TODO: Make it into an array of 3 cameras for switching
 
   private:
     // static std::shared_ptr<GUIManager>   instance;

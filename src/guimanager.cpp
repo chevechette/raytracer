@@ -51,8 +51,7 @@
 GUIManager::GUIManager()
     : window(nullptr),
       background(GRAPHIC_PRESET_GUI_WIDTH, GRAPHIC_PRESET_GUI_HEIGHT),
-      cam(Coordinates{CAMERA_DEFAULT_X, CAMERA_DEFAULT_Y, CAMERA_DEFAULT_Z},
-          Coordinates{CAMERA_DIR_DEFAULT_X, CAMERA_DIR_DEFAULT_Y, CAMERA_DIR_DEFAULT_Z}) {
+      cams(Camera(), Camera(), Camera()) {
     background.renderBackgroundSin();
 }
 
@@ -290,12 +289,30 @@ void GUIManager::renderGUI() {
         ImVec2(main_viewport->Size.x * 0.30, main_viewport->Size.y * 0.90));
 
     if (ImGui::Begin("Render Menu")) {
-        //TODO: CAMERA GUI
-            // Select Camera
-            // Cordinates x, y. z
-            // Direction x, y, z
-            // Rotation // not working
-            // Render from cam
+        // TODO: CAMERA GUI
+        static int currentCamera = 0;
+
+        const char *cameras[] = {"Camera 1", "Camera 2", "Secret Cam 3"};
+        ImGui::Combo("selected", &currentCamera, cameras,
+                     IM_ARRAYSIZE(cameras)); // if var 1 set to 0, sHIT
+
+        // TODO: check the decapsulation and find alternatives
+        Camera &selectedCam = this->cams[currentCamera];
+        Coordinates &pos = selectedCam.getPositionRef();
+        Coordinates &dir = selectedCam.getDirectionRef();
+        ImGui::DragFloat("X position", &pos.x, 0.1f, 0.0f, 0.0f, "%.06f");
+        ImGui::DragFloat("Y position", &pos.y, 0.1f, 0.0f, 0.0f, "%.06f");
+        ImGui::DragFloat("Z position", &pos.z, 0.1f, 0.0f, 0.0f, "%.06f");
+
+        ImGui::DragFloat("X angle", &dir.x, 0.01f, 0.0f, 0.0f, "%.06f");
+        ImGui::DragFloat("Y angle", &dir.y, 0.01f, 0.0f, 0.0f, "%.06f");
+        ImGui::DragFloat("Z angle", &dir.z, 0.01f, 0.0f, 0.0f, "%.06f");
+
+        // Select Camera
+        // Cordinates x, y. z
+        // Direction x, y, z
+        // Rotation // not working
+        // Render from cam
 
         //     ImGui::PushItemWidth(ImGui::GetFontSize() * -12);
         if (ImGui::Button("Render")) {

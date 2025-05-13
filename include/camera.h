@@ -7,6 +7,15 @@
 #include "ray.h"
 #include "structs.h"
 
+#define CAMERA_DEFAULT_X 0
+#define CAMERA_DEFAULT_Y 0
+#define CAMERA_DEFAULT_Z -100
+
+#define CAMERA_DIR_DEFAULT_X 0
+#define CAMERA_DIR_DEFAULT_Y 0
+#define CAMERA_DIR_DEFAULT_Z 1
+
+
 #define FIELD_DEPTH 20.0;
 #define VISION_ANGLE 80.0; // should this be in randiant ?
 
@@ -26,6 +35,7 @@ class Camera {
     std::size_t width = GRAPHIC_PRESET_GUI_WIDTH;
     // TODO add POV distance
   public:
+    Camera();
     Camera(Coordinates pos, Coordinates dir);
     ~Camera();
 
@@ -35,6 +45,10 @@ class Camera {
 
     Coordinates getPosition() const;
     Coordinates getDirection() const;
+
+    
+    Coordinates &getPositionRef();
+    Coordinates &getDirectionRef();
 
     Ray createRay(std::size_t x, std::size_t y);
     // CreateRay...
