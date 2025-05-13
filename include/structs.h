@@ -65,6 +65,7 @@ struct Coordinates {
         };
     }
 
+    // should this not modify ? most operation always need permanent normalization
     inline  Coordinates &normalize() {
         auto length = sqrt(this->x * this->x + this->y * this->y + this->z * this->z);
         this->x = this->x / length;
