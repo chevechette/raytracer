@@ -3,10 +3,10 @@
 
 // TODO: make it threadsafe
 ObjectManager::ObjectManager() {
-    this->removeObjects();
 }
 
-ObjectManager::~ObjectManager() {}
+ObjectManager::~ObjectManager() {
+    this->removeObjects();}
 
 ObjectManager &ObjectManager::getInstance() {
     static ObjectManager instance = ObjectManager();

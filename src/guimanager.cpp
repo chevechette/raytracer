@@ -17,8 +17,8 @@
 #include "graphic_presets.h"
 #include "main.h"
 #include "messages.h"
-#include "rtobject.h"
 #include "ray.h"
+#include "rtobject.h"
 #include "structs.h"
 #include "version_config.h"
 #include <cmath>
@@ -48,10 +48,11 @@
 // void renderRaytracer();
 // void renderGUI();
 
-
 GUIManager::GUIManager()
     : window(nullptr),
-      background(GRAPHIC_PRESET_GUI_WIDTH, GRAPHIC_PRESET_GUI_HEIGHT) {
+      background(GRAPHIC_PRESET_GUI_WIDTH, GRAPHIC_PRESET_GUI_HEIGHT),
+      cam(Coordinates{CAMERA_DEFAULT_X, CAMERA_DEFAULT_Y, CAMERA_DEFAULT_Z},
+          Coordinates{CAMERA_DIR_DEFAULT_X, CAMERA_DIR_DEFAULT_Y, CAMERA_DIR_DEFAULT_Z}) {
     background.renderBackgroundSin();
 }
 
@@ -289,6 +290,13 @@ void GUIManager::renderGUI() {
         ImVec2(main_viewport->Size.x * 0.30, main_viewport->Size.y * 0.90));
 
     if (ImGui::Begin("Render Menu")) {
+        //TODO: CAMERA GUI
+            // Select Camera
+            // Cordinates x, y. z
+            // Direction x, y, z
+            // Rotation // not working
+            // Render from cam
+
         //     ImGui::PushItemWidth(ImGui::GetFontSize() * -12);
         if (ImGui::Button("Render")) {
             // triggers calculation
