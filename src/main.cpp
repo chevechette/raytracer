@@ -32,7 +32,7 @@ int main(int argc, char* argv[]) {
         gui.guiVarSetUp(); // TODO : Init the menu variables
 
         ObjectManager   &objs = ObjectManager::getInstance();
-        objs.createSphere(Coordinates{0, 0, -100}, 30.0, Color::random());
+        objs.createSphere(Coordinates{0, 0, 500}, 30.0, Color::random());
 
         gui.mainloop();
         gui.unload(); // SEGFAULT IF NOT UNLOADED

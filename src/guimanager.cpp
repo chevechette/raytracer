@@ -226,8 +226,34 @@ void GUIManager::mainloop() {
     }
 }
 
+#include <iostream>
 // TODO : Complete rework
-void GUIManager::renderFromCamera() {
+void GUIManager::renderFromCamera(int cameraNo) {
+    Camera &camera = this->cams[cameraNo]; // Does this need to be init here ?
+
+    const int imgHeight = this->background.getHeight();
+    const int imgWidth = this->background.getWidth();
+
+    ObjectManager   &objmanager = ObjectManager::getInstance();
+    //     Render(main_viewport->Size.x,
+    //            main_viewport->Size.y);
+    for (int i = 0; i < imgWidth; i++) {
+        for (int j = 0; j < imgHeight; j++) {
+            // try {
+            Ray pixRay = camera.createRay(i, j);
+            auto intersection = objmanager.intersectAllObjects(pixRay);
+            if (intersection) {
+                std::cout<< "SOMETHONG" << std::endl;
+                this->background[i, j] = Color::fromHex(0xC34FFF);
+            } else {
+                this->background[i, j] = Color::fromHex(0x40102F);
+            }
+            // } catch (std::exception &) {
+
+            //     std::cout << "failwith " << i << j << std::endl;
+            // }
+        }
+    }
     // const ImGuiViewport*    main_viewport = ImGui::GetMainViewport();
 }
 
@@ -316,6 +342,7 @@ void GUIManager::renderGUI() {
 
         //     ImGui::PushItemWidth(ImGui::GetFontSize() * -12);
         if (ImGui::Button("Render")) {
+            this->renderFromCamera(currentCamera);
             // triggers calculation
         }
         if (ImGui::CollapsingHeader("Background settings")) {
@@ -327,5 +354,5 @@ void GUIManager::renderGUI() {
 
 void GUIManager::renderRaytracer() {
     GUIManager &guiinstance = GUIManager::getInstance();
-    guiinstance.renderFromCamera();
+    guiinstance.renderFromCamera(0);
 }

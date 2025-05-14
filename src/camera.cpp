@@ -62,7 +62,7 @@ Ray Camera::createRay(std::size_t x, std::size_t y) {
 
     Coordinates pixel =
         (horVec * camRefPixel.x) + (upVec * camRefPixel.y) + this->position;
-    return Ray(this->projectedPos, pixel - this->projectedPos);
+    return Ray(pixel, this->direction);
 }
 
 // default light is a sunlike thing

@@ -91,7 +91,7 @@ class GUIManager {
     // render options (full or partial to quick render)
     void renderBackground();
     // launch the rendering
-    void renderFromCamera();
+    void renderFromCamera(int cameraNo);
 
     // bool isloaded() const; ?
 };
