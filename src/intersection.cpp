@@ -9,9 +9,6 @@
 // };
 
 // TODO: check booleans
-#include <fmt/core.h>
-#include <iostream>
-
 // Intersection::Intersection()
 //     : obj(nullptr), dist(-1), point(Coordinates{1, 1, 1}) {}
 

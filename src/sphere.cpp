@@ -22,16 +22,8 @@ float Sphere::getRadius() const {
     return this->radius;
 }
 
-#include <fmt/core.h>
-#include <iostream>
 Intersection Sphere::intersect(const Ray &ray) const {
     Intersection ret = Intersection{this};
-    // fmt::print(stdout, "RAY ORIGIN : {} ; {} ; {}\n", ray.getOrigin().x,
-    //            ray.getOrigin().y, ray.getOrigin().z);
-    // fmt::print(stdout, "RAY DIRECTION : {} ; {} ; {}\n", ray.getVector().x,
-    //            ray.getVector().y, ray.getVector().z);
-    // fmt::print(stdout, "AIMING AT : {} ; {} ; {}; {}\n", this->origin.x,
-    //            this->origin.y, this->origin.z, this->radius);
 
     Coordinates movedOrigin = ray.getOrigin() - this->getOrigin();
     double a = ray.getVector() *
@@ -42,12 +34,10 @@ Intersection Sphere::intersect(const Ray &ray) const {
         auto [x0, x1] = boost::math::tools::quadratic_roots(a, b, c);
 
         // check which is shorter
-        if (x0 > 0 && x0 <= x1) {
+        if (x0 > 0 && (x1 <= 0 || x0 <= x1)) {
             return Intersection{this, x0,
                                 ray.getOrigin() + ray.getVector() * x0};
-        } else if (x1 > 0 && x1 <= x0) {
-
-            // std::cout << " RETURN X1 " << std::endl;
+        } else if (x1 > 0 && (x0 <= 0 || x1 <= x0)) {
             return Intersection{this, x1,
                                 ray.getOrigin() + ray.getVector() * x1};
         }

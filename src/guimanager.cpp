@@ -226,7 +226,6 @@ void GUIManager::mainloop() {
     }
 }
 
-#include <iostream>
 // TODO : Complete rework
 void GUIManager::renderFromCamera(int cameraNo) {
     Camera &camera = this->cams[cameraNo]; // Does this need to be init here ?
@@ -255,7 +254,7 @@ void GUIManager::renderFromCamera(int cameraNo) {
                 // std::cout << "STAP" << std::endl;
             } catch (std::exception &) {
 
-                std::cout << "failwith " << i << j << std::endl;
+                std::cout << "failwith " << i << j << std::endl; //TODO: Log error properly
             }
         }
     }
