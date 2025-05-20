@@ -237,9 +237,11 @@ void GUIManager::renderFromCamera(int cameraNo) {
     ObjectManager   &objmanager = ObjectManager::getInstance();
     //     Render(main_viewport->Size.x,
     //            main_viewport->Size.y);
-    for (int i = 0; i < imgWidth; i++) {
-        for (int j = 0; j < imgHeight; j++) {
+    // for (int i = 0; i < imgWidth; i++) {
+    //     for (int j = 0; j < imgHeight; j++) {
             // try {
+            int i = GRAPHIC_PRESET_GUI_WIDTH / 2;
+            int j = GRAPHIC_PRESET_GUI_HEIGHT / 2;
             Ray pixRay = camera.createRay(i, j);
             auto intersection = objmanager.intersectAllObjects(pixRay);
             if (intersection) {
@@ -250,10 +252,10 @@ void GUIManager::renderFromCamera(int cameraNo) {
             }
             // } catch (std::exception &) {
 
-            //     std::cout << "failwith " << i << j << std::endl;
+                // std::cout << "failwith " << i << j << std::endl;
             // }
-        }
-    }
+    //     }
+    // }
     // const ImGuiViewport*    main_viewport = ImGui::GetMainViewport();
 }
 

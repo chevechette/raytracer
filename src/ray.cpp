@@ -8,15 +8,15 @@ Ray::Ray() {
 }
 
 Ray::Ray(float x, float y, float z, float a, float b, float c) {
-    Ray(x, y, z, a, b, c, 0xFFFFFFFF);
+    *this = Ray(x, y, z, a, b, c, 0xFFFFFFFF);
 }
 
 Ray::Ray(float x, float y, float z, float a, float b, float c, float hexcolor) {
-    Ray(Coordinates{x, y, z}, Coordinates{a, b, c}, hexcolor);
+    *this = Ray(Coordinates{x, y, z}, Coordinates{a, b, c}, hexcolor);
 }
 
 Ray::Ray(Coordinates loc, Coordinates vec) {
-    Ray(loc, vec, Color{1, 1, 1, 1});
+    *this = Ray(loc, vec, Color{1, 1, 1, 1});
 }
 
 Ray::Ray(Coordinates loc, Coordinates vec, float hexcolor) {
@@ -32,13 +32,15 @@ Ray::Ray(Coordinates loc, Coordinates vec, float hexcolor) {
     Color col = {
         .r = red / 0x100, .g = green / 0x100, .b = blue / 0x100, .a = alpha / 0x100
     };
-    Ray(loc, vec, col);
+    *this = Ray(loc, vec, col);
 }
 
+#include <iostream>       
+#include <fmt/core.h> 
 Ray::Ray(Coordinates loc, Coordinates vec, Color col) {
     this->setColor(col);
-    this->setOrigin(origin);
-    this->setVector(vector);
+    this->setOrigin(loc);
+    this->setVector(vec);
     this->setLux(1.0);
 }
 

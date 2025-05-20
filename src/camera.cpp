@@ -48,6 +48,8 @@ Coordinates &Camera::getDirectionRef() {
     return this->direction;
 }
 
+#include <iostream>       
+#include <fmt/core.h> 
 Ray Camera::createRay(std::size_t x, std::size_t y) {
     if (x < 0 || y < 0 || x >= this->width || y >= this->height)
         throw std::out_of_range(RT_MESSAGE_ERR_PIXEL_OOB);
@@ -60,8 +62,10 @@ Ray Camera::createRay(std::size_t x, std::size_t y) {
     upVec = horVec ^ this->direction;
     upVec.normalize();
 
+    
     Coordinates pixel =
-        (horVec * camRefPixel.x) + (upVec * camRefPixel.y) + this->position;
+    (horVec * camRefPixel.x) + (upVec * camRefPixel.y) + this->position;
+    // fmt::print(stdout, "RAY ORIGIN : {} ; {} ; {}\n", direction.x, direction.y, direction.z);
     return Ray(pixel, this->direction);
 }
 
