@@ -2,13 +2,11 @@
 #include "rtobject.h"
 #include <cmath>
 
-Sphere::Sphere(Coordinates pos, float radius) : Object(pos, Color::random()) {
-    this->radius = radius;
-}
+Sphere::Sphere(Coordinates pos, float radius)
+    : Object(pos, Color::random()), radius(radius) {}
 
-Sphere::Sphere(Coordinates pos, float radius, Color col) : Object(pos, col) {
-    this->radius = radius;
-}
+Sphere::Sphere(Coordinates pos, float radius, Color col)
+    : Object(pos, col), radius(radius) {}
 
 Sphere::~Sphere() {}
 
@@ -27,7 +25,7 @@ Intersection Sphere::intersect(const Ray &ray) const {
 
     Coordinates movedOrigin = ray.getOrigin() - this->getOrigin();
     double a = ray.getVector() *
-               ray.getVector(); // Should  == 1 be ray vector normalised 
+               ray.getVector(); // Should  == 1 be ray vector normalised
     double b = (movedOrigin * ray.getVector()) * 2.0;
     double c = movedOrigin * movedOrigin - this->radius * this->radius;
     try {

@@ -3,6 +3,8 @@
 #include "structs.h"
 #include "ray.h"
 
+#define EPSILLON 0.001f
+
 class Object {
     protected:
         explicit    Object(Coordinates origin, Color col);

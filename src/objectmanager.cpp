@@ -30,6 +30,10 @@ void ObjectManager::createSphere(Coordinates coord, float radius, Color col) {
     this->addObject(std::shared_ptr<Object>(new Sphere(coord, radius, col)));
 }
 
+void ObjectManager::createTriangle(Coordinates a, Coordinates b, Coordinates c, Color col) {
+    this->addObject(std::shared_ptr<Object>(new Triangle(a, b, c, col)));
+}
+
 Intersection ObjectManager::intersectAllObjects(const Ray &ray) {
     Intersection closest{};
 

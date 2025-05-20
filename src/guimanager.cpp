@@ -25,10 +25,11 @@
 #include <exception>
 #include <vector>
 
-// TOCO : Clean up the includes, this is a mess
-
-// TODO : Relocate what can be from render to GUIManager
-// TODO : Setup a list of cameras with appropriate GUI
+// TODO : One render /
+// TODO : Clean up the includes, this is a mess
+// TODO : Compensate for fisheye
+// TODO : Fix camera selection
+// TODO : Update Camera settings gui
 // TODO : For each camera, create the parameters
 // TODO : Go update the camera functions
 // TODO : (static) add a few objects at a specific distance
@@ -43,10 +44,6 @@
 // and never want to bother with mixing those two nor bother with casting
 #include "managers.h"
 #include "render.h"
-
-// void renderBackground();
-// void renderRaytracer();
-// void renderGUI();
 
 GUIManager::GUIManager()
     : window(nullptr),
@@ -234,20 +231,16 @@ void GUIManager::renderFromCamera(int cameraNo) {
     const int imgWidth = this->background.getWidth();
 
     ObjectManager &objmanager = ObjectManager::getInstance();
-    //     Render(main_viewport->Size.x,
-    //            main_viewport->Size.y);
     for (int i = 0; i < imgWidth; i++) {
         for (int j = 0; j < imgHeight; j++) {
             try {
-                // int i = GRAPHIC_PRESET_GUI_WIDTH / 2;
-                // int j = GRAPHIC_PRESET_GUI_HEIGHT / 2;
                 Ray pixRay = camera.createRay(i, j);
-
                 Intersection intersect = objmanager.intersectAllObjects(pixRay);
-
                 if (intersect) {
-                    // std::cout << "Object found !" << std::endl;
-                    this->background[i, j] = Color::fromHex(0xC34FFF);
+                    // Fix the random color assignement
+                        // fmt::print(stdout, "Chosen one {}\n",intersect.dist);
+
+                    this->background[i, j] = intersect.obj->getColor();
                 } else {
                     this->background[i, j] = Color::fromHex(0x40102F);
                 }
@@ -258,7 +251,6 @@ void GUIManager::renderFromCamera(int cameraNo) {
             }
         }
     }
-    // const ImGuiViewport*    main_viewport = ImGui::GetMainViewport();
 }
 
 // To port within the class
@@ -321,14 +313,13 @@ void GUIManager::renderGUI() {
 
     if (ImGui::Begin("Render Menu")) {
         // TODO: CAMERA GUI
-        static int currentCamera = 0;
 
         const char *cameras[] = {"Camera 1", "Camera 2", "Secret Cam 3"};
-        ImGui::Combo("selected", &currentCamera, cameras,
+        ImGui::Combo("selected", &selectedCamera, cameras,
                      IM_ARRAYSIZE(cameras)); // if var 1 set to 0, sHIT
 
         // TODO: check the decapsulation and find alternatives
-        Camera &selectedCam = this->cams[currentCamera];
+        Camera &selectedCam = this->cams[selectedCamera];
         Coordinates &pos = selectedCam.getPositionRef();
         Coordinates &dir = selectedCam.getDirectionRef();
         ImGui::DragFloat("X position", &pos.x, 0.1f, 0.0f, 0.0f, "%.06f");
@@ -347,7 +338,8 @@ void GUIManager::renderGUI() {
 
         //     ImGui::PushItemWidth(ImGui::GetFontSize() * -12);
         if (ImGui::Button("Render")) {
-            this->renderFromCamera(currentCamera);
+            // this should be upgraded to complicated render later.
+            this->renderFromCamera(selectedCamera);
             // triggers calculation
         }
         if (ImGui::CollapsingHeader("Background settings")) {
@@ -359,5 +351,7 @@ void GUIManager::renderGUI() {
 
 void GUIManager::renderRaytracer() {
     GUIManager &guiinstance = GUIManager::getInstance();
-    guiinstance.renderFromCamera(0);
+    // TODO: set render update omly linked to any interaction.
+    // TODO: Render auto update in a toggable feature.
+    guiinstance.renderFromCamera(selectedCamera);
 }

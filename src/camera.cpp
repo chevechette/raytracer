@@ -3,6 +3,7 @@
 // adjustable cameras according to gui
 #include "camera.h"
 
+//TODO : update the create pixel for faning out the screen vectors
 Camera::Camera()
     : position(
           Coordinates{CAMERA_DEFAULT_X, CAMERA_DEFAULT_Y, CAMERA_DEFAULT_Z}),
@@ -12,7 +13,7 @@ Camera::Camera()
               this->position + (this->direction.normalize() * (-fov));
 }
 
-Camera::Camera(Coordinates pos, Coordinates dir)
+Camera::Camera(const Coordinates &pos, const Coordinates &dir)
     : position{pos}, direction{dir.normalize()},
       projectedPos{pos + (dir.normalize() * (-fov))} {}
 
@@ -24,7 +25,7 @@ void Camera::setPosition(Coordinates pos) {
 
 void Camera::setDirection(Coordinates dir) {
     this->direction = dir;
-    this->direction.normalize();
+    this->direction.normalizeSelf();
 }
 
 void Camera::setScreenSize(std::size_t width, std::size_t height) {
@@ -56,9 +57,8 @@ Ray Camera::createRay(std::size_t x, std::size_t y) {
         Coordinates{(x - this->width / 2.0f), (y - this->height / 2.0f), 0};
     Coordinates upVec = Coordinates{0, 1, 0};
     Coordinates horVec = upVec ^ this->direction;
-    horVec.normalize();
-    upVec = horVec ^ this->direction;
-    upVec.normalize();
+    upVec = horVec.normalizeSelf() ^ this->direction;
+    upVec.normalizeSelf();
 
     
     Coordinates pixel =

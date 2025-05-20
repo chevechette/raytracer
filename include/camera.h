@@ -15,7 +15,6 @@
 #define CAMERA_DIR_DEFAULT_Y 0
 #define CAMERA_DIR_DEFAULT_Z 1
 
-
 #define FIELD_DEPTH 20.0;
 #define VISION_ANGLE 80.0; // should this be in randiant ?
 
@@ -36,7 +35,8 @@ class Camera {
     // TODO add POV distance
   public:
     Camera();
-    Camera(Coordinates pos, Coordinates dir);
+
+    Camera(const Coordinates &pos, const Coordinates &dir);
     ~Camera();
 
     void setPosition(Coordinates pos);
@@ -46,7 +46,6 @@ class Camera {
     Coordinates getPosition() const;
     Coordinates getDirection() const;
 
-    
     Coordinates &getPositionRef();
     Coordinates &getDirectionRef();
 

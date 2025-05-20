@@ -15,11 +15,17 @@ struct Color {
     float a = 1;
 
     // TODO: update the random to something safer rand has issue and has been
-    // updated in c++11 I initialised the seed in main.cpp
+    // updated in c++11
+    // I initialised the seed in main.cpp drom the load of the GUIManager
     inline static Color random() {
-        return Color{static_cast<float>(std::rand() % 0x100) / 0xFFf,
-                     static_cast<float>(std::rand() % 0x100) / 0xFFf,
-                     static_cast<float>(std::rand() % 0x100) / 0xFFf};
+        float r, g, b;
+        
+        r = (std::rand() % 0x100);
+        g = (std::rand() % 0x100);
+        b = (std::rand() % 0x100);
+
+        // this is just 255.0f in a very dramatic way
+        return Color{r / 0xFF.0p0f, g / 0xFF.0p0f, b / 0xFF.0p0f};
     }
 
     inline static Color fromHexAlpha(unsigned int col) {
@@ -74,27 +80,22 @@ struct Coordinates {
                            this->x * v.y - this->y * v.x};
     }
 
-    // should this not modify ? most operation always need permanent
     // normalization
-    inline Coordinates &normalize() {
+    inline Coordinates &normalizeSelf() {
         auto length =
             sqrt(this->x * this->x + this->y * this->y + this->z * this->z);
         this->x = this->x / length;
         this->y = this->y / length;
         this->z = this->z / length;
-        // how to normalize a vector?
         return *this;
     }
 
-    // inline Coordinates &normalize() {
-    //     auto length =
-    //         sqrt(this->x * this->x + this->y * this->y + this->z * this->z);
-    //     this->x = this->x / length;
-    //     this->y = this->y / length;
-    //     this->z = this->z / length;
-    //     // how to normalize a vector?
-    //     return *this;
-    // }
+    inline Coordinates normalize() const {
+        float length =
+            sqrt(this->x * this->x + this->y * this->y + this->z * this->z);
+        return Coordinates{this->x / length, this->y / length,
+                           this->z / length};
+    }
 };
 
 // Given all operators, maybe it should become a class;
@@ -119,6 +120,5 @@ struct Intersection {
     bool operator>=(const Intersection &i) const;
     bool operator<=(const Intersection &i) const;
 };
-
 
 // Create a new struct for intersections with distance and other data ?

@@ -35,13 +35,15 @@ class ObjectManager {
     void removeObjects();
 
     void createSphere(Coordinates coord, float radius, Color col);
-    // TODO: add other objs
+    void createTriangle(Coordinates a, Coordinates b, Coordinates c, Color col);
+    // TODO: add plane
+    // TODO: add a group of objects
+    // TODO: update object tree
 
     Intersection intersectAllObjects(const Ray &ray);
 
     // TODO: override some fmt for printability
 };
-
 
 // TODO : throw errors EVERYWHERE
 class GUIManager {
@@ -49,11 +51,12 @@ class GUIManager {
     GLFWwindow *window;
     Render background;
     bool loaded = false;
-    // private:
+    int selectedCamera = 0; // No get/set as it is only interacted by GUI
+                            // private:
     //   static GUIManager *instance; // TODO switch for shared ptr for thread
     //   safety
 
-  public:       // TODO: TMP SHIT
+  public:           // TODO: TMP SHIT
     Camera cams[3]; // TODO: Make it into an array of 3 cameras for switching
 
   private:
