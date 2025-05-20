@@ -234,28 +234,31 @@ void GUIManager::renderFromCamera(int cameraNo) {
     const int imgHeight = this->background.getHeight();
     const int imgWidth = this->background.getWidth();
 
-    ObjectManager   &objmanager = ObjectManager::getInstance();
+    ObjectManager &objmanager = ObjectManager::getInstance();
     //     Render(main_viewport->Size.x,
     //            main_viewport->Size.y);
-    // for (int i = 0; i < imgWidth; i++) {
-    //     for (int j = 0; j < imgHeight; j++) {
-            // try {
-            int i = GRAPHIC_PRESET_GUI_WIDTH / 2;
-            int j = GRAPHIC_PRESET_GUI_HEIGHT / 2;
-            Ray pixRay = camera.createRay(i, j);
-            auto intersection = objmanager.intersectAllObjects(pixRay);
-            if (intersection) {
-                std::cout<< "SOMETHONG" << std::endl;
-                this->background[i, j] = Color::fromHex(0xC34FFF);
-            } else {
-                this->background[i, j] = Color::fromHex(0x40102F);
-            }
-            // } catch (std::exception &) {
+    for (int i = 0; i < imgWidth; i++) {
+        for (int j = 0; j < imgHeight; j++) {
+            try {
+                // int i = GRAPHIC_PRESET_GUI_WIDTH / 2;
+                // int j = GRAPHIC_PRESET_GUI_HEIGHT / 2;
+                Ray pixRay = camera.createRay(i, j);
 
-                // std::cout << "failwith " << i << j << std::endl;
-            // }
-    //     }
-    // }
+                Intersection intersect = objmanager.intersectAllObjects(pixRay);
+
+                if (intersect) {
+                    // std::cout << "Object found !" << std::endl;
+                    this->background[i, j] = Color::fromHex(0xC34FFF);
+                } else {
+                    this->background[i, j] = Color::fromHex(0x40102F);
+                }
+                // std::cout << "STAP" << std::endl;
+            } catch (std::exception &) {
+
+                std::cout << "failwith " << i << j << std::endl;
+            }
+        }
+    }
     // const ImGuiViewport*    main_viewport = ImGui::GetMainViewport();
 }
 
@@ -269,7 +272,8 @@ void GUIManager::renderBackground() {
 
     // Render bckgrnd =
     //     Render(main_viewport->Size.x,
-    //            main_viewport->Size.y); // TODO : make this into property
+    //            main_viewport->Size.y); // TODO : make this into
+    //            property
     // bckgrnd.renderBackgroundSin();
 
     GLuint g_TextureID = 0;

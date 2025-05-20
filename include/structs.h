@@ -85,6 +85,16 @@ struct Coordinates {
         // how to normalize a vector?
         return *this;
     }
+
+    // inline Coordinates &normalize() {
+    //     auto length =
+    //         sqrt(this->x * this->x + this->y * this->y + this->z * this->z);
+    //     this->x = this->x / length;
+    //     this->y = this->y / length;
+    //     this->z = this->z / length;
+    //     // how to normalize a vector?
+    //     return *this;
+    // }
 };
 
 // Given all operators, maybe it should become a class;
@@ -93,6 +103,12 @@ struct Intersection {
     const Object *obj = nullptr;
     double dist = -1;
     Coordinates point = Coordinates{0, 0, 0};
+
+    // Intersection();
+    // Intersection(const Object *obj, double dist, Coordinates p);
+    // // Intersection(const Intersection& other) = default;
+    // Intersection(const Intersection& i);
+    Intersection &operator=(const Intersection &other);
 
     explicit operator bool() const;
 
@@ -103,5 +119,6 @@ struct Intersection {
     bool operator>=(const Intersection &i) const;
     bool operator<=(const Intersection &i) const;
 };
+
 
 // Create a new struct for intersections with distance and other data ?
