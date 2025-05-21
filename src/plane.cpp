@@ -64,7 +64,7 @@ float       Plane::getwidth(float x) const {
 
 Intersection Plane::intersect(const Ray &ray) const {
     double cosPlane = ray.getVector() * this->getNormal();
-    if (cosPlane == 0) {
+    if (cosPlane <= EPSILLON) {
         return Intersection{}; // Parallel vector
     }
     Coordinates p0 = this->getOrigin() - ray.getOrigin();

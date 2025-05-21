@@ -36,8 +36,8 @@ int main(int argc, char *argv[]) {
 
         ObjectManager &objs = ObjectManager::getInstance();
         objs.createSphere(Coordinates{100, 100, 500}, 30.0, Color::random());
-        objs.createTriangle(Coordinates{-200, 0, 200}, Coordinates{200, 200, 200},
-                            Coordinates{-200, -200, 200}, Color::random());
+        // objs.createTriangle(Coordinates{-200, 0, 200}, Coordinates{200, 200, 200},
+        //                     Coordinates{-200, -200, 200}, Color::random());
 
         gui.mainloop();
         gui.unload(); // SEGFAULT IF NOT UNLOADED

@@ -48,7 +48,8 @@ Coordinates &Camera::getPositionRef() {
 Coordinates &Camera::getDirectionRef() {
     return this->direction;
 }
-
+#include <iostream>
+#include <fmt/core.h>
 Ray Camera::createRay(std::size_t x, std::size_t y) {
     if (x < 0 || y < 0 || x >= this->width || y >= this->height)
         throw std::out_of_range(RT_MESSAGE_ERR_PIXEL_OOB);
@@ -60,10 +61,18 @@ Ray Camera::createRay(std::size_t x, std::size_t y) {
     upVec = horVec.normalizeSelf() ^ this->direction;
     upVec.normalizeSelf();
 
-    
+    // this deviates badly
     Coordinates pixel =
     (horVec * camRefPixel.x) + (upVec * camRefPixel.y) + this->position;
-    return Ray(pixel, this->direction);
+    
+    Coordinates projectedPos = this->position + (this->direction.normalize() * (-5));
+    projectedPos = projectedPos - pixel;
+    projectedPos.normalizeSelf();
+    // fix fisheye
+    // fmt::print(stdout, "PIXEL {} {} {}\n", pixel.x, pixel.y, pixel.z);
+    // fmt::print(stdout, "vector {} {} {}\n", projectedPos.x, projectedPos.y, projectedPos.z);
+    // return Ray(pixel, this->direction);
+    return Ray(this->position, projectedPos);
 }
 
 // default light is a sunlike thing
