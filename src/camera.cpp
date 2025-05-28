@@ -3,19 +3,15 @@
 // adjustable cameras according to gui
 #include "camera.h"
 
-//TODO : update the create pixel for faning out the screen vectors
+// TODO : update the create pixel for faning out the screen vectors
 Camera::Camera()
     : position(
           Coordinates{CAMERA_DEFAULT_X, CAMERA_DEFAULT_Y, CAMERA_DEFAULT_Z}),
       direction(Coordinates{CAMERA_DIR_DEFAULT_X, CAMERA_DIR_DEFAULT_Y,
-                            CAMERA_DIR_DEFAULT_Z}) {
-          this->projectedPos =
-              this->position + (this->direction.normalize() * (-fov));
-}
+                            CAMERA_DIR_DEFAULT_Z}) {}
 
 Camera::Camera(const Coordinates &pos, const Coordinates &dir)
-    : position{pos}, direction{dir.normalize()},
-      projectedPos{pos + (dir.normalize() * (-fov))} {}
+    : position{pos}, direction{dir.normalize()} {}
 
 Camera::~Camera() {}
 
@@ -48,31 +44,67 @@ Coordinates &Camera::getPositionRef() {
 Coordinates &Camera::getDirectionRef() {
     return this->direction;
 }
-#include <iostream>
+
+#include <cmath> // is boost faster ? I heard not
 #include <fmt/core.h>
+#include <iostream>
 Ray Camera::createRay(std::size_t x, std::size_t y) {
     if (x < 0 || y < 0 || x >= this->width || y >= this->height)
         throw std::out_of_range(RT_MESSAGE_ERR_PIXEL_OOB);
+    this->direction.normalizeSelf();
 
-    Coordinates camRefPixel =
-        Coordinates{(x - this->width / 2.0f), (y - this->height / 2.0f), 0};
-    Coordinates upVec = Coordinates{0, 1, 0};
-    Coordinates horVec = upVec ^ this->direction;
-    upVec = horVec.normalizeSelf() ^ this->direction;
-    upVec.normalizeSelf();
 
-    // this deviates badly
-    Coordinates pixel =
-    (horVec * camRefPixel.x) + (upVec * camRefPixel.y) + this->position;
+
+    Coordinates p = Coordinates{x - this->width / 2.0f + 0.5f,
+                                (this->height / 2.0f - y + 0.5f), 1};
+
+
+    double aspect_ratio = static_cast<double>(this->width) / this->height;
+    double fov_radians = (100 * M_PI / 180.0);  // TODO: dehardcode the fov
+    double fov_scale = std::tan(fov_radians * 0.5);
+
+    p.x = (2.0 * (x + 0.5) / this->width - 1.0) * aspect_ratio;
+    p.y = (1.0 - 2.0 * (y + 0.5) / this->height);
+
     
-    Coordinates projectedPos = this->position + (this->direction.normalize() * (-5));
-    projectedPos = projectedPos - pixel;
-    projectedPos.normalizeSelf();
-    // fix fisheye
-    // fmt::print(stdout, "PIXEL {} {} {}\n", pixel.x, pixel.y, pixel.z);
-    // fmt::print(stdout, "vector {} {} {}\n", projectedPos.x, projectedPos.y, projectedPos.z);
-    // return Ray(pixel, this->direction);
-    return Ray(this->position, projectedPos);
+    // if (x == 0 && y == 0) {
+
+    //     fmt::print(stdout, "Pixel world position: {} {} {}\n", p.x,
+    //                p.y, p.z);
+    // }
+    p.normalizeSelf();
+    p = p * fov_scale;
+
+
+    Coordinates a = Coordinates{0, 0, 1} ^ this->direction;
+    a.normalizeSelf();
+    // angle of rotation
+    double theta = std::acos(this->direction.z);
+    float c =
+        1 - std::cos(theta); // has to be normalized beforehand in constructor
+    float s = std::sin(theta);
+
+    // this can be simplified by removing the last column but is for future
+    // reference
+    Coordinates rotateCol1 =
+        Coordinates{1 - c * a.y * a.y, c * a.x * a.y, -s * a.y};
+    Coordinates rotateCol2 =
+        Coordinates{c * a.x * a.y, 1 - c * a.x * a.x, s * a.x};
+    Coordinates rotateCol3 =
+        Coordinates{s * a.y, -s * a.x, 1 - c * (a.y * a.y + a.x * a.x)};
+
+    Coordinates pixelPosition = {p * rotateCol1, p * rotateCol2,
+                                 p * rotateCol3};
+
+    float viewPlaneDistance = 1.00f;
+    // Placeholder return
+    pixelPosition = pixelPosition + ((this->direction * viewPlaneDistance)) +
+                    this->position; 
+    Coordinates rayPosition = this->position; // pixelPosition;
+    Coordinates rayDirection = pixelPosition - this->position;
+    rayDirection.normalizeSelf();
+    Ray ray = Ray(rayPosition, rayDirection);
+    return ray;
 }
 
 // default light is a sunlike thing

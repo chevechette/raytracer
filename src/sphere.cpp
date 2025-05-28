@@ -25,7 +25,7 @@ Intersection Sphere::intersect(const Ray &ray) const {
 
     Coordinates movedOrigin = ray.getOrigin() - this->getOrigin();
     double a = ray.getVector() *
-               ray.getVector(); // Should  == 1 be ray vector normalised
+               ray.getVector(); // Should  == 1 be as ray vector is normalised
     double b = (movedOrigin * ray.getVector()) * 2.0;
     double c = movedOrigin * movedOrigin - this->radius * this->radius;
     try {

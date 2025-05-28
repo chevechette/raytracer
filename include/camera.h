@@ -15,7 +15,7 @@
 #define CAMERA_DIR_DEFAULT_Y 0
 #define CAMERA_DIR_DEFAULT_Z 1
 
-#define FIELD_DEPTH 600.0;
+#define FIELD_DEPTH 100.0;
 #define VISION_ANGLE 80.0; // should this be in randiant ?
 
 // There is no actuall camera rotation, up is always up
@@ -26,7 +26,6 @@ class Camera {
     Coordinates position;
     Coordinates direction;
     float fov = FIELD_DEPTH;
-    Coordinates projectedPos;
     // not accurate,
     // TODO: update to a lenlike
     // calculation later

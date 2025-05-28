@@ -2,6 +2,7 @@
 
 #include <cmath>
 #include <cstdlib>
+#include <iostream>
 
 // TODO: Default constructors ?
 #include "forward_declaration.h"
@@ -19,7 +20,7 @@ struct Color {
     // I initialised the seed in main.cpp drom the load of the GUIManager
     inline static Color random() {
         float r, g, b;
-        
+
         r = (std::rand() % 0x100);
         g = (std::rand() % 0x100);
         b = (std::rand() % 0x100);
@@ -47,7 +48,7 @@ struct Coordinates {
     float z;
 
     inline Coordinates operator+(const Coordinates &v) const {
-        return Coordinates{this->x + v.x, this->y + v.y, this->z * v.z};
+        return Coordinates{this->x + v.x, this->y + v.y, this->z + v.z};
     }
 
     inline Coordinates operator-() const {
@@ -80,19 +81,30 @@ struct Coordinates {
                            this->x * v.y - this->y * v.x};
     }
 
+    // #include <cmath>
     // normalization
     inline Coordinates &normalizeSelf() {
-        auto length =
+        double length =
             sqrt(this->x * this->x + this->y * this->y + this->z * this->z);
+        // std::cout << length << std::endl;
+        if (length == 0)
+            return *this;
         this->x = this->x / length;
         this->y = this->y / length;
         this->z = this->z / length;
+        // std::cout << this->x << std::endl;
+        // std::cout << this->y << std::endl;
+        // std::cout << this->x << std::endl;
+
         return *this;
     }
 
     inline Coordinates normalize() const {
         float length =
             sqrt(this->x * this->x + this->y * this->y + this->z * this->z);
+            
+        if (length == 0)
+            return Coordinates{0, 0, 0};
         return Coordinates{this->x / length, this->y / length,
                            this->z / length};
     }

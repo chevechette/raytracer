@@ -329,6 +329,7 @@ void GUIManager::renderGUI() {
         ImGui::DragFloat("X angle", &dir.x, 0.01f, 0.0f, 0.0f, "%.06f");
         ImGui::DragFloat("Y angle", &dir.y, 0.01f, 0.0f, 0.0f, "%.06f");
         ImGui::DragFloat("Z angle", &dir.z, 0.01f, 0.0f, 0.0f, "%.06f");
+        dir.normalizeSelf();
 
         // Select Camera
         // Cordinates x, y. z
