@@ -3,6 +3,7 @@
 // adjustable cameras according to gui
 #include "camera.h"
 
+#include <cmath> // is boost faster ? I heard not
 // TODO : update the create pixel for faning out the screen vectors
 Camera::Camera()
     : position(
@@ -45,64 +46,44 @@ Coordinates &Camera::getDirectionRef() {
     return this->direction;
 }
 
-#include <cmath> // is boost faster ? I heard not
-#include <fmt/core.h>
-#include <iostream>
 Ray Camera::createRay(std::size_t x, std::size_t y) {
     if (x < 0 || y < 0 || x >= this->width || y >= this->height)
         throw std::out_of_range(RT_MESSAGE_ERR_PIXEL_OOB);
     this->direction.normalizeSelf();
 
-
-
-    Coordinates p = Coordinates{x - this->width / 2.0f + 0.5f,
-                                (this->height / 2.0f - y + 0.5f), 1};
-
+    Coordinates p = Coordinates{2.0f * (x + 0.5) / this->width - 1.0f,
+                                1.0f - 2.0f * (y + 0.5) / this->height, 1};
 
     double aspect_ratio = static_cast<double>(this->width) / this->height;
-    double fov_radians = (100 * M_PI / 180.0);  // TODO: dehardcode the fov
-    double fov_scale = std::tan(fov_radians * 0.5);
+    double fov_radians = (45 * M_PI / 180.0); // TODO: dehardcode the fov
+    double fov_scale = std::tan(fov_radians / 2.0);
+    double inv_fov = 1.0 / fov_scale;
 
-    p.x = (2.0 * (x + 0.5) / this->width - 1.0) * aspect_ratio;
-    p.y = (1.0 - 2.0 * (y + 0.5) / this->height);
+    p.x *= aspect_ratio * fov_scale;
+    p.y *= fov_scale;
+    // p.z *= 1.0f;
 
-    
-    // if (x == 0 && y == 0) {
-
-    //     fmt::print(stdout, "Pixel world position: {} {} {}\n", p.x,
-    //                p.y, p.z);
-    // }
-    p.normalizeSelf();
-    p = p * fov_scale;
-
+    Coordinates pixelPosition = p;
 
     Coordinates a = Coordinates{0, 0, 1} ^ this->direction;
-    a.normalizeSelf();
     // angle of rotation
-    double theta = std::acos(this->direction.z);
-    float c =
-        1 - std::cos(theta); // has to be normalized beforehand in constructor
-    float s = std::sin(theta);
 
-    // this can be simplified by removing the last column but is for future
-    // reference
-    Coordinates rotateCol1 =
-        Coordinates{1 - c * a.y * a.y, c * a.x * a.y, -s * a.y};
-    Coordinates rotateCol2 =
-        Coordinates{c * a.x * a.y, 1 - c * a.x * a.x, s * a.x};
-    Coordinates rotateCol3 =
-        Coordinates{s * a.y, -s * a.x, 1 - c * (a.y * a.y + a.x * a.x)};
+    if (a.abs() > 0.0001) {
+        a.normalizeSelf();
 
-    Coordinates pixelPosition = {p * rotateCol1, p * rotateCol2,
-                                 p * rotateCol3};
+        double theta = std::acos(Coordinates{0, 0, 1} * this->direction);
+        pixelPosition = p * std::cos(theta) + (a ^ p) * sin(theta) +
+                        a * (a * p) * (1 - std::cos(theta));
 
-    float viewPlaneDistance = 1.00f;
-    // Placeholder return
-    pixelPosition = pixelPosition + ((this->direction * viewPlaneDistance)) +
-                    this->position; 
-    Coordinates rayPosition = this->position; // pixelPosition;
-    Coordinates rayDirection = pixelPosition - this->position;
+    }
+    Coordinates rayPosition = this->position;
+    Coordinates rayDirection = pixelPosition;
     rayDirection.normalizeSelf();
+    // if (((x == 0 || x == width - 1) && (y == 0 || y == height - 1)) ||
+    //     (x == width / 2 && y == height / 2)) {
+    //     fmt::print("Ray direction at pixel {} {}: {} {} {}\n", x, y,
+    //                rayDirection.x, rayDirection.y, rayDirection.z);
+    // }
     Ray ray = Ray(rayPosition, rayDirection);
     return ray;
 }

@@ -36,6 +36,8 @@ class ObjectManager {
 
     void createSphere(Coordinates coord, float radius, Color col);
     void createTriangle(Coordinates a, Coordinates b, Coordinates c, Color col);
+    
+void createPlane(Coordinates o, Coordinates n, Color col);
     // TODO: add plane
     // TODO: add a group of objects
     // TODO: update object tree

@@ -35,12 +35,14 @@ int main(int argc, char *argv[]) {
         gui.guiVarSetUp(); // TODO : Init the menu variables
 
         ObjectManager &objs = ObjectManager::getInstance();
-                objs.createSphere(Coordinates{0, 0, 100}, 50.0, Color::random());
-
-        objs.createSphere(Coordinates{100, 150, 200}, 10.0, Color::random());
-        objs.createSphere(Coordinates{-200, -200, 200}, 100.0, Color::random());
-        objs.createTriangle(Coordinates{-200, 0, 200}, Coordinates{200, 200, 200},
-                            Coordinates{-200, -200, 200}, Color::random());
+        objs.createSphere(Coordinates{0, 0, 10}, 5.0, Color::random());
+        objs.createSphere(Coordinates{10, 15, 20}, 1.0, Color::random());
+        objs.createSphere(Coordinates{-20, -20, 20}, 10.0, Color::random());
+        objs.createTriangle(Coordinates{-20, 0, 20},
+                            Coordinates{20, 20, 20},
+                            Coordinates{-20, -20, 20}, Color::random());
+        objs.createPlane(Coordinates{0, 3, 0}, Coordinates{0.5, 0.5, 0},
+                         Color::random());
 
         gui.mainloop();
         gui.unload(); // SEGFAULT IF NOT UNLOADED

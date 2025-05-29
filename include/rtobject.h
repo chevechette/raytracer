@@ -3,7 +3,7 @@
 #include "structs.h"
 #include "ray.h"
 
-#define EPSILLON 0.001f
+#define EPSILLON 0.0001f
 
 class Object {
     protected:

@@ -83,6 +83,11 @@ struct Coordinates {
 
     // #include <cmath>
     // normalization
+
+    inline double abs() {
+        return sqrt(this->x * this->x + this->y * this->y + this->z * this->z);
+    }
+
     inline Coordinates &normalizeSelf() {
         double length =
             sqrt(this->x * this->x + this->y * this->y + this->z * this->z);
@@ -92,17 +97,14 @@ struct Coordinates {
         this->x = this->x / length;
         this->y = this->y / length;
         this->z = this->z / length;
-        // std::cout << this->x << std::endl;
-        // std::cout << this->y << std::endl;
-        // std::cout << this->x << std::endl;
 
         return *this;
     }
 
     inline Coordinates normalize() const {
-        float length =
-            sqrt(this->x * this->x + this->y * this->y + this->z * this->z);
-            
+        double length = sqrt((this->x * this->x) + (this->y * this->y) +
+                            (this->z * this->z));
+
         if (length == 0)
             return Coordinates{0, 0, 0};
         return Coordinates{this->x / length, this->y / length,

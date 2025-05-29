@@ -34,6 +34,10 @@ void ObjectManager::createTriangle(Coordinates a, Coordinates b, Coordinates c, 
     this->addObject(std::shared_ptr<Object>(new Triangle(a, b, c, col)));
 }
 
+void ObjectManager::createPlane(Coordinates o, Coordinates n, Color col) {
+    this->addObject(std::shared_ptr<Object>(new Plane(o, n, col)));
+}
+
 Intersection ObjectManager::intersectAllObjects(const Ray &ray) {
     Intersection closest{};
 
