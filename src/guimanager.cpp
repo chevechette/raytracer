@@ -47,7 +47,9 @@
 
 GUIManager::GUIManager()
     : window(nullptr),
-      background(GRAPHIC_PRESET_GUI_WIDTH, GRAPHIC_PRESET_GUI_HEIGHT),
+      bckgrnds(Render(GRAPHIC_PRESET_GUI_WIDTH, GRAPHIC_PRESET_GUI_HEIGHT),
+               Render(GRAPHIC_PRESET_GUI_WIDTH, GRAPHIC_PRESET_GUI_HEIGHT),
+               Render(GRAPHIC_PRESET_GUI_WIDTH, GRAPHIC_PRESET_GUI_HEIGHT)),
       cams(Camera(Coordinates{CAMERA_DEFAULT_X, CAMERA_DEFAULT_Y,
                               CAMERA_DEFAULT_Z},
                   Coordinates{CAMERA_DIR_DEFAULT_X, CAMERA_DIR_DEFAULT_Y,
@@ -59,9 +61,7 @@ GUIManager::GUIManager()
            Camera(Coordinates{CAMERA_DEFAULT_2_X, CAMERA_DEFAULT_2_Y,
                               CAMERA_DEFAULT_2_Z},
                   Coordinates{CAMERA_DIR_DEFAULT_2_X, CAMERA_DIR_DEFAULT_2_Y,
-                              CAMERA_DIR_DEFAULT_2_Z})) {
-    background.renderBackgroundSin();
-}
+                              CAMERA_DIR_DEFAULT_2_Z})) {}
 
 GUIManager::~GUIManager() {
     if (this->loaded) {
@@ -100,10 +100,15 @@ void GUIManager::guiKeyCallback(GLFWwindow *window, int key, int scancode,
 
 void GUIManager::guiResizeCallback(GLFWwindow *window, int width, int height) {
     GUIManager &gui = GUIManager::getInstance();
+    for (int i = 0; i < 3; i++) {
+        Render &background = gui.bckgrnds[i];
+        Camera &cam = gui.cams[i];
 
-    gui.background.adjustRenderSize(
-        width, height); // should I keep it if it is bigger ?
-    gui.background.renderBackgroundSin();
+        cam.setScreenSize(width, height);
+        background.adjustRenderSize(
+            width, height); // should I keep it if it is bigger ?
+        background.renderBackgroundSin();
+    }
 }
 
 void GUIManager::guiVarSetUp() {
@@ -240,8 +245,9 @@ void GUIManager::mainloop() {
 void GUIManager::renderFromCamera(int cameraNo) {
     Camera &camera = this->cams[cameraNo]; // Does this need to be init here ?
 
-    const int imgHeight = this->background.getHeight();
-    const int imgWidth = this->background.getWidth();
+    Render &background = this->bckgrnds[cameraNo];
+    const int imgHeight = background.getHeight();
+    const int imgWidth = background.getWidth();
 
     ObjectManager &objmanager = ObjectManager::getInstance();
     for (int i = 0; i < imgWidth; i++) {
@@ -253,9 +259,9 @@ void GUIManager::renderFromCamera(int cameraNo) {
                     // Fix the random color assignement
                     // fmt::print(stdout, "Chosen one {}\n",intersect.dist);
 
-                    this->background[i, j] = intersect.obj->getColor();
+                    background[i, j] = intersect.obj->getColor();
                 } else {
-                    this->background[i, j] = Color::fromHex(0x40102F);
+                    background[i, j] = Color::fromHex(0x40102F);
                 }
                 // std::cout << "STAP" << std::endl;
             } catch (std::exception &) {
@@ -281,6 +287,8 @@ void GUIManager::renderBackground() {
     //            property
     // bckgrnd.renderBackgroundSin();
 
+    Render &background = this->bckgrnds[this->selectedCamera];
+
     GLuint g_TextureID = 0;
     glGenTextures(1, &g_TextureID);
     glBindTexture(GL_TEXTURE_2D, g_TextureID);
@@ -291,9 +299,9 @@ void GUIManager::renderBackground() {
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
 
-    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, this->background.getWidth(),
-                 this->background.getHeight(), 0, GL_RGBA, GL_UNSIGNED_BYTE,
-                 this->background.buffer.data());
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, background.getWidth(),
+                 background.getHeight(), 0, GL_RGBA, GL_UNSIGNED_BYTE,
+                 background.buffer.data());
 
     // ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(0, 0));
     // ImGui::PushStyleVar(ImGuiStyleVar_WindowBorderSize, 0.0f);

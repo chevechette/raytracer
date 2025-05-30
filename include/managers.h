@@ -51,7 +51,7 @@ void createPlane(Coordinates o, Coordinates n, Color col);
 class GUIManager {
   private:
     GLFWwindow *window;
-    Render background;
+    Render bckgrnds[3];
     bool loaded = false;
     int selectedCamera = 0; // No get/set as it is only interacted by GUI
                             // private:
