@@ -48,7 +48,18 @@
 GUIManager::GUIManager()
     : window(nullptr),
       background(GRAPHIC_PRESET_GUI_WIDTH, GRAPHIC_PRESET_GUI_HEIGHT),
-      cams(Camera(), Camera(), Camera()) {
+      cams(Camera(Coordinates{CAMERA_DEFAULT_X, CAMERA_DEFAULT_Y,
+                              CAMERA_DEFAULT_Z},
+                  Coordinates{CAMERA_DIR_DEFAULT_X, CAMERA_DIR_DEFAULT_Y,
+                              CAMERA_DIR_DEFAULT_Z}),
+           Camera(Coordinates{CAMERA_DEFAULT_1_X, CAMERA_DEFAULT_1_Y,
+                              CAMERA_DEFAULT_1_Z},
+                  Coordinates{CAMERA_DEFAULT_1_X, CAMERA_DIR_DEFAULT_1_Y,
+                              CAMERA_DIR_DEFAULT_1_Z}),
+           Camera(Coordinates{CAMERA_DEFAULT_2_X, CAMERA_DEFAULT_2_Y,
+                              CAMERA_DEFAULT_2_Z},
+                  Coordinates{CAMERA_DIR_DEFAULT_2_X, CAMERA_DIR_DEFAULT_2_Y,
+                              CAMERA_DIR_DEFAULT_2_Z})) {
     background.renderBackgroundSin();
 }
 
@@ -158,13 +169,15 @@ void GUIManager::load() {
                                  true); // true ports all glfw triggers to ImGUI
     ImGui_ImplOpenGL3_Init();           // Can specify some version here
 
-    // // Try to call some OpenGL functions, and print some more version info.
-    // printf( "Renderer: %s.\n", glGetString( GL_RENDERER ) );
-    // printf( "OpenGL version supported %s.\n", glGetString( GL_VERSION ) );
+    // // Try to call some OpenGL functions, and print some more version
+    // info. printf( "Renderer: %s.\n", glGetString( GL_RENDERER ) );
+    // printf( "OpenGL version supported %s.\n", glGetString( GL_VERSION )
+    // );
 
-    // refresh and swapping setting up, actually should the swap really be that
-    // much updated when we are working with a ray tracer ?
-    //  TODO : for readability, should move event stuff into their own function
+    // refresh and swapping setting up, actually should the swap really be
+    // that much updated when we are working with a ray tracer ?
+    //  TODO : for readability, should move event stuff into their own
+    //  function
     glfwSwapInterval(1);
     glfwSetKeyCallback(this->window, GUIManager::guiKeyCallback);
     glfwSetWindowSizeCallback(this->window, GUIManager::guiResizeCallback);
@@ -175,8 +188,8 @@ void GUIManager::load() {
     // to check if Dear ImGui wants to obstruct mouse/keyboard
     // inputs from underlying apps.
     // e.g. when hovering a window WantCaptureMouse will be set to true,
-    // one possible strategy would be to stop passing mouse events to your main
-    // application.
+    // one possible strategy would be to stop passing mouse events to your
+    // main application.
 }
 // called by the unload
 void GUIManager::unloadWindow() {
@@ -238,7 +251,7 @@ void GUIManager::renderFromCamera(int cameraNo) {
                 Intersection intersect = objmanager.intersectAllObjects(pixRay);
                 if (intersect) {
                     // Fix the random color assignement
-                        // fmt::print(stdout, "Chosen one {}\n",intersect.dist);
+                    // fmt::print(stdout, "Chosen one {}\n",intersect.dist);
 
                     this->background[i, j] = intersect.obj->getColor();
                 } else {
@@ -247,7 +260,8 @@ void GUIManager::renderFromCamera(int cameraNo) {
                 // std::cout << "STAP" << std::endl;
             } catch (std::exception &) {
 
-                std::cout << "failwith " << i << j << std::endl; //TODO: Log error properly
+                std::cout << "failwith " << i << j
+                          << std::endl; // TODO: Log error properly
             }
         }
     }

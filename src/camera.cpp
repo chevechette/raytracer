@@ -68,14 +68,14 @@ Ray Camera::createRay(std::size_t x, std::size_t y) {
     Coordinates a = Coordinates{0, 0, 1} ^ this->direction;
     // angle of rotation
 
-    if (a.abs() > 0.0001) {
-        a.normalizeSelf();
+    // if (a.abs() > 0.0001) {
+    a.normalizeSelf();
 
-        double theta = std::acos(Coordinates{0, 0, 1} * this->direction);
-        pixelPosition = p * std::cos(theta) + (a ^ p) * sin(theta) +
-                        a * (a * p) * (1 - std::cos(theta));
+    double theta = std::acos(Coordinates{0, 0, 1} * this->direction);
+    pixelPosition = p * std::cos(theta) + (a ^ p) * sin(theta) +
+                    a * (a * p) * (1 - std::cos(theta));
 
-    }
+    // }
     Coordinates rayPosition = this->position;
     Coordinates rayDirection = pixelPosition;
     rayDirection.normalizeSelf();

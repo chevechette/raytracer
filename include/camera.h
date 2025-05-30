@@ -7,16 +7,6 @@
 #include "ray.h"
 #include "structs.h"
 
-#define CAMERA_DEFAULT_X 0
-#define CAMERA_DEFAULT_Y 0
-#define CAMERA_DEFAULT_Z -50
-
-#define CAMERA_DIR_DEFAULT_X 0
-#define CAMERA_DIR_DEFAULT_Y 0
-#define CAMERA_DIR_DEFAULT_Z 1
-
-#define FIELD_DEPTH 100.0;
-#define VISION_ANGLE 80.0; // should this be in randiant ?
 
 // There is no actuall camera rotation, up is always up
 // How do fisheye work anyway ? I remember doing that
