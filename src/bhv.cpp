@@ -4,6 +4,7 @@
 class BHV {
   private:
     Box storage;
+    //TODO: make this into a vector
     const BHV *leaf1 = nullptr;
     const BHV *leaf2 = nullptr;
     const BHV *leaf3 = nullptr;
@@ -28,7 +29,7 @@ BHV::BHV(const Sphere &obj) : storage(obj) {}
 BHV::BHV(const Triangle &obj) : storage(obj) {}
 BHV::BHV(const Box &obj) : storage(obj) {}
 
-//TODO : rework this, this is a mess
+//TODO: rework this, this is a mess Just use a loop
 BHV::BHV(const BHV *one, const BHV *two, const BHV *three,
          const BHV *four)
     : leaf1(one), leaf2(two), leaf3(three), leaf4(four) {
