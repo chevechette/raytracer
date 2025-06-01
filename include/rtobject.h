@@ -101,10 +101,10 @@ class Plane : public Object {
 };
 
 class Box : public Object {
-  private:
+  protected:
     Coordinates minlier;
     Coordinates maxlier;
-    const Object *obj;
+    const Object *obj = nullptr;
 
   public:
     Box(const Coordinates &minlier, const Coordinates &maxlier);
@@ -113,10 +113,23 @@ class Box : public Object {
     Box(const Sphere &sphere);
     Box(const Triangle &triangle);
 
+    Box(const Box &smallbox1, const Box &smallbox2);
+
     ~Box();
+
+    Coordinates getMin() const;
+    Coordinates getMax() const;
+    void setMin(Coordinates newMin);
+    void setMax(Coordinates newMax);
+    void setMinMax(Coordinates newMin, Coordinates newMax);
+
+    bool hasObj() const;
+    const Object *getObj() const;
+    // Should I use a set Obj ?
+
     // Maybe those two should be private
     Intersection intersectBox(const Ray &ray) const;
     Intersection intersectInnerObject(const Ray &ray) const;
-    
+
     Intersection intersect(const Ray &ray) const;
 };

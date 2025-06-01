@@ -1,6 +1,8 @@
 #include "rtobject.h"
 #include "structs.h"
 
+#include <cmath>
+
 Plane::Plane(Coordinates origin, Coordinates normal)
     : Object(origin, Color{1, 1, 1, 1}), normalVec{normal.normalize()},
       height{-1}, width{-1} {
@@ -64,9 +66,7 @@ float Plane::getHeight(float x) const {
 float Plane::getwidth(float x) const {
     return this->width;
 }
-#include <cmath>
-#include <fmt/core.h>
-#include <iostream>
+
 Intersection Plane::intersect(const Ray &ray) const {
     double cosPlane = ray.getVector() * this->getNormal();
 
@@ -79,11 +79,3 @@ Intersection Plane::intersect(const Ray &ray) const {
         return Intersection{};
     return Intersection{this, coef, ray.getOrigin() + ray.getVector() * coef};
 }
-
-// TODO : check this
-// if (this->height > 0 && (p0 - this->origin) * this->h > this->height) {
-//     return Intersection{};
-// }
-// if (this->width > 0 && (p0 - this->origin) * this->w > this->width) {
-//     return Intersection{};
-// }
