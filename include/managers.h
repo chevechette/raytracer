@@ -2,7 +2,9 @@
 #include <memory> // shared_ptr usage
 #include <vector>
 
+#include "bhv.h"
 #include "camera.h"
+#include "forward_declaration.h"
 #include "opengl_include.h"
 #include "ray.h"
 #include "render.h"
@@ -13,6 +15,10 @@ class ObjectManager {
   public:                                      // TMP PUBLIC VARIABLES
                                                // would be the full libraries
     std::vector<std::shared_ptr<Object>> objs; // shared pointer ? optional ?
+    std::vector<Box> boxes;
+    std::vector<std::shared_ptr<Object>> infinityObjs;
+
+    std::vector<BHV> nodes;
 
   private:
     ObjectManager(const ObjectManager &) = delete;
@@ -26,18 +32,28 @@ class ObjectManager {
     static ObjectManager &getInstance();
 
     static void release();
-    // remove(); // pop
-    // binary tree structure... later
 
     // cameras map for edition
     void addObject(std::shared_ptr<Object> obj);
+    // called for planes and such
+    void addInfinityObject(std::shared_ptr<Object> obj);
+    // binary tree structure... later
+    void addBox(const Box &box);
 
+    // remove(); // pop
     void removeObjects();
+    void removeNodes();
+
+    void buildNodes();
+    void buildTree();
+
+    std::shared_ptr<BHV>
+    recursiveTreeBuid(std::vector<std::shared_ptr<BHV>> currentNodes);
 
     void createSphere(Coordinates coord, float radius, Color col);
     void createTriangle(Coordinates a, Coordinates b, Coordinates c, Color col);
-    
-void createPlane(Coordinates o, Coordinates n, Color col);
+
+    void createPlane(Coordinates o, Coordinates n, Color col);
     // TODO: add plane
     // TODO: add a group of objects
     // TODO: update object tree

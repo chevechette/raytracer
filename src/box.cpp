@@ -1,9 +1,11 @@
 #include "rtobject.h"
 #include <algorithm>
+#include <iostream>
+#include <memory>
 
 Box::Box()
     : Object(Coordinates{0, 0, 0}, Color::random()),
-      minlier(Coordinates{0, 0, 0}), maxler(Coordinates{0, 0, 0}),
+      minlier(Coordinates{0, 0, 0}), maxlier(Coordinates{0, 0, 0}),
       validBox(false) {}
 
 Box::Box(const Coordinates &m, const Coordinates &n)
@@ -13,35 +15,36 @@ Box::Box(const Coordinates &m, const Coordinates &n)
 Box::Box(const Coordinates &m, const Coordinates &n, const Color &col)
     : Object((m + n) * 0.5, col), minlier(m), maxlier(n), obj(nullptr) {}
 
-Box::Box(const Sphere &sphere)
-    : Object(sphere.getOrigin(), sphere.getColor()), obj(&sphere),
-      minlier(sphere.getOrigin() - Coordinates{sphere.getRadius(),
-                                               sphere.getRadius(),
-                                               sphere.getRadius()}),
-      maxlier(sphere.getOrigin() + Coordinates{sphere.getRadius(),
-                                               sphere.getRadius(),
-                                               sphere.getRadius()}) {}
+Box::Box(std::shared_ptr<Sphere> sphere)
+    : Object(sphere->getOrigin(), sphere->getColor()),
+      obj(std::static_pointer_cast<Object>(sphere)),
+      minlier(sphere->getOrigin() - Coordinates{sphere->getRadius(),
+                                                sphere->getRadius(),
+                                                sphere->getRadius()}),
+      maxlier(sphere->getOrigin() + Coordinates{sphere->getRadius(),
+                                                sphere->getRadius(),
+                                                sphere->getRadius()}) {
+    std::cout << "Box created for sphere at " << sphere->getOrigin().x
+              << sphere->getOrigin().y << sphere->getOrigin().z << std::endl;
+}
 
-Box::Box(const Box &box)
-    : Object(box.getOrigin(), box.getColor()), obj(nullptr),
-      minlier(box.getMin()), maxlier(box.getMax()), validBox(box.isValid()) {}
-
-Box::Box(const Triangle &triangle)
-    : Object(triangle.getOrigin(), triangle.getColor()), obj(nullptr),
+Box::Box(std::shared_ptr<Triangle> triangle)
+    : Object(triangle->getOrigin(), triangle->getColor()),
+      obj(std::static_pointer_cast<Object>(triangle)),
       minlier(Coordinates{
-          std::min({triangle.getVertexA().x, triangle.getVertexB().x,
-                    triangle.getVertexC().x}),
-          std::min({triangle.getVertexA().y, triangle.getVertexB().y,
-                    triangle.getVertexC().y}),
-          std::min({triangle.getVertexA().z, triangle.getVertexB().z,
-                    triangle.getVertexC().z})}),
+          std::min({triangle->getVertexA().x, triangle->getVertexB().x,
+                    triangle->getVertexC().x}),
+          std::min({triangle->getVertexA().y, triangle->getVertexB().y,
+                    triangle->getVertexC().y}),
+          std::min({triangle->getVertexA().z, triangle->getVertexB().z,
+                    triangle->getVertexC().z})}),
       maxlier(Coordinates{
-          std::max({triangle.getVertexA().x, triangle.getVertexB().x,
-                    triangle.getVertexC().x}),
-          std::max({triangle.getVertexA().y, triangle.getVertexB().y,
-                    triangle.getVertexC().y}),
-          std::max({triangle.getVertexA().z, triangle.getVertexB().z,
-                    triangle.getVertexC().z})}) {}
+          std::max({triangle->getVertexA().x, triangle->getVertexB().x,
+                    triangle->getVertexC().x}),
+          std::max({triangle->getVertexA().y, triangle->getVertexB().y,
+                    triangle->getVertexC().y}),
+          std::max({triangle->getVertexA().z, triangle->getVertexB().z,
+                    triangle->getVertexC().z})}) {}
 
 Box::Box(const Box &smallbox1, const Box &smallbox2)
     : Object((smallbox1.getOrigin() + smallbox2.getOrigin()) * 0.5,
@@ -68,7 +71,10 @@ Box::Box(const Box &smallbox1, const Box &smallbox2)
         this->validBox = false;
     }
 }
-Box::~Box() {}
+
+Box::~Box() {
+    std::cout << "Box has been destroyed" << std::endl;
+}
 
 Coordinates Box::getMin() const {
     return this->minlier;
@@ -165,7 +171,7 @@ bool Box::hasObj() const {
     return this->obj != nullptr;
 }
 
-const Object *Box::getObj() const {
+const std::shared_ptr<const Object> Box::getObj() const {
     if (this->obj !=
         nullptr) // obj not nullptr ... I know I could remove this logic at all;
         return this->obj;

@@ -3,6 +3,7 @@
 #include "forward_declaration.h"
 #include "ray.h"
 #include "structs.h"
+#include <memory>
 
 #define EPSILON 0.0001f
 
@@ -102,21 +103,23 @@ class Plane : public Object {
     Intersection intersect(const Ray &ray) const;
 };
 
+#include <memory>
+
 class Box : public Object {
   private:
     Coordinates minlier;
     Coordinates maxlier;
-    const Object *obj = nullptr;
-    bool  validBox = true;
+    std::shared_ptr<Object> obj = std::shared_ptr<Object>(nullptr);
+    bool validBox = true;
 
   public:
     Box();
     Box(const Coordinates &minlier, const Coordinates &maxlier);
     Box(const Coordinates &minlier, const Coordinates &maxlier,
         const Color &col);
-    Box(const Sphere &sphere);
-    Box(const Triangle &triangle);
-    Box(const Box &box);
+    Box(std::shared_ptr<Sphere> sphere);
+    Box(std::shared_ptr<Triangle> triangle);
+    Box(const Box &box) = default;
 
     Box(const Box &smallbox1, const Box &smallbox2);
 
@@ -129,7 +132,7 @@ class Box : public Object {
     void setMinMax(Coordinates newMin, Coordinates newMax);
 
     bool hasObj() const;
-    const Object *getObj() const;
+    const std::shared_ptr<const Object> getObj() const;
     bool isValid() const;
     // Should I use a set Obj ?
 

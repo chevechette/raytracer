@@ -8,7 +8,8 @@ Sphere::Sphere(Coordinates pos, float radius)
 Sphere::Sphere(Coordinates pos, float radius, Color col)
     : Object(pos, col), radius(radius) {}
 
-Sphere::~Sphere() {}
+Sphere::~Sphere() {
+    std::cout << "Sphere destroyed\n";}
 
 void Sphere::setRadius(float radius) {
     if (abs(radius) >= 0)

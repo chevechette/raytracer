@@ -1,41 +1,22 @@
 #include "bhv.h"
 
-// TODO : create leafnote
-class BHV {
-  private:
-    Box storage;
-    //TODO: make this into a vector
-    const BHV *leaf1 = nullptr;
-    const BHV *leaf2 = nullptr;
-    const BHV *leaf3 = nullptr;
-    const BHV *leaf4 = nullptr;
+BHV::BHV(std::shared_ptr<Sphere> obj) : storage(obj) {}
+BHV::BHV(std::shared_ptr<Triangle> obj) : storage(obj) {}
+BHV::BHV(const Box &obj) : storage(obj) {
+  
+    if (!storage.hasObj()) {
+        std::cerr << "BHV constructed with box that has null obj!" << std::endl;
+        std::terminate(); // Or throw std::runtime_error
+    }
+}
 
-  public:
-    //    BHV();
-    BHV(const Sphere &obj);
-    BHV(const Triangle &obj);
-    BHV(const Box &obj); // this does not copy the box's content into it...
-                         // though it could ?
-
-    BHV(const BHV *one, const BHV *two = nullptr, const BHV *three = nullptr,
-        const BHV *four = nullptr);
-
-    const Box &getBox() const;
-
-    ~BHV();
-};
-
-BHV::BHV(const Sphere &obj) : storage(obj) {}
-BHV::BHV(const Triangle &obj) : storage(obj) {}
-BHV::BHV(const Box &obj) : storage(obj) {}
-
-//TODO: rework this, this is a mess Just use a loop
-BHV::BHV(const BHV *one, const BHV *two, const BHV *three,
-         const BHV *four)
+// TODO: rework this, this is a mess Just use a loop
+BHV::BHV(std::shared_ptr<BHV> one, std::shared_ptr<BHV> two,
+    std::shared_ptr<BHV> three, std::shared_ptr<BHV> four)
     : leaf1(one), leaf2(two), leaf3(three), leaf4(four) {
     Box box1, box2;
 
-    if (leaf1 != nullptr &&leaf2 != nullptr) {
+    if (leaf1 != nullptr && leaf2 != nullptr) {
         box1 = Box(leaf1->getBox(), leaf2->getBox());
     } else if (leaf1 != nullptr) {
         box2 = leaf1->getBox();
@@ -52,4 +33,7 @@ const Box &BHV::getBox() const {
     return this->storage;
 }
 
-BHV::~BHV() {}
+#include <iostream>
+BHV::~BHV() {
+    std::cout << "Node has been destroyed" << std::endl;
+}
