@@ -81,6 +81,26 @@ struct Coordinates {
                            this->x * v.y - this->y * v.x};
     }
 
+    inline bool operator>(const float check) const {
+        return (this->x > check && this->y > check && this->z > check);
+    }
+
+    inline bool operator<(const float check) const {
+        return (this->x < check && this->y < check && this->z < check);
+    }
+
+    inline bool operator==(const float check) const {
+        return (this->x == check && this->y == check && this->z == check);
+    }
+
+    inline bool operator>=(const float check) const {
+        return (*this > check && *this == check);
+    }
+
+    inline bool operator<=(const float check) const {
+        return (*this < check && *this == check);
+    }
+
     // #include <cmath>
     // normalization
 
@@ -103,12 +123,17 @@ struct Coordinates {
 
     inline Coordinates normalize() const {
         double length = sqrt((this->x * this->x) + (this->y * this->y) +
-                            (this->z * this->z));
+                             (this->z * this->z));
 
         if (length == 0)
             return Coordinates{0, 0, 0};
-        return Coordinates{this->x / length, this->y / length,
-                           this->z / length};
+
+        Coordinates ret;
+
+        ret.x = this->x / length;
+        ret.y = this->y / length;
+        ret.z = this->z / length;
+        return ret;
     }
 };
 

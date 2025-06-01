@@ -71,7 +71,7 @@ Coordinates Triangle::getVertexC() const {
 Intersection Triangle::intersect(const Ray &ray) const {
     // Plane verification
     double dot = this->normal * ray.getVector();
-    if (dot <= EPSILLON && dot >= -EPSILLON)
+    if (dot <= EPSILON && dot >= -EPSILON)
         return Intersection{};
 
     Coordinates p0 = this->getOrigin() - ray.getOrigin();

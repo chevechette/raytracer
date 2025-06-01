@@ -56,7 +56,7 @@ GUIManager::GUIManager()
                               CAMERA_DIR_DEFAULT_Z}),
            Camera(Coordinates{CAMERA_DEFAULT_1_X, CAMERA_DEFAULT_1_Y,
                               CAMERA_DEFAULT_1_Z},
-                  Coordinates{CAMERA_DEFAULT_1_X, CAMERA_DIR_DEFAULT_1_Y,
+                  Coordinates{CAMERA_DIR_DEFAULT_1_X, CAMERA_DIR_DEFAULT_1_Y,
                               CAMERA_DIR_DEFAULT_1_Z}),
            Camera(Coordinates{CAMERA_DEFAULT_2_X, CAMERA_DEFAULT_2_Y,
                               CAMERA_DEFAULT_2_Z},
@@ -107,7 +107,6 @@ void GUIManager::guiResizeCallback(GLFWwindow *window, int width, int height) {
         cam.setScreenSize(width, height);
         background.adjustRenderSize(
             width, height); // should I keep it if it is bigger ?
-        background.renderBackgroundSin();
     }
 }
 

@@ -70,12 +70,12 @@ float Plane::getwidth(float x) const {
 Intersection Plane::intersect(const Ray &ray) const {
     double cosPlane = ray.getVector() * this->getNormal();
 
-    if (std::abs(cosPlane) <= EPSILLON) {
+    if (std::abs(cosPlane) <= EPSILON) {
         return Intersection{}; // Parallel vector
     }
     Coordinates p0 = this->getOrigin() - ray.getOrigin();
     double coef = p0 * this->getNormal() / cosPlane;
-    if (coef < EPSILLON)
+    if (coef < EPSILON)
         return Intersection{};
     return Intersection{this, coef, ray.getOrigin() + ray.getVector() * coef};
 }

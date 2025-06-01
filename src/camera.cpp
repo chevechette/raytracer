@@ -3,6 +3,9 @@
 // adjustable cameras according to gui
 #include "camera.h"
 
+#include "fmt/core.h"
+#include <iostream>
+
 #include <cmath> // is boost faster ? I heard not
 // TODO : update the create pixel for faning out the screen vectors
 Camera::Camera()
@@ -12,7 +15,11 @@ Camera::Camera()
                             CAMERA_DIR_DEFAULT_Z}) {}
 
 Camera::Camera(const Coordinates &pos, const Coordinates &dir)
-    : position{pos}, direction{dir.normalize()} {}
+    : position{pos}, direction{dir.normalize()} {
+
+    fmt::print("Camera Ray direction initialized at {} {} {}\n", direction.x,
+               direction.y, direction.z);
+}
 
 Camera::~Camera() {}
 
@@ -49,10 +56,13 @@ Coordinates &Camera::getDirectionRef() {
 Ray Camera::createRay(std::size_t x, std::size_t y) {
     if (x < 0 || y < 0 || x >= this->width || y >= this->height)
         throw std::out_of_range(RT_MESSAGE_ERR_PIXEL_OOB);
-    this->direction.normalizeSelf();
+    // this->direction.normalizeSelf();
 
-    Coordinates p = Coordinates{2.0f * (x + 0.5) / this->width - 1.0f,
-                                1.0f - 2.0f * (y + 0.5) / this->height, 1};
+    Coordinates p;
+
+    p.x = 2.0f * (x + 0.5) / this->width - 1.0f;
+    p.y = 1.0f - 2.0f * (y + 0.5) / this->height;
+    p.z = 1;
 
     double aspect_ratio = static_cast<double>(this->width) / this->height;
     double fov_radians = (45 * M_PI / 180.0); // TODO: dehardcode the fov
