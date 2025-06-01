@@ -15,10 +15,10 @@ class ObjectManager {
   public:                                      // TMP PUBLIC VARIABLES
                                                // would be the full libraries
     std::vector<std::shared_ptr<Object>> objs; // shared pointer ? optional ?
-    std::vector<Box> boxes;
+    std::vector<std::shared_ptr<Box>> boxes;
     std::vector<std::shared_ptr<Object>> infinityObjs;
 
-    std::vector<BHV> nodes;
+    std::vector<std::shared_ptr<BHV>> nodes;
 
   private:
     ObjectManager(const ObjectManager &) = delete;
@@ -38,7 +38,7 @@ class ObjectManager {
     // called for planes and such
     void addInfinityObject(std::shared_ptr<Object> obj);
     // binary tree structure... later
-    void addBox(const Box &box);
+    void addBox(std::shared_ptr<Box> box);
 
     // remove(); // pop
     void removeObjects();
@@ -47,8 +47,9 @@ class ObjectManager {
     void buildNodes();
     void buildTree();
 
-    std::shared_ptr<BHV>
-    recursiveTreeBuid(std::vector<std::shared_ptr<BHV>> currentNodes);
+
+std::shared_ptr<BHV> recursiveTreeBuid(
+    std::vector<std::shared_ptr<BHV>> &currentNodes);
 
     void createSphere(Coordinates coord, float radius, Color col);
     void createTriangle(Coordinates a, Coordinates b, Coordinates c, Color col);
