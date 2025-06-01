@@ -1,5 +1,6 @@
 #pragma once
 
+#include "forward_declaration.h"
 #include "ray.h"
 #include "structs.h"
 
@@ -16,6 +17,7 @@ class Object {
     virtual ~Object();
 
     virtual Intersection intersect(const Ray &ray) const = 0;
+    // TODO: virtual Box toBox() const = 0;
 
     void setColor(Color col);
     void setOrigin(Coordinates origin);
@@ -101,17 +103,20 @@ class Plane : public Object {
 };
 
 class Box : public Object {
-  protected:
+  private:
     Coordinates minlier;
     Coordinates maxlier;
     const Object *obj = nullptr;
+    bool  validBox = true;
 
   public:
+    Box();
     Box(const Coordinates &minlier, const Coordinates &maxlier);
     Box(const Coordinates &minlier, const Coordinates &maxlier,
         const Color &col);
     Box(const Sphere &sphere);
     Box(const Triangle &triangle);
+    Box(const Box &box);
 
     Box(const Box &smallbox1, const Box &smallbox2);
 
@@ -125,6 +130,7 @@ class Box : public Object {
 
     bool hasObj() const;
     const Object *getObj() const;
+    bool isValid() const;
     // Should I use a set Obj ?
 
     // Maybe those two should be private

@@ -1,6 +1,11 @@
 #include "rtobject.h"
 #include <algorithm>
 
+Box::Box()
+    : Object(Coordinates{0, 0, 0}, Color::random()),
+      minlier(Coordinates{0, 0, 0}), maxler(Coordinates{0, 0, 0}),
+      validBox(false) {}
+
 Box::Box(const Coordinates &m, const Coordinates &n)
     : Object((m + n) * 0.5, Color::random()), minlier(m), maxlier(n),
       obj(nullptr) {}
@@ -16,6 +21,10 @@ Box::Box(const Sphere &sphere)
       maxlier(sphere.getOrigin() + Coordinates{sphere.getRadius(),
                                                sphere.getRadius(),
                                                sphere.getRadius()}) {}
+
+Box::Box(const Box &box)
+    : Object(box.getOrigin(), box.getColor()), obj(nullptr),
+      minlier(box.getMin()), maxlier(box.getMax()), validBox(box.isValid()) {}
 
 Box::Box(const Triangle &triangle)
     : Object(triangle.getOrigin(), triangle.getColor()), obj(nullptr),
@@ -37,15 +46,27 @@ Box::Box(const Triangle &triangle)
 Box::Box(const Box &smallbox1, const Box &smallbox2)
     : Object((smallbox1.getOrigin() + smallbox2.getOrigin()) * 0.5,
              smallbox1.getColor()),
-      obj(nullptr),
-      minlier(
-          Coordinates{std::min({smallbox1.getMin().x, smallbox2.getMin().x}),
-                      std::min({smallbox1.getMin().y, smallbox2.getMin().y}),
-                      std::min({smallbox1.getMin().z, smallbox2.getMin().z})}),
-      maxlier(
-          Coordinates{std::max({smallbox1.getMax().x, smallbox2.getMax().x}),
-                      std::max({smallbox1.getMax().y, smallbox2.getMax().y}),
-                      std::max({smallbox1.getMax().z, smallbox2.getMax().z})}) {
+      obj(nullptr) {
+    if (smallbox1.isValid() && smallbox2.isValid()) {
+        this->minlier =
+            Coordinates{std::min({smallbox1.getMin().x, smallbox2.getMin().x}),
+                        std::min({smallbox1.getMin().y, smallbox2.getMin().y}),
+                        std::min({smallbox1.getMin().z, smallbox2.getMin().z})};
+        this->maxlier =
+            Coordinates{std::max({smallbox1.getMax().x, smallbox2.getMax().x}),
+                        std::max({smallbox1.getMax().y, smallbox2.getMax().y}),
+                        std::max({smallbox1.getMax().z, smallbox2.getMax().z})};
+    } else if (smallbox1.isValid()) {
+        this->minlier = smallbox1.getMin();
+        this->maxlier = smallbox1.getMax();
+    } else if (smallbox2.isValid()) {
+        this->minlier = smallbox2.getMin();
+        this->maxlier = smallbox2.getMax();
+    } else {
+        this->minlier = Coordinates{0, 0, 0};
+        this->maxlier = Coordinates{0, 0, 0};
+        this->validBox = false;
+    }
 }
 Box::~Box() {}
 
@@ -149,4 +170,8 @@ const Object *Box::getObj() const {
         nullptr) // obj not nullptr ... I know I could remove this logic at all;
         return this->obj;
     return nullptr;
+}
+
+bool Box::isValid() const {
+    return this->isValid();
 }
