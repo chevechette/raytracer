@@ -2,5 +2,7 @@
 .vscode
 build/*
 CMakePresets.json
+CMakeUserPresets.json
 vcpkg-configuration.json
 vcpkg_installed
+imgui.ini

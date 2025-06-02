@@ -3,7 +3,7 @@
 // wabout cameras ?
 
 #include <cmath>
-#include "object.h"
+#include "rtobject.h"
 
 // class Object {
 //     protected:
@@ -27,8 +27,9 @@ Object::Object(Coordinates origin, Color col) {
     this->setColor(col);
 }
 
+#include <iostream>
 Object::~Object() {
-    
+    // std::cout<< "Object has been destroyed" <<std::endl;
 }
 
 void    Object::setColor(Color col) {

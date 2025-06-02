@@ -14,3 +14,6 @@ Comments, code quality, and features will be gradually improved over time.
 This repository is intended for personal growth and experimentation, not for showcasing production-ready code.
 
 ---
+
+# Clean pull
+copy the CMakePresets.json and CMakeUserPresets.json to be used
