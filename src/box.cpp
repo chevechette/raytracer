@@ -50,6 +50,11 @@ Box::Box(const Box &smallbox1, const Box &smallbox2)
     : Object((smallbox1.getOrigin() + smallbox2.getOrigin()) * 0.5,
              smallbox1.getColor()),
       obj(nullptr) {
+    std::cout << "ACTUALLY MAKING THE BIG BOX START" << std::endl;
+    std::cout << smallbox1.getOrigin().x << std::endl;
+    std::cout << smallbox2.getOrigin().x << std::endl;
+    std::cout << smallbox1.isValid() << std::endl;
+    std::cout << smallbox2.isValid() << std::endl;
     if (smallbox1.isValid() && smallbox2.isValid()) {
         this->minlier =
             Coordinates{std::min({smallbox1.getMin().x, smallbox2.getMin().x}),
@@ -179,5 +184,5 @@ const std::shared_ptr<const Object> Box::getObj() const {
 }
 
 bool Box::isValid() const {
-    return this->isValid();
+    return this->validBox;
 }

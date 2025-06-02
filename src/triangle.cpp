@@ -1,6 +1,8 @@
 #include "rtobject.h"
 #include "structs.h"
 
+#include <fmt/core.h>
+#include <iostream>
 Triangle::Triangle(Coordinates a, Coordinates b, Coordinates c)
     : Object(Triangle::getCenter(a, b, c), Color{1, 1, 1, 1}), a(a), b(b),
       c(c) {
@@ -12,7 +14,9 @@ Triangle::Triangle(Coordinates a, Coordinates b, Coordinates c, Color col)
     this->setNormal();
 }
 
-Triangle::~Triangle() {}
+Triangle::~Triangle() {
+    std::cout << "Triangle has been destroyed" << std::endl;
+}
 
 void Triangle::setNormal() {
     this->normal = (this->b - this->a) ^ (this->c - this->a);
@@ -64,8 +68,6 @@ Coordinates Triangle::getVertexC() const {
     return this->c;
 }
 
-#include <fmt/core.h>
-#include <iostream>
 
 // maybe this should be using some inheritance from Plane
 Intersection Triangle::intersect(const Ray &ray) const {

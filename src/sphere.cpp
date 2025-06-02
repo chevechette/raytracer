@@ -9,7 +9,8 @@ Sphere::Sphere(Coordinates pos, float radius, Color col)
     : Object(pos, col), radius(radius) {}
 
 Sphere::~Sphere() {
-    std::cout << "Sphere destroyed\n";}
+    std::cout << "Sphere destroyed" << std::endl;
+}
 
 void Sphere::setRadius(float radius) {
     if (abs(radius) >= 0)
@@ -25,7 +26,8 @@ Intersection Sphere::intersect(const Ray &ray) const {
     Intersection ret = Intersection{this};
 
     Coordinates movedOrigin = ray.getOrigin() - this->getOrigin();
-    double a = ray.getVector() * ray.getVector(); // Should  == 1 be as ray vector is normalised
+    double a = ray.getVector() *
+               ray.getVector(); // Should  == 1 be as ray vector is normalised
     double b = (movedOrigin * ray.getVector()) * 2.0;
     double c = movedOrigin * movedOrigin - this->radius * this->radius;
 

@@ -17,8 +17,8 @@ class ObjectManager {
     std::vector<std::shared_ptr<Object>> objs; // shared pointer ? optional ?
     std::vector<std::shared_ptr<Box>> boxes;
     std::vector<std::shared_ptr<Object>> infinityObjs;
-
     std::vector<std::shared_ptr<BHV>> nodes;
+    std::shared_ptr<BHV> tree = nullptr;
 
   private:
     ObjectManager(const ObjectManager &) = delete;
@@ -47,9 +47,9 @@ class ObjectManager {
     void buildNodes();
     void buildTree();
 
-
-std::shared_ptr<BHV> recursiveTreeBuid(
-    std::vector<std::shared_ptr<BHV>> &currentNodes);
+    std::shared_ptr<BHV> recursiveTreeBuid(
+        std::vector<std::shared_ptr<BHV>> &currentNodes,
+        std::vector<std::shared_ptr<BHV>> &savedNodes);
 
     void createSphere(Coordinates coord, float radius, Color col);
     void createTriangle(Coordinates a, Coordinates b, Coordinates c, Color col);
@@ -60,6 +60,7 @@ std::shared_ptr<BHV> recursiveTreeBuid(
     // TODO: update object tree
 
     Intersection intersectAllObjects(const Ray &ray);
+    Intersection treeWalk(const Ray &ray);
 
     // TODO: override some fmt for printability
 };

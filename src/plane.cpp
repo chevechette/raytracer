@@ -2,6 +2,7 @@
 #include "structs.h"
 
 #include <cmath>
+#include <iostream>
 
 Plane::Plane(Coordinates origin, Coordinates normal)
     : Object(origin, Color{1, 1, 1, 1}), normalVec{normal.normalize()},
@@ -28,7 +29,9 @@ Plane::Plane(Coordinates origin, Coordinates normal, Color col, float height,
     this->setVectors();
 }
 
-Plane::~Plane() {}
+Plane::~Plane() {
+    std::cout << "Plane destroyed" << std::endl;
+}
 
 void Plane::setNormal(Coordinates norm) {
     this->normalVec = norm;

@@ -1,3 +1,4 @@
+#include "fmt/core.h"
 #include "managers.h"
 #include "rtobject.h"
 #include <iostream>
@@ -63,31 +64,79 @@ void ObjectManager::buildNodes() {
 }
 
 std::shared_ptr<BHV> ObjectManager::recursiveTreeBuid(
-    std::vector<std::shared_ptr<BHV>> &currentNodes) {
-    if (currentNodes.size() == 0)
-        return nullptr;
-    if (currentNodes.size() <= 4) {
-        return std::make_shared<BHV>(
-            currentNodes[0],
-            (currentNodes.size() > 1) ? currentNodes[1] : nullptr,
-            (currentNodes.size() > 2) ? currentNodes[2] : nullptr,
-            (currentNodes.size() > 3) ? currentNodes[3] : nullptr);
+    std::vector<std::shared_ptr<BHV>> &currentNodes,
+    std::vector<std::shared_ptr<BHV>> &savedNodes) {
+    size_t i = 0;
+    size_t currentNodesSize = currentNodes.size();
+
+    fmt::print(stdout, "Amount of nodes in main list {} secondary {}\n",
+               currentNodes.size(), savedNodes.size());
+
+    for (i = 0; i + 3 < currentNodesSize; i += 4) {
+        fmt::print(
+            stdout,
+            "I COUNTER {} Amount of nodes in main list {} secondary {}\n", i,
+            currentNodes.size(), savedNodes.size());
+        auto node =
+            std::make_shared<BHV>(currentNodes[i], currentNodes[i + 1],
+                                  currentNodes[i + 2], currentNodes[i + 3]);
+        savedNodes.push_back(node);
+        fmt::print(
+            stdout,
+            "I COUNTER {} Amount of nodes in main list {} secondary {}\n", i,
+            currentNodes.size(), savedNodes.size());
     }
-    return nullptr;
-    // auto node1 =
-    //     std::make_shared<BHV>(currentNodes.pop_back(), currentNodes.pop_back(),
-    //                           currentNodes.pop_back(), currentNodes.pop_back());
-    // auto node2 = recursiveTreeBuid(currentNodes);
-    // auto node3 = recursiveTreeBuid(currentNodes);
-    // auto node4 = recursiveTreeBuid(currentNodes);
-    // if (node2 == nullptr)
-    //     return node1;
-    // auto bigNode = std::make_shared<BHV>(node1, node2, node3, node4);
-    // return bigNode;
+    while (i-- > 0) {
+        currentNodes.pop_back();
+
+        fmt::print(stdout, "Pop pop\n");
+    }
+    currentNodesSize = currentNodes.size();
+    std::cout << "This is the node amount " << currentNodesSize << std::endl;
+    if (currentNodesSize > 0 && currentNodesSize <= 4) {
+        std::cout << "Getting scraps This is the node amount "
+                  << currentNodesSize << std::endl;
+        auto node = std::make_shared<BHV>(
+            currentNodes[currentNodesSize],
+            (currentNodes.size() > 1) ? currentNodes[currentNodesSize - 1]
+                                      : nullptr,
+            (currentNodes.size() > 2) ? currentNodes[currentNodesSize - 2]
+                                      : nullptr,
+            (currentNodes.size() > 3) ? currentNodes[currentNodesSize - 3]
+                                      : nullptr);
+        savedNodes.push_back(node);
+        for (int i = 0; i < currentNodesSize; i++) {
+            currentNodes.pop_back();
+        }
+    }
+    currentNodesSize = currentNodes.size();
+    std::cout << "This is the node amount " << currentNodesSize << std::endl;
+
+    if (currentNodesSize <= 0) { // should always be true
+        if (savedNodes.size() <= 0)
+            return nullptr;
+        if (savedNodes.size() == 1)
+            return savedNodes[0];
+        return recursiveTreeBuid(savedNodes, currentNodes);
+    }
+
+    return recursiveTreeBuid(currentNodes,
+                             savedNodes); // should never get there
 }
 
 void ObjectManager::buildTree() {
-    this->buildNodes();
+    // this->buildNodes();
+    auto workingNodes = this->nodes;
+    std::vector<std::shared_ptr<BHV>> emptyTree;
+
+    fmt::print(stdout,
+               "Amount of nodes in main list {} secondary {} and empty {}\n",
+               this->nodes.size(), workingNodes.size(), emptyTree.size());
+    auto mainNode = recursiveTreeBuid(workingNodes, emptyTree);
+    fmt::print(stdout,
+               "Amount of nodes in main list {} secondary {} and empty {}\n",
+               this->nodes.size(), workingNodes.size(), emptyTree.size());
+    this->tree = mainNode;
 }
 
 void ObjectManager::createSphere(Coordinates coord, float radius, Color col) {
@@ -113,6 +162,24 @@ void ObjectManager::createPlane(Coordinates o, Coordinates n, Color col) {
 
     this->addInfinityObject(ptr);
     this->addObject(ptr);
+}
+
+Intersection ObjectManager::treeWalk(const Ray &ray) {
+    Intersection closest{};
+
+    // This is the basic logic
+    // TODO: should be updated with a spatial tree later
+    for (auto &objPtr : this->objs) {
+        auto intersect = objPtr->intersect(ray);
+        if (intersect && intersect < closest) {
+            closest = intersect;
+        }
+    }
+    // Throw exception if no match ?
+    // TODO: implement intersection with and ifthen logic
+    return closest;
+    // if intesect exist -> should calculate the next ray or recover this as a
+    // color
 }
 
 Intersection ObjectManager::intersectAllObjects(const Ray &ray) {
