@@ -7,17 +7,6 @@
 #include "ray.h"
 #include "structs.h"
 
-#define CAMERA_DEFAULT_X 0
-#define CAMERA_DEFAULT_Y 0
-#define CAMERA_DEFAULT_Z -100
-
-#define CAMERA_DIR_DEFAULT_X 0
-#define CAMERA_DIR_DEFAULT_Y 0
-#define CAMERA_DIR_DEFAULT_Z 1
-
-
-#define FIELD_DEPTH 20.0;
-#define VISION_ANGLE 80.0; // should this be in randiant ?
 
 // There is no actuall camera rotation, up is always up
 // How do fisheye work anyway ? I remember doing that
@@ -27,7 +16,6 @@ class Camera {
     Coordinates position;
     Coordinates direction;
     float fov = FIELD_DEPTH;
-    Coordinates projectedPos;
     // not accurate,
     // TODO: update to a lenlike
     // calculation later
@@ -36,7 +24,8 @@ class Camera {
     // TODO add POV distance
   public:
     Camera();
-    Camera(Coordinates pos, Coordinates dir);
+
+    Camera(const Coordinates &pos, const Coordinates &dir);
     ~Camera();
 
     void setPosition(Coordinates pos);
@@ -46,7 +35,6 @@ class Camera {
     Coordinates getPosition() const;
     Coordinates getDirection() const;
 
-    
     Coordinates &getPositionRef();
     Coordinates &getDirectionRef();
 

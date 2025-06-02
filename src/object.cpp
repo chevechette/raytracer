@@ -29,8 +29,7 @@ Object::Object(Coordinates origin, Color col) {
 
 #include <iostream>
 Object::~Object() {
-    std::cout<< "Object has been destroyed" <<std::endl;
-    
+    // std::cout<< "Object has been destroyed" <<std::endl;
 }
 
 void    Object::setColor(Color col) {

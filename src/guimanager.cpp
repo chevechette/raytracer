@@ -25,10 +25,11 @@
 #include <exception>
 #include <vector>
 
-// TOCO : Clean up the includes, this is a mess
-
-// TODO : Relocate what can be from render to GUIManager
-// TODO : Setup a list of cameras with appropriate GUI
+// TODO : One render /
+// TODO : Clean up the includes, this is a mess
+// TODO : Compensate for fisheye
+// TODO : Fix camera selection
+// TODO : Update Camera settings gui
 // TODO : For each camera, create the parameters
 // TODO : Go update the camera functions
 // TODO : (static) add a few objects at a specific distance
@@ -44,16 +45,23 @@
 #include "managers.h"
 #include "render.h"
 
-// void renderBackground();
-// void renderRaytracer();
-// void renderGUI();
-
 GUIManager::GUIManager()
     : window(nullptr),
-      background(GRAPHIC_PRESET_GUI_WIDTH, GRAPHIC_PRESET_GUI_HEIGHT),
-      cams(Camera(), Camera(), Camera()) {
-    background.renderBackgroundSin();
-}
+      bckgrnds(Render(GRAPHIC_PRESET_GUI_WIDTH, GRAPHIC_PRESET_GUI_HEIGHT),
+               Render(GRAPHIC_PRESET_GUI_WIDTH, GRAPHIC_PRESET_GUI_HEIGHT),
+               Render(GRAPHIC_PRESET_GUI_WIDTH, GRAPHIC_PRESET_GUI_HEIGHT)),
+      cams(Camera(Coordinates{CAMERA_DEFAULT_X, CAMERA_DEFAULT_Y,
+                              CAMERA_DEFAULT_Z},
+                  Coordinates{CAMERA_DIR_DEFAULT_X, CAMERA_DIR_DEFAULT_Y,
+                              CAMERA_DIR_DEFAULT_Z}),
+           Camera(Coordinates{CAMERA_DEFAULT_1_X, CAMERA_DEFAULT_1_Y,
+                              CAMERA_DEFAULT_1_Z},
+                  Coordinates{CAMERA_DIR_DEFAULT_1_X, CAMERA_DIR_DEFAULT_1_Y,
+                              CAMERA_DIR_DEFAULT_1_Z}),
+           Camera(Coordinates{CAMERA_DEFAULT_2_X, CAMERA_DEFAULT_2_Y,
+                              CAMERA_DEFAULT_2_Z},
+                  Coordinates{CAMERA_DIR_DEFAULT_2_X, CAMERA_DIR_DEFAULT_2_Y,
+                              CAMERA_DIR_DEFAULT_2_Z})) {}
 
 GUIManager::~GUIManager() {
     if (this->loaded) {
@@ -92,10 +100,14 @@ void GUIManager::guiKeyCallback(GLFWwindow *window, int key, int scancode,
 
 void GUIManager::guiResizeCallback(GLFWwindow *window, int width, int height) {
     GUIManager &gui = GUIManager::getInstance();
+    for (int i = 0; i < 3; i++) {
+        Render &background = gui.bckgrnds[i];
+        Camera &cam = gui.cams[i];
 
-    gui.background.adjustRenderSize(
-        width, height); // should I keep it if it is bigger ?
-    gui.background.renderBackgroundSin();
+        cam.setScreenSize(width, height);
+        background.adjustRenderSize(
+            width, height); // should I keep it if it is bigger ?
+    }
 }
 
 void GUIManager::guiVarSetUp() {
@@ -161,13 +173,15 @@ void GUIManager::load() {
                                  true); // true ports all glfw triggers to ImGUI
     ImGui_ImplOpenGL3_Init();           // Can specify some version here
 
-    // // Try to call some OpenGL functions, and print some more version info.
-    // printf( "Renderer: %s.\n", glGetString( GL_RENDERER ) );
-    // printf( "OpenGL version supported %s.\n", glGetString( GL_VERSION ) );
+    // // Try to call some OpenGL functions, and print some more version
+    // info. printf( "Renderer: %s.\n", glGetString( GL_RENDERER ) );
+    // printf( "OpenGL version supported %s.\n", glGetString( GL_VERSION )
+    // );
 
-    // refresh and swapping setting up, actually should the swap really be that
-    // much updated when we are working with a ray tracer ?
-    //  TODO : for readability, should move event stuff into their own function
+    // refresh and swapping setting up, actually should the swap really be
+    // that much updated when we are working with a ray tracer ?
+    //  TODO : for readability, should move event stuff into their own
+    //  function
     glfwSwapInterval(1);
     glfwSetKeyCallback(this->window, GUIManager::guiKeyCallback);
     glfwSetWindowSizeCallback(this->window, GUIManager::guiResizeCallback);
@@ -178,8 +192,8 @@ void GUIManager::load() {
     // to check if Dear ImGui wants to obstruct mouse/keyboard
     // inputs from underlying apps.
     // e.g. when hovering a window WantCaptureMouse will be set to true,
-    // one possible strategy would be to stop passing mouse events to your main
-    // application.
+    // one possible strategy would be to stop passing mouse events to your
+    // main application.
 }
 // called by the unload
 void GUIManager::unloadWindow() {
@@ -226,35 +240,36 @@ void GUIManager::mainloop() {
     }
 }
 
-#include <iostream>
 // TODO : Complete rework
 void GUIManager::renderFromCamera(int cameraNo) {
     Camera &camera = this->cams[cameraNo]; // Does this need to be init here ?
 
-    const int imgHeight = this->background.getHeight();
-    const int imgWidth = this->background.getWidth();
+    Render &background = this->bckgrnds[cameraNo];
+    const int imgHeight = background.getHeight();
+    const int imgWidth = background.getWidth();
 
-    ObjectManager   &objmanager = ObjectManager::getInstance();
-    //     Render(main_viewport->Size.x,
-    //            main_viewport->Size.y);
+    ObjectManager &objmanager = ObjectManager::getInstance();
     for (int i = 0; i < imgWidth; i++) {
         for (int j = 0; j < imgHeight; j++) {
-            // try {
-            Ray pixRay = camera.createRay(i, j);
-            auto intersection = objmanager.intersectAllObjects(pixRay);
-            if (intersection) {
-                std::cout<< "SOMETHONG" << std::endl;
-                this->background[i, j] = Color::fromHex(0xC34FFF);
-            } else {
-                this->background[i, j] = Color::fromHex(0x40102F);
-            }
-            // } catch (std::exception &) {
+            try {
+                Ray pixRay = camera.createRay(i, j);
+                Intersection intersect = objmanager.treeWalk(pixRay);
+                if (intersect) {
+                    // Fix the random color assignement
+                    // fmt::print(stdout, "Chosen one {}\n",intersect.dist);
 
-            //     std::cout << "failwith " << i << j << std::endl;
-            // }
+                    background[i, j] = intersect.obj->getColor();
+                } else {
+                    background[i, j] = Color::fromHex(0x40102F);
+                }
+                // std::cout << "STAP" << std::endl;
+            } catch (std::exception &) {
+
+                std::cout << "failwith " << i << j
+                          << std::endl; // TODO: Log error properly
+            }
         }
     }
-    // const ImGuiViewport*    main_viewport = ImGui::GetMainViewport();
 }
 
 // To port within the class
@@ -267,8 +282,11 @@ void GUIManager::renderBackground() {
 
     // Render bckgrnd =
     //     Render(main_viewport->Size.x,
-    //            main_viewport->Size.y); // TODO : make this into property
+    //            main_viewport->Size.y); // TODO : make this into
+    //            property
     // bckgrnd.renderBackgroundSin();
+
+    Render &background = this->bckgrnds[this->selectedCamera];
 
     GLuint g_TextureID = 0;
     glGenTextures(1, &g_TextureID);
@@ -280,9 +298,9 @@ void GUIManager::renderBackground() {
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
 
-    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, this->background.getWidth(),
-                 this->background.getHeight(), 0, GL_RGBA, GL_UNSIGNED_BYTE,
-                 this->background.buffer.data());
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, background.getWidth(),
+                 background.getHeight(), 0, GL_RGBA, GL_UNSIGNED_BYTE,
+                 background.buffer.data());
 
     // ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(0, 0));
     // ImGui::PushStyleVar(ImGuiStyleVar_WindowBorderSize, 0.0f);
@@ -316,14 +334,13 @@ void GUIManager::renderGUI() {
 
     if (ImGui::Begin("Render Menu")) {
         // TODO: CAMERA GUI
-        static int currentCamera = 0;
 
         const char *cameras[] = {"Camera 1", "Camera 2", "Secret Cam 3"};
-        ImGui::Combo("selected", &currentCamera, cameras,
+        ImGui::Combo("selected", &selectedCamera, cameras,
                      IM_ARRAYSIZE(cameras)); // if var 1 set to 0, sHIT
 
         // TODO: check the decapsulation and find alternatives
-        Camera &selectedCam = this->cams[currentCamera];
+        Camera &selectedCam = this->cams[selectedCamera];
         Coordinates &pos = selectedCam.getPositionRef();
         Coordinates &dir = selectedCam.getDirectionRef();
         ImGui::DragFloat("X position", &pos.x, 0.1f, 0.0f, 0.0f, "%.06f");
@@ -333,6 +350,7 @@ void GUIManager::renderGUI() {
         ImGui::DragFloat("X angle", &dir.x, 0.01f, 0.0f, 0.0f, "%.06f");
         ImGui::DragFloat("Y angle", &dir.y, 0.01f, 0.0f, 0.0f, "%.06f");
         ImGui::DragFloat("Z angle", &dir.z, 0.01f, 0.0f, 0.0f, "%.06f");
+        dir.normalizeSelf();
 
         // Select Camera
         // Cordinates x, y. z
@@ -342,7 +360,8 @@ void GUIManager::renderGUI() {
 
         //     ImGui::PushItemWidth(ImGui::GetFontSize() * -12);
         if (ImGui::Button("Render")) {
-            this->renderFromCamera(currentCamera);
+            // this should be upgraded to complicated render later.
+            this->renderFromCamera(selectedCamera);
             // triggers calculation
         }
         if (ImGui::CollapsingHeader("Background settings")) {
@@ -354,5 +373,7 @@ void GUIManager::renderGUI() {
 
 void GUIManager::renderRaytracer() {
     GUIManager &guiinstance = GUIManager::getInstance();
-    guiinstance.renderFromCamera(0);
+    // TODO: set render update omly linked to any interaction.
+    // TODO: Render auto update in a toggable feature.
+    guiinstance.renderFromCamera(selectedCamera);
 }

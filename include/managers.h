@@ -2,7 +2,9 @@
 #include <memory> // shared_ptr usage
 #include <vector>
 
+#include "bhv.h"
 #include "camera.h"
+#include "forward_declaration.h"
 #include "opengl_include.h"
 #include "ray.h"
 #include "render.h"
@@ -13,6 +15,10 @@ class ObjectManager {
   public:                                      // TMP PUBLIC VARIABLES
                                                // would be the full libraries
     std::vector<std::shared_ptr<Object>> objs; // shared pointer ? optional ?
+    std::vector<std::shared_ptr<Box>> boxes;
+    std::vector<std::shared_ptr<Object>> infinityObjs;
+    std::vector<std::shared_ptr<BHV>> nodes;
+    std::shared_ptr<BHV> tree = nullptr;
 
   private:
     ObjectManager(const ObjectManager &) = delete;
@@ -26,34 +32,51 @@ class ObjectManager {
     static ObjectManager &getInstance();
 
     static void release();
-    // remove(); // pop
-    // binary tree structure... later
 
     // cameras map for edition
     void addObject(std::shared_ptr<Object> obj);
+    // called for planes and such
+    void addInfinityObject(std::shared_ptr<Object> obj);
+    // binary tree structure... later
+    void addBox(std::shared_ptr<Box> box);
 
+    // remove(); // pop
     void removeObjects();
+    void removeNodes();
+
+    void buildNodes();
+    void buildTree();
+
+    std::shared_ptr<BHV> recursiveTreeBuid(
+        std::vector<std::shared_ptr<BHV>> &currentNodes,
+        std::vector<std::shared_ptr<BHV>> &savedNodes);
 
     void createSphere(Coordinates coord, float radius, Color col);
-    // TODO: add other objs
+    void createTriangle(Coordinates a, Coordinates b, Coordinates c, Color col);
+
+    void createPlane(Coordinates o, Coordinates n, Color col);
+    // TODO: add plane
+    // TODO: add a group of objects
+    // TODO: update object tree
 
     Intersection intersectAllObjects(const Ray &ray);
+    Intersection treeWalk(const Ray &ray);
 
     // TODO: override some fmt for printability
 };
-
 
 // TODO : throw errors EVERYWHERE
 class GUIManager {
   private:
     GLFWwindow *window;
-    Render background;
+    Render bckgrnds[3];
     bool loaded = false;
-    // private:
+    int selectedCamera = 0; // No get/set as it is only interacted by GUI
+                            // private:
     //   static GUIManager *instance; // TODO switch for shared ptr for thread
     //   safety
 
-  public:       // TODO: TMP SHIT
+  public:           // TODO: TMP SHIT
     Camera cams[3]; // TODO: Make it into an array of 3 cameras for switching
 
   private:

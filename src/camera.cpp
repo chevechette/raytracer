@@ -3,18 +3,23 @@
 // adjustable cameras according to gui
 #include "camera.h"
 
+#include "fmt/core.h"
+#include <iostream>
+
+#include <cmath> // is boost faster ? I heard not
+// TODO : update the create pixel for faning out the screen vectors
 Camera::Camera()
     : position(
           Coordinates{CAMERA_DEFAULT_X, CAMERA_DEFAULT_Y, CAMERA_DEFAULT_Z}),
       direction(Coordinates{CAMERA_DIR_DEFAULT_X, CAMERA_DIR_DEFAULT_Y,
-                            CAMERA_DIR_DEFAULT_Z}) {
-          this->projectedPos =
-              this->position + (this->direction.normalize() * (-fov));
-}
+                            CAMERA_DIR_DEFAULT_Z}) {}
 
-Camera::Camera(Coordinates pos, Coordinates dir)
-    : position{pos}, direction{dir.normalize()},
-      projectedPos{pos + (dir.normalize() * (-fov))} {}
+Camera::Camera(const Coordinates &pos, const Coordinates &dir)
+    : position{pos}, direction{dir.normalize()} {
+
+    fmt::print("Camera Ray direction initialized at {} {} {}\n", direction.x,
+               direction.y, direction.z);
+}
 
 Camera::~Camera() {}
 
@@ -24,7 +29,7 @@ void Camera::setPosition(Coordinates pos) {
 
 void Camera::setDirection(Coordinates dir) {
     this->direction = dir;
-    this->direction.normalize();
+    this->direction.normalizeSelf();
 }
 
 void Camera::setScreenSize(std::size_t width, std::size_t height) {
@@ -51,18 +56,46 @@ Coordinates &Camera::getDirectionRef() {
 Ray Camera::createRay(std::size_t x, std::size_t y) {
     if (x < 0 || y < 0 || x >= this->width || y >= this->height)
         throw std::out_of_range(RT_MESSAGE_ERR_PIXEL_OOB);
+    // this->direction.normalizeSelf();
 
-    Coordinates camRefPixel =
-        Coordinates{(x - this->width / 2.0f), (y - this->height / 2.0f), 0};
-    Coordinates upVec = Coordinates{0, 1, 0};
-    Coordinates horVec = upVec ^ this->direction;
-    horVec.normalize();
-    upVec = horVec ^ this->direction;
-    upVec.normalize();
+    Coordinates p;
 
-    Coordinates pixel =
-        (horVec * camRefPixel.x) + (upVec * camRefPixel.y) + this->position;
-    return Ray(pixel, this->direction);
+    p.x = 2.0f * (x + 0.5) / this->width - 1.0f;
+    p.y = 1.0f - 2.0f * (y + 0.5) / this->height;
+    p.z = 1;
+
+    double aspect_ratio = static_cast<double>(this->width) / this->height;
+    double fov_radians = (45 * M_PI / 180.0); // TODO: dehardcode the fov
+    double fov_scale = std::tan(fov_radians / 2.0);
+    double inv_fov = 1.0 / fov_scale;
+
+    p.x *= aspect_ratio * fov_scale;
+    p.y *= fov_scale;
+    // p.z *= 1.0f;
+
+    Coordinates pixelPosition = p;
+
+    Coordinates a = Coordinates{0, 0, 1} ^ this->direction;
+    // angle of rotation
+
+    // if (a.abs() > 0.0001) {
+    a.normalizeSelf();
+
+    double theta = std::acos(Coordinates{0, 0, 1} * this->direction);
+    pixelPosition = p * std::cos(theta) + (a ^ p) * sin(theta) +
+                    a * (a * p) * (1 - std::cos(theta));
+
+    // }
+    Coordinates rayPosition = this->position;
+    Coordinates rayDirection = pixelPosition;
+    rayDirection.normalizeSelf();
+    // if (((x == 0 || x == width - 1) && (y == 0 || y == height - 1)) ||
+    //     (x == width / 2 && y == height / 2)) {
+    //     fmt::print("Ray direction at pixel {} {}: {} {} {}\n", x, y,
+    //                rayDirection.x, rayDirection.y, rayDirection.z);
+    // }
+    Ray ray = Ray(rayPosition, rayDirection);
+    return ray;
 }
 
 // default light is a sunlike thing

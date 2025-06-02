@@ -2,6 +2,7 @@
 
 #include <cmath>
 #include <cstdlib>
+#include <iostream>
 
 // TODO: Default constructors ?
 #include "forward_declaration.h"
@@ -15,11 +16,17 @@ struct Color {
     float a = 1;
 
     // TODO: update the random to something safer rand has issue and has been
-    // updated in c++11 I initialised the seed in main.cpp
+    // updated in c++11
+    // I initialised the seed in main.cpp drom the load of the GUIManager
     inline static Color random() {
-        return Color{static_cast<float>(std::rand() % 0x100) / 0xFFf,
-                     static_cast<float>(std::rand() % 0x100) / 0xFFf,
-                     static_cast<float>(std::rand() % 0x100) / 0xFFf};
+        float r, g, b;
+
+        r = (std::rand() % 0x100);
+        g = (std::rand() % 0x100);
+        b = (std::rand() % 0x100);
+
+        // this is just 255.0f in a very dramatic way
+        return Color{r / 0xFF.0p0f, g / 0xFF.0p0f, b / 0xFF.0p0f};
     }
 
     inline static Color fromHexAlpha(unsigned int col) {
@@ -41,7 +48,7 @@ struct Coordinates {
     float z;
 
     inline Coordinates operator+(const Coordinates &v) const {
-        return Coordinates{this->x + v.x, this->y + v.y, this->z * v.z};
+        return Coordinates{this->x + v.x, this->y + v.y, this->z + v.z};
     }
 
     inline Coordinates operator-() const {
@@ -74,16 +81,59 @@ struct Coordinates {
                            this->x * v.y - this->y * v.x};
     }
 
-    // should this not modify ? most operation always need permanent
+    inline bool operator>(const float check) const {
+        return (this->x > check && this->y > check && this->z > check);
+    }
+
+    inline bool operator<(const float check) const {
+        return (this->x < check && this->y < check && this->z < check);
+    }
+
+    inline bool operator==(const float check) const {
+        return (this->x == check && this->y == check && this->z == check);
+    }
+
+    inline bool operator>=(const float check) const {
+        return (*this > check && *this == check);
+    }
+
+    inline bool operator<=(const float check) const {
+        return (*this < check && *this == check);
+    }
+
+    // #include <cmath>
     // normalization
-    inline Coordinates &normalize() {
-        auto length =
+
+    inline double abs() {
+        return sqrt(this->x * this->x + this->y * this->y + this->z * this->z);
+    }
+
+    inline Coordinates &normalizeSelf() {
+        double length =
             sqrt(this->x * this->x + this->y * this->y + this->z * this->z);
+        // std::cout << length << std::endl;
+        if (length == 0)
+            return *this;
         this->x = this->x / length;
         this->y = this->y / length;
         this->z = this->z / length;
-        // how to normalize a vector?
+
         return *this;
+    }
+
+    inline Coordinates normalize() const {
+        double length = sqrt((this->x * this->x) + (this->y * this->y) +
+                             (this->z * this->z));
+
+        if (length == 0)
+            return Coordinates{0, 0, 0};
+
+        Coordinates ret;
+
+        ret.x = this->x / length;
+        ret.y = this->y / length;
+        ret.z = this->z / length;
+        return ret;
     }
 };
 
@@ -93,6 +143,12 @@ struct Intersection {
     const Object *obj = nullptr;
     double dist = -1;
     Coordinates point = Coordinates{0, 0, 0};
+
+    // Intersection();
+    // Intersection(const Object *obj, double dist, Coordinates p);
+    // // Intersection(const Intersection& other) = default;
+    // Intersection(const Intersection& i);
+    Intersection &operator=(const Intersection &other);
 
     explicit operator bool() const;
 
