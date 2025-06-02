@@ -253,7 +253,7 @@ void GUIManager::renderFromCamera(int cameraNo) {
         for (int j = 0; j < imgHeight; j++) {
             try {
                 Ray pixRay = camera.createRay(i, j);
-                Intersection intersect = objmanager.intersectAllObjects(pixRay);
+                Intersection intersect = objmanager.treeWalk(pixRay);
                 if (intersect) {
                     // Fix the random color assignement
                     // fmt::print(stdout, "Chosen one {}\n",intersect.dist);

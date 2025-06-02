@@ -165,11 +165,19 @@ void ObjectManager::createPlane(Coordinates o, Coordinates n, Color col) {
 }
 
 Intersection ObjectManager::treeWalk(const Ray &ray) {
+    auto node = this->tree;
+
     Intersection closest{};
+    if (node != nullptr) {
+        // std::cout << "TREE WALK START" << std::endl;
+        closest = node->intersectNodeBox(ray);
+        // std::cout << std::endl;
+    }
+
 
     // This is the basic logic
     // TODO: should be updated with a spatial tree later
-    for (auto &objPtr : this->objs) {
+    for (auto &objPtr : this->infinityObjs) {
         auto intersect = objPtr->intersect(ray);
         if (intersect && intersect < closest) {
             closest = intersect;

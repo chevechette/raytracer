@@ -168,8 +168,11 @@ Intersection Box::intersectInnerObject(const Ray &ray) const {
 }
 
 Intersection Box::intersect(const Ray &ray) const {
-    if (this->obj)
+    if (this->obj) {
+        // std::cout << "Box intersecting with inner Obj" << std::endl;
         return this->intersectInnerObject(ray);
+    }
+    // std::cout << "Box intersecting" << std::endl;
     return this->intersectBox(ray);
 }
 bool Box::hasObj() const {
