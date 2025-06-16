@@ -35,7 +35,6 @@ Ray::Ray(Coordinates loc, Coordinates vec, float hexcolor) {
     *this = Ray(loc, vec, col);
 }
    
-#include <fmt/core.h> 
 Ray::Ray(Coordinates loc, Coordinates vec, Color col) {
     this->setColor(col);
     this->setOrigin(loc);

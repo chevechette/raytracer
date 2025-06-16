@@ -1,7 +1,7 @@
 #include "rtobject.h"
 #include <algorithm>
-#include <iostream>
 #include <memory>
+#include "logger.h"
 
 Box::Box()
     : Object(Coordinates{0, 0, 0}, Color::random()),
@@ -24,8 +24,6 @@ Box::Box(std::shared_ptr<Sphere> sphere)
       maxlier(sphere->getOrigin() + Coordinates{sphere->getRadius(),
                                                 sphere->getRadius(),
                                                 sphere->getRadius()}) {
-    std::cout << "Box created for sphere at " << sphere->getOrigin().x
-              << sphere->getOrigin().y << sphere->getOrigin().z << std::endl;
 }
 
 Box::Box(std::shared_ptr<Triangle> triangle)
@@ -50,11 +48,11 @@ Box::Box(const Box &smallbox1, const Box &smallbox2)
     : Object((smallbox1.getOrigin() + smallbox2.getOrigin()) * 0.5,
              smallbox1.getColor()),
       obj(nullptr) {
-    std::cout << "ACTUALLY MAKING THE BIG BOX START" << std::endl;
-    std::cout << smallbox1.getOrigin().x << std::endl;
-    std::cout << smallbox2.getOrigin().x << std::endl;
-    std::cout << smallbox1.isValid() << std::endl;
-    std::cout << smallbox2.isValid() << std::endl;
+    // std::cout << "ACTUALLY MAKING THE BIG BOX START" << std::endl;
+    // std::cout << smallbox1.getOrigin().x << std::endl;
+    // std::cout << smallbox2.getOrigin().x << std::endl;
+    // std::cout << smallbox1.isValid() << std::endl;
+    // std::cout << smallbox2.isValid() << std::endl;
     if (smallbox1.isValid() && smallbox2.isValid()) {
         this->minlier =
             Coordinates{std::min({smallbox1.getMin().x, smallbox2.getMin().x}),
@@ -78,7 +76,7 @@ Box::Box(const Box &smallbox1, const Box &smallbox2)
 }
 
 Box::~Box() {
-    std::cout << "Box has been destroyed" << std::endl;
+    spdlog::info( "Box has been destroyed");
 }
 
 Coordinates Box::getMin() const {

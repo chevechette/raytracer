@@ -2,7 +2,7 @@
 #include "structs.h"
 
 #include <cmath>
-#include <iostream>
+#include "logger.h"
 
 Plane::Plane(Coordinates origin, Coordinates normal)
     : Object(origin, Color{1, 1, 1, 1}), normalVec{normal.normalize()},
@@ -30,7 +30,7 @@ Plane::Plane(Coordinates origin, Coordinates normal, Color col, float height,
 }
 
 Plane::~Plane() {
-    std::cout << "Plane destroyed" << std::endl;
+    spdlog::info("Plane destroyed");
 }
 
 void Plane::setNormal(Coordinates norm) {

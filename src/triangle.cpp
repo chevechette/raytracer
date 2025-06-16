@@ -1,8 +1,7 @@
 #include "rtobject.h"
 #include "structs.h"
+#include "logger.h"
 
-#include <fmt/core.h>
-#include <iostream>
 Triangle::Triangle(Coordinates a, Coordinates b, Coordinates c)
     : Object(Triangle::getCenter(a, b, c), Color{1, 1, 1, 1}), a(a), b(b),
       c(c) {
@@ -15,7 +14,7 @@ Triangle::Triangle(Coordinates a, Coordinates b, Coordinates c, Color col)
 }
 
 Triangle::~Triangle() {
-    std::cout << "Triangle has been destroyed" << std::endl;
+    spdlog::info("Triangle has been destroyed");
 }
 
 void Triangle::setNormal() {

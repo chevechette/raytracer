@@ -1,7 +1,8 @@
 #include "boost/math/tools/roots.hpp"
 #include "rtobject.h"
 #include <cmath>
-#include <fmt/core.h>
+#include "logger.h"
+
 Sphere::Sphere(Coordinates pos, float radius)
     : Object(pos, Color::random()), radius(radius) {}
 
@@ -9,7 +10,7 @@ Sphere::Sphere(Coordinates pos, float radius, Color col)
     : Object(pos, col), radius(radius) {}
 
 Sphere::~Sphere() {
-    std::cout << "Sphere destroyed" << std::endl;
+    spdlog::info("Sphere destroyed");
 }
 
 void Sphere::setRadius(float radius) {

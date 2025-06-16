@@ -1,28 +1,6 @@
 // IDK if struct or class tbh
 #include "rtobject.h"
 
-// struct Intersection {
-//     Object      *obj = nullptr;
-
-//     explicit    operator bool() const;
-
-// };
-
-// TODO: check booleans
-// Intersection::Intersection()
-//     : obj(nullptr), dist(-1), point(Coordinates{1, 1, 1}) {}
-
-// Intersection::Intersection(const Object *obj, double dist, Coordinates p)
-//     : obj(obj), dist(dist), point(p) {}
-
-// Intersection::Intersection(const Intersection &other)
-//     : obj(other.obj), dist(other.dist), point(other.point) {
-//     std::cout << "This is annoying" << std::endl;
-
-//     fmt::print(stdout, "CHECK ?? : {} pointer ? {} SO this \n", this->dist,
-//                this->obj != nullptr);
-// }
-
 Intersection::operator bool() const {
     // fmt::print(stdout, "CHECK in the bool : {} pointer ? {} SO this {} \n",
             //    this->dist, this->obj != nullptr,

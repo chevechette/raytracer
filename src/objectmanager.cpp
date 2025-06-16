@@ -1,7 +1,8 @@
-#include "fmt/core.h"
+// #include "fmt/core.h"
 #include "managers.h"
 #include "rtobject.h"
-#include <iostream>
+// #include <iostream>
+#include "logger.h"
 
 // TODO: make it threadsafe
 ObjectManager::ObjectManager() {}
@@ -42,19 +43,18 @@ void ObjectManager::addBox(std::shared_ptr<Box> box) {
 #include <iostream>
 void ObjectManager::removeObjects() {
 
-    std::cout << "Cleaning up boxes..." << std::endl;
+    spdlog::info("Cleaning up boxes...");
     this->boxes.clear();
-    std::cout << "Cleaning up objects..." << std::endl;
+    spdlog::info("Cleaning up objects...");
     this->objs.clear();
-    std::cout << "Cleaning up planes and infinities..." << std::endl;
+    spdlog::info("Cleaning up planes and infinitiesoxes...");
     this->infinityObjs.clear();
 }
 
 void ObjectManager::removeNodes() {
 
-    std::cout << "Cleaning up nodes..." << std::endl;
+    spdlog::info("Cleaning up nodes...");
     this->nodes.clear();
-    std::cout << std::endl;
 }
 
 void ObjectManager::buildNodes() {
@@ -69,33 +69,19 @@ std::shared_ptr<BHV> ObjectManager::recursiveTreeBuid(
     size_t i = 0;
     size_t currentNodesSize = currentNodes.size();
 
-    fmt::print(stdout, "Amount of nodes in main list {} secondary {}\n",
-               currentNodes.size(), savedNodes.size());
-
     for (i = 0; i + 3 < currentNodesSize; i += 4) {
-        fmt::print(
-            stdout,
-            "I COUNTER {} Amount of nodes in main list {} secondary {}\n", i,
-            currentNodes.size(), savedNodes.size());
         auto node =
             std::make_shared<BHV>(currentNodes[i], currentNodes[i + 1],
                                   currentNodes[i + 2], currentNodes[i + 3]);
         savedNodes.push_back(node);
-        fmt::print(
-            stdout,
-            "I COUNTER {} Amount of nodes in main list {} secondary {}\n", i,
-            currentNodes.size(), savedNodes.size());
     }
     while (i-- > 0) {
         currentNodes.pop_back();
-
-        fmt::print(stdout, "Pop pop\n");
     }
     currentNodesSize = currentNodes.size();
-    std::cout << "This is the node amount " << currentNodesSize << std::endl;
+    spdlog::info("This is the node amount {}.", currentNodesSize);
     if (currentNodesSize > 0 && currentNodesSize <= 4) {
-        std::cout << "Getting scraps This is the node amount "
-                  << currentNodesSize << std::endl;
+        spdlog::info("This is the node amount {}.", currentNodesSize);
         auto node = std::make_shared<BHV>(
             currentNodes[currentNodesSize],
             (currentNodes.size() > 1) ? currentNodes[currentNodesSize - 1]
@@ -110,7 +96,7 @@ std::shared_ptr<BHV> ObjectManager::recursiveTreeBuid(
         }
     }
     currentNodesSize = currentNodes.size();
-    std::cout << "This is the node amount " << currentNodesSize << std::endl;
+    spdlog::info("This is the node amount {}.", currentNodesSize);
 
     if (currentNodesSize <= 0) { // should always be true
         if (savedNodes.size() <= 0)
@@ -129,13 +115,12 @@ void ObjectManager::buildTree() {
     auto workingNodes = this->nodes;
     std::vector<std::shared_ptr<BHV>> emptyTree;
 
-    fmt::print(stdout,
-               "Amount of nodes in main list {} secondary {} and empty {}\n",
-               this->nodes.size(), workingNodes.size(), emptyTree.size());
+    spdlog::info("Amount of nodes in main list {} secondary {} and empty {}",
+                 this->nodes.size(), workingNodes.size(), emptyTree.size());
     auto mainNode = recursiveTreeBuid(workingNodes, emptyTree);
-    fmt::print(stdout,
-               "Amount of nodes in main list {} secondary {} and empty {}\n",
-               this->nodes.size(), workingNodes.size(), emptyTree.size());
+    spdlog::info(
+                 "Amount of nodes in main list {} secondary {} and empty {}",
+                 this->nodes.size(), workingNodes.size(), emptyTree.size());
     this->tree = mainNode;
 }
 
@@ -173,7 +158,6 @@ Intersection ObjectManager::treeWalk(const Ray &ray) {
         closest = node->intersectNodeBox(ray);
         // std::cout << std::endl;
     }
-
 
     // This is the basic logic
     // TODO: should be updated with a spatial tree later

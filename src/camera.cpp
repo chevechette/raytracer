@@ -3,7 +3,7 @@
 // adjustable cameras according to gui
 #include "camera.h"
 
-#include "fmt/core.h"
+#include "logger.h"
 #include <iostream>
 
 #include <cmath> // is boost faster ? I heard not
@@ -17,8 +17,8 @@ Camera::Camera()
 Camera::Camera(const Coordinates &pos, const Coordinates &dir)
     : position{pos}, direction{dir.normalize()} {
 
-    fmt::print("Camera Ray direction initialized at {} {} {}\n", direction.x,
-               direction.y, direction.z);
+    spdlog::info("Camera Ray direction initialized at {} {} {}", direction.x,
+                 direction.y, direction.z);
 }
 
 Camera::~Camera() {}

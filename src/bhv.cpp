@@ -1,14 +1,16 @@
 #include "bhv.h"
+#include "logger.h"
 
 BHV::BHV(std::shared_ptr<Sphere> obj) : storage(std::make_shared<Box>(obj)) {}
 BHV::BHV(std::shared_ptr<Triangle> obj) : storage(std::make_shared<Box>(obj)) {}
 BHV::BHV(std::shared_ptr<Box> obj) : storage(obj) {
 
-    std::cout << "Constructed BHV from Box" << std::endl;
+    spdlog::info("Constructed BHV from Box");
     if (obj) {
-        std::cout << "Box origin: " << obj->getOrigin().x << std::endl;
+        spdlog::info("Box origin: {} {} {}", obj->getOrigin().x,
+                     obj->getOrigin().y, obj->getOrigin().z);
     } else {
-        std::cout << "Null box received!" << std::endl;
+        spdlog::info("Null box received!");
     }
 }
 
@@ -28,9 +30,7 @@ BHV::BHV(std::shared_ptr<BHV> one, std::shared_ptr<BHV> two,
     //     std::cout << leaves[3]->getBox()->getOrigin().x << std::endl;
 
     if (leaves[0] != nullptr && leaves[1] != nullptr) {
-        std::cout << "BIG BOX 1" << std::endl;
         box1 = Box(*(leaves[0]->getBox()), *(leaves[1]->getBox()));
-        std::cout << "BIG BOX 1 OK" << std::endl;
     } else if (leaves[0] != nullptr) {
         box2 = *leaves[0]->getBox();
     }
@@ -49,7 +49,7 @@ std::shared_ptr<Box> BHV::getBox() const {
 
 #include <iostream>
 BHV::~BHV() {
-    std::cout << "Node has been destroyed" << std::endl;
+    spdlog::info("Node has been destroyed");
 }
 
 Intersection BHV::intersectNodeBox(const Ray &ray) const {
@@ -64,7 +64,7 @@ Intersection BHV::intersectNodeBox(const Ray &ray) const {
             // std::cout << "Intersecting with inner object" << std::endl;
             return this->storage->intersect(ray);
         }
-            // std::cout << "Intersecting with leaves" << std::endl;
+        // std::cout << "Intersecting with leaves" << std::endl;
         return this->intersectSubNodes(ray);
     }
     return Intersection{};

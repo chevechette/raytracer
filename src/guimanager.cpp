@@ -1,8 +1,7 @@
 
 
-#include <iostream>
 // Faster printing and formating
-#include <fmt/core.h>
+// #include <fmt/core.h>
 // For stderr and faster better printing
 #include <cstdio>
 #include <ctime>
@@ -24,6 +23,8 @@
 #include <cmath>
 #include <exception>
 #include <vector>
+
+#include "logger.h"
 
 // TODO : One render /
 // TODO : Clean up the includes, this is a mess
@@ -86,7 +87,7 @@ void GUIManager::release() {
 }
 
 void GUIManager::glfwErrorCallback(int error, const char *description) {
-    fmt::println(stderr, "GLFW Err code {} : {}", error, description);
+    spdlog::error("GLFW Err code {} : {}", error, description);
 }
 
 void GUIManager::guiKeyCallback(GLFWwindow *window, int key, int scancode,
@@ -94,7 +95,7 @@ void GUIManager::guiKeyCallback(GLFWwindow *window, int key, int scancode,
     // TODO : set up all one key triggers
     if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS) {
         glfwSetWindowShouldClose(window, GLFW_TRUE);
-        fmt::println(stdout, "GO THERE\n");
+        spdlog::info("The Raytracer Program has been escaped");
     }
 }
 
@@ -256,7 +257,7 @@ void GUIManager::renderFromCamera(int cameraNo) {
                 Intersection intersect = objmanager.treeWalk(pixRay);
                 if (intersect) {
                     // Fix the random color assignement
-                    // fmt::print(stdout, "Chosen one {}\n",intersect.dist);
+                    // ::print(stdout, "Chosen one {}\n",intersect.dist);
 
                     background[i, j] = intersect.obj->getColor();
                 } else {
@@ -264,9 +265,7 @@ void GUIManager::renderFromCamera(int cameraNo) {
                 }
                 // std::cout << "STAP" << std::endl;
             } catch (std::exception &) {
-
-                std::cout << "failwith " << i << j
-                          << std::endl; // TODO: Log error properly
+                spdlog::error("Out of bound error with {} {}", i, j);
             }
         }
     }

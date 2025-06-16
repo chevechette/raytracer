@@ -25,8 +25,7 @@
 #include "managers.h"
 
 int main(int argc, char *argv[]) {
-    spdlog::info("Welcome to spdlog!");
-    fmt::print(stdout, "{} Version {}.{}\n", argv[0], RAYTRACER_VERSION_MAJOR,
+    spdlog::info("{} Version {}.{}\n", argv[0], RAYTRACER_VERSION_MAJOR,
                RAYTRACER_VERSION_MINOR);
 
     try {
