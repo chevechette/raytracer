@@ -21,10 +21,11 @@
 
 #include "main.h" // This is a co2 wasting that should fall into the abyss
 #include "version_config.h" // Disclaimer and stuff should go there
-
+#include "logger.h"
 #include "managers.h"
 
 int main(int argc, char *argv[]) {
+    spdlog::info("Welcome to spdlog!");
     fmt::print(stdout, "{} Version {}.{}\n", argv[0], RAYTRACER_VERSION_MAJOR,
                RAYTRACER_VERSION_MINOR);
 
