@@ -18,16 +18,7 @@ BHV::BHV(std::shared_ptr<Box> obj) : storage(obj) {
 BHV::BHV(std::shared_ptr<BHV> one, std::shared_ptr<BHV> two,
          std::shared_ptr<BHV> three, std::shared_ptr<BHV> four)
     : leaves{one, two, three, four} {
-    // std::cout << "Hi, imma make box" << std::endl;
     Box box1, box2;
-    // if (leaves[0] != nullptr)
-    //     std::cout << leaves[0]->getBox()->getOrigin().x << std::endl;
-    // if (leaves[1] != nullptr)
-    //     std::cout << leaves[1]->getBox()->getOrigin().x << std::endl;
-    // if (leaves[2] != nullptr)
-    //     std::cout << leaves[2]->getBox()->getOrigin().x << std::endl;
-    // if (leaves[3] != nullptr)
-    //     std::cout << leaves[3]->getBox()->getOrigin().x << std::endl;
 
     if (leaves[0] != nullptr && leaves[1] != nullptr) {
         box1 = Box(*(leaves[0]->getBox()), *(leaves[1]->getBox()));
@@ -40,7 +31,7 @@ BHV::BHV(std::shared_ptr<BHV> one, std::shared_ptr<BHV> two,
         box2 = *leaves[2]->getBox();
     }
     this->storage = std::make_shared<Box>(box1, box2);
-    // std::cout << "Hi, imma did make box" << std::endl;
+    spdlog::debug("Build a BHV Branch such as : {}", this->to_string());
 }
 
 std::shared_ptr<Box> BHV::getBox() const {
@@ -48,7 +39,13 @@ std::shared_ptr<Box> BHV::getBox() const {
 }
 
 BHV::~BHV() {
-    spdlog::info("{} has been destroyed", *this);
+    spdlog::info("{} has been destroyed", this->to_string());
+}
+
+std::string BHV::to_string() const {
+    std::string innerBox = (this->storage) ? this->storage->to_string() : std::string("No Box");
+
+    return fmt::format("BHV Node ({} leaves :\n\tInner {})", this->countLeaves(), innerBox);
 }
 
 int BHV::countLeaves() const {
@@ -69,10 +66,8 @@ Intersection BHV::intersectNodeBox(const Ray &ray) const {
     Intersection selfintersect = this->storage->intersect(ray);
     if (selfintersect) {
         if (this->storage->hasObj()) {
-            // std::cout << "Intersecting with inner object" << std::endl;
             return this->storage->intersect(ray);
         }
-        // std::cout << "Intersecting with leaves" << std::endl;
         return this->intersectSubNodes(ray);
     }
     return Intersection{};
@@ -81,15 +76,12 @@ Intersection BHV::intersectNodeBox(const Ray &ray) const {
 Intersection BHV::intersectSubNodes(const Ray &ray) const {
     Intersection innerClosest{};
 
-    // std::cout << "\t Box has been intersected proceed to check inner nodes"
-    //           << std::endl;
     for (int i = 0; i < BHV_LEAVES_NUMBER; i++) {
         auto leafPtr = this->leaves[i];
         if (leafPtr != nullptr) {
             auto leafIntersect = leafPtr->intersectNodeBox(ray);
             if (leafIntersect && leafIntersect < innerClosest) {
                 innerClosest = leafIntersect;
-                // std::cout << "intersection updated" << std::endl;
             }
         }
     }

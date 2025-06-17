@@ -7,8 +7,6 @@ Intersection::operator bool() const {
 }
 
 Intersection &Intersection::operator=(const Intersection &other) {
-    // std::cout << "HI COPY" << std::endl;
-    // Guard against self-assignment
     if (this != &other) {
         obj = other.obj;
         dist = other.dist;

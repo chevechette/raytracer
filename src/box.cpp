@@ -1,7 +1,7 @@
+#include "logger.h"
 #include "rtobject.h"
 #include <algorithm>
 #include <memory>
-#include "logger.h"
 
 Box::Box()
     : Object(Coordinates{0, 0, 0}, Color::random()),
@@ -23,8 +23,7 @@ Box::Box(std::shared_ptr<Sphere> sphere)
                                                 sphere->getRadius()}),
       maxlier(sphere->getOrigin() + Coordinates{sphere->getRadius(),
                                                 sphere->getRadius(),
-                                                sphere->getRadius()}) {
-}
+                                                sphere->getRadius()}) {}
 
 Box::Box(std::shared_ptr<Triangle> triangle)
     : Object(triangle->getOrigin(), triangle->getColor()),
@@ -48,11 +47,6 @@ Box::Box(const Box &smallbox1, const Box &smallbox2)
     : Object((smallbox1.getOrigin() + smallbox2.getOrigin()) * 0.5,
              smallbox1.getColor()),
       obj(nullptr) {
-    // std::cout << "ACTUALLY MAKING THE BIG BOX START" << std::endl;
-    // std::cout << smallbox1.getOrigin().x << std::endl;
-    // std::cout << smallbox2.getOrigin().x << std::endl;
-    // std::cout << smallbox1.isValid() << std::endl;
-    // std::cout << smallbox2.isValid() << std::endl;
     if (smallbox1.isValid() && smallbox2.isValid()) {
         this->minlier =
             Coordinates{std::min({smallbox1.getMin().x, smallbox2.getMin().x}),
@@ -76,7 +70,7 @@ Box::Box(const Box &smallbox1, const Box &smallbox2)
 }
 
 Box::~Box() {
-    spdlog::info("{} destroyed", this->to_string());
+    spdlog::info("Destroyed : {}", this->to_string());
 }
 
 Coordinates Box::getMin() const {
@@ -167,10 +161,8 @@ Intersection Box::intersectInnerObject(const Ray &ray) const {
 
 Intersection Box::intersect(const Ray &ray) const {
     if (this->obj) {
-        // std::cout << "Box intersecting with inner Obj" << std::endl;
         return this->intersectInnerObject(ray);
     }
-    // std::cout << "Box intersecting" << std::endl;
     return this->intersectBox(ray);
 }
 bool Box::hasObj() const {
@@ -178,8 +170,8 @@ bool Box::hasObj() const {
 }
 
 const std::shared_ptr<const Object> Box::getObj() const {
-    if (this->obj !=
-        nullptr) // obj not nullptr ... I know I could remove this logic at all;
+    // obj not nullptr ... I know I could remove this logic at all;
+    if (this->obj != nullptr)
         return this->obj;
     return nullptr;
 }
@@ -188,8 +180,13 @@ bool Box::isValid() const {
     return this->validBox;
 }
 
-
 std::string Box::to_string() const {
-    return fmt::format("Box(Min : {} ; Max {} ; Color {})",
-                       this->minlier, this->maxlier, this->col);
+    if (this->obj) {
+
+        return fmt::format("Box(Min : {} ; Max {} ; Color {})\n\tContent : {}",
+                           this->minlier, this->maxlier, this->col,
+                           this->obj->to_string());
+    }
+    return fmt::format("Box(Min : {} ; Max {} ; Color {})", this->minlier,
+                       this->maxlier, this->col);
 }

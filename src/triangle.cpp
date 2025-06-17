@@ -14,7 +14,7 @@ Triangle::Triangle(Coordinates a, Coordinates b, Coordinates c, Color col)
 }
 
 Triangle::~Triangle() {
-    spdlog::info("{} destroyed", this->to_string());
+    spdlog::info("Destroyed : {}", this->to_string());
 }
 
 void Triangle::setNormal() {
@@ -94,6 +94,6 @@ Intersection Triangle::intersect(const Ray &ray) const {
 }
 
 std::string Triangle::to_string() const {
-    return fmt::format("Triange(Center {} ; ({}, {}, {}) ; Color : {})",
-                          this->origin, this->a, this->b, this->c, this->col);
+    return fmt::format("Triange(Center {} ; {}) :\n\tA : {}\n\tB : {}\n\tC : {})",
+                          this->origin, this->col, this->a, this->b, this->c);
 }

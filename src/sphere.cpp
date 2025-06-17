@@ -14,7 +14,7 @@ Sphere::Sphere(Coordinates pos, float radius, Color col)
 }
 
 Sphere::~Sphere() {
-    spdlog::info("{} destroyed", this->to_string());
+    spdlog::info("Destroyed : {}", this->to_string());
 }
 
 void Sphere::setRadius(float radius) {

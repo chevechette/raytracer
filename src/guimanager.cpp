@@ -258,7 +258,6 @@ void GUIManager::renderFromCamera(int cameraNo) {
                 } else {
                     background[i, j] = Color::fromHex(0x40102F);
                 }
-                // std::cout << "STAP" << std::endl;
             } catch (std::exception &) {
                 spdlog::error("Out of bound error with {} {}", i, j);
             }

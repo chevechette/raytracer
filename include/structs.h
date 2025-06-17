@@ -51,7 +51,7 @@ template <> struct fmt::formatter<Color> {
     auto format(const Color &col, FormatContext &ctx) const
         -> decltype(ctx.out()) {
         return fmt::format_to(ctx.out(), "Color({} {} {} ; {}%)", col.r, col.g,
-                              col.b, col.a);
+                              col.b, col.a * 100.0f);
     }
 };
 
@@ -194,8 +194,9 @@ template <> struct fmt::formatter<Intersection> {
     auto format(const Intersection &intersect, FormatContext &ctx)
         -> decltype(ctx.out()) const {
         if (intersect) {
-            // TODO:"comback to finish once an object has a formater"
-            return fmt::format_to(ctx.out(), "Intersection()");
+            return fmt::format_to(
+                ctx.out(), "Intersection(Distance {}, Object {}, {})",
+                intersect.dist, intersect.obj->to_string, intersect.point);
         }
         return fmt::format_to(ctx.out(), "Intersection(invalid)");
     }

@@ -23,7 +23,8 @@ class BHV {
         std::shared_ptr<BHV> three = nullptr,
         std::shared_ptr<BHV> four = nullptr);
 
-        int countLeaves() const;
+    int countLeaves() const;
+    std::string to_string() const;
 
     Intersection intersectNodeBox(const Ray &ray) const;
     Intersection intersectSubNodes(const Ray &ray) const;
@@ -41,7 +42,7 @@ template <> struct fmt::formatter<BHV> {
     template <typename FormatContext>
     auto format(const BHV &node, FormatContext &ctx) const
         -> decltype(ctx.out()) {
-          //TODO : fix possible segfault via to_string() implementation
+        // TODO : fix possible segfault via to_string() implementation
         return fmt::format_to(ctx.out(), "Node({} containing {} leaves)",
                               node.getBox()->to_string(), node.countLeaves());
     }

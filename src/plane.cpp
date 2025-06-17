@@ -30,7 +30,7 @@ Plane::Plane(Coordinates origin, Coordinates normal, Color col, float height,
 }
 
 Plane::~Plane() {
-    spdlog::info("{} destroyed", this->to_string());
+    spdlog::info("Destroyed : {}", this->to_string());
 }
 
 void Plane::setNormal(Coordinates norm) {
