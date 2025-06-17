@@ -1,6 +1,5 @@
 #pragma once
 
-//TODO: import the logger library
 //TODO: Make all error messages
 //TODO: Translate all error messages
 //TODO: Remake the error classes
@@ -13,5 +12,8 @@
 //TODO: Remove a lot of commentary\
 //TODO: Update all todo lists
 //TODO: Sort  messages by theme
+//TODO: Keep count of all objects to check for memory leaks
 
 #include "spdlog/spdlog.h"
+
+#include "messages.h"

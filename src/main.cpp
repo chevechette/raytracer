@@ -3,12 +3,10 @@
 // TODO : Find C++ 23 tutorial to check if something should be updated
 // TODO : Multithreading
 // TODO : CUDA upgrade for ray
-// TODO : convert to smart pointers when appropriate
 // TODO : write all disclaimer and starting information into its own thing
 // TODO : Upgrade the error handling to exceptions
 // TODO : CHECK ALL CONST !! ALL REF !! THE MOST MEANEST COMPILAITON RULES
 // TODO : verbose messaging
-// TODO : logging correctly
 // TODO : clean up this file
 // TODO : add documentation
 // TODO : check all header files for name harmonisation
@@ -16,8 +14,6 @@
 // TODO : catch control C for exit
 
 #include <exception>
-#include <fmt/core.h> // For stderr and faster better printing
-#include <iostream>   // Faster printing and formating
 
 #include "main.h" // This is a co2 wasting that should fall into the abyss
 #include "version_config.h" // Disclaimer and stuff should go there
@@ -25,6 +21,8 @@
 #include "managers.h"
 
 int main(int argc, char *argv[]) {
+    //TODO: Export this into a default logger with a file
+    spdlog::set_level(spdlog::level::debug);
     spdlog::info("{} Version {}.{}\n", argv[0], RAYTRACER_VERSION_MAJOR,
                RAYTRACER_VERSION_MINOR);
 

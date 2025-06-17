@@ -2,13 +2,16 @@
 // sphere triangle and plane as inheritance
 // wabout cameras ?
 
-#include <cmath>
+#include "logger.h"
 #include "rtobject.h"
+#include <cmath>
+
+// TODO: Remove the aggregation ?
 
 // class Object {
 //     protected:
 //         explicit    Object(Coordinates origin, Color col);
-        
+
 //         Color       col;
 //         Coordinates origin;
 //     public :
@@ -27,47 +30,42 @@ Object::Object(Coordinates origin, Color col) {
     this->setColor(col);
 }
 
-#include <iostream>
 Object::~Object() {
-    // std::cout<< "Object has been destroyed" <<std::endl;
 }
 
-void    Object::setColor(Color col) {
+void Object::setColor(Color col) {
     this->col = col;
 }
 
-Color   Object::getColor() const {
+Color Object::getColor() const {
     return this->col;
 }
 
-void    Object::setOrigin(Coordinates origin) {
+void Object::setOrigin(Coordinates origin) {
     this->origin = origin;
 }
 
-Coordinates   Object::getOrigin() const {
+Coordinates Object::getOrigin() const {
     return this->origin;
 }
 
 class ObjectAggregation : public Object {
-    private:
-        // vector of objects
-        inline  void estimateCenter() {}
-    public:
-        ObjectAggregation();
-        ~ObjectAggregation();
+  private:
+    // vector of objects
+    inline void estimateCenter() {}
 
-        Intersection     intersect(Ray ray) const;
-        //         virtual Coordinates intersect(Ray) const = 0;
+  public:
+    ObjectAggregation();
+    ~ObjectAggregation();
+
+    Intersection intersect(Ray ray) const;
+    //         virtual Coordinates intersect(Ray) const = 0;
 };
 
-ObjectAggregation::ObjectAggregation() :
-    Object(Coordinates{0, 0, 0}, Color::random()) {
+ObjectAggregation::ObjectAggregation()
+    : Object(Coordinates{0, 0, 0}, Color::random()) {}
 
-}
-
-ObjectAggregation::~ObjectAggregation() {
-
-}
+ObjectAggregation::~ObjectAggregation() {}
 
 Intersection ObjectAggregation::intersect(Ray ray) const {
     return Intersection{}; // TODO: Plane interesect place holder

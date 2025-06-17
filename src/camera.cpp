@@ -4,7 +4,6 @@
 #include "camera.h"
 
 #include "logger.h"
-#include <iostream>
 
 #include <cmath> // is boost faster ? I heard not
 // TODO : update the create pixel for faning out the screen vectors
@@ -89,11 +88,11 @@ Ray Camera::createRay(std::size_t x, std::size_t y) {
     Coordinates rayPosition = this->position;
     Coordinates rayDirection = pixelPosition;
     rayDirection.normalizeSelf();
-    // if (((x == 0 || x == width - 1) && (y == 0 || y == height - 1)) ||
-    //     (x == width / 2 && y == height / 2)) {
-    //     fmt::print("Ray direction at pixel {} {}: {} {} {}\n", x, y,
-    //                rayDirection.x, rayDirection.y, rayDirection.z);
-    // }
+    if (((x == 0 || x == width - 1) && (y == 0 || y == height - 1)) ||
+        (x == width / 2 && y == height / 2)) {
+        spdlog::debug("Ray direction at pixel {} {}: {}", x, y,
+                   rayDirection);
+    }
     Ray ray = Ray(rayPosition, rayDirection);
     return ray;
 }

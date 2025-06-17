@@ -2,13 +2,8 @@
 #include "rtobject.h"
 
 Intersection::operator bool() const {
-    // fmt::print(stdout, "CHECK in the bool : {} pointer ? {} SO this {} \n",
-            //    this->dist, this->obj != nullptr,
-            //    this->obj != nullptr && this->dist > 20);
-
-    // std::cout << "CHECK INTERSECT" << std::endl;
     return (this->obj != nullptr &&
-            this->dist > 20); // TODO: check the distance
+            this->dist > 20); // TODO: check the distancem set it up as epsilon ?
 }
 
 Intersection &Intersection::operator=(const Intersection &other) {

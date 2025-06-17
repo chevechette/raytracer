@@ -1,6 +1,6 @@
+#include "logger.h"
 #include "rtobject.h"
 #include "structs.h"
-#include "logger.h"
 
 Triangle::Triangle(Coordinates a, Coordinates b, Coordinates c)
     : Object(Triangle::getCenter(a, b, c), Color{1, 1, 1, 1}), a(a), b(b),
@@ -14,7 +14,7 @@ Triangle::Triangle(Coordinates a, Coordinates b, Coordinates c, Color col)
 }
 
 Triangle::~Triangle() {
-    spdlog::info("Triangle has been destroyed");
+    spdlog::info("{} destroyed", this->to_string());
 }
 
 void Triangle::setNormal() {
@@ -67,7 +67,6 @@ Coordinates Triangle::getVertexC() const {
     return this->c;
 }
 
-
 // maybe this should be using some inheritance from Plane
 Intersection Triangle::intersect(const Ray &ray) const {
     // Plane verification
@@ -92,4 +91,9 @@ Intersection Triangle::intersect(const Ray &ray) const {
     if (u < 0.0 || v < 0.0 || (u + v) > 1)
         return Intersection{};
     return Intersection{this, coef, ray.getOrigin() + ray.getVector() * coef};
+}
+
+std::string Triangle::to_string() const {
+    return fmt::format("Triange(Center {} ; ({}, {}, {}) ; Color : {})",
+                          this->origin, this->a, this->b, this->c, this->col);
 }

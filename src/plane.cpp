@@ -30,7 +30,7 @@ Plane::Plane(Coordinates origin, Coordinates normal, Color col, float height,
 }
 
 Plane::~Plane() {
-    spdlog::info("Plane destroyed");
+    spdlog::info("{} destroyed", this->to_string());
 }
 
 void Plane::setNormal(Coordinates norm) {
@@ -81,4 +81,9 @@ Intersection Plane::intersect(const Ray &ray) const {
     if (coef < EPSILON)
         return Intersection{};
     return Intersection{this, coef, ray.getOrigin() + ray.getVector() * coef};
+}
+
+std::string Plane::to_string() const {
+    return fmt::format("Plane(Center : {} ; Normal {} ; Color {})",
+                       this->origin, this->normalVec, this->col);
 }

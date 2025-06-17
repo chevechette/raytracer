@@ -1,7 +1,5 @@
-// #include "fmt/core.h"
 #include "managers.h"
 #include "rtobject.h"
-// #include <iostream>
 #include "logger.h"
 
 // TODO: make it threadsafe
@@ -118,8 +116,7 @@ void ObjectManager::buildTree() {
     spdlog::info("Amount of nodes in main list {} secondary {} and empty {}",
                  this->nodes.size(), workingNodes.size(), emptyTree.size());
     auto mainNode = recursiveTreeBuid(workingNodes, emptyTree);
-    spdlog::info(
-                 "Amount of nodes in main list {} secondary {} and empty {}",
+    spdlog::info("Amount of nodes in main list {} secondary {} and empty {}",
                  this->nodes.size(), workingNodes.size(), emptyTree.size());
     this->tree = mainNode;
 }
@@ -154,39 +151,29 @@ Intersection ObjectManager::treeWalk(const Ray &ray) {
 
     Intersection closest{};
     if (node != nullptr) {
-        // std::cout << "TREE WALK START" << std::endl;
         closest = node->intersectNodeBox(ray);
-        // std::cout << std::endl;
     }
-
-    // This is the basic logic
-    // TODO: should be updated with a spatial tree later
     for (auto &objPtr : this->infinityObjs) {
         auto intersect = objPtr->intersect(ray);
         if (intersect && intersect < closest) {
             closest = intersect;
         }
     }
-    // Throw exception if no match ?
-    // TODO: implement intersection with and ifthen logic
     return closest;
-    // if intesect exist -> should calculate the next ray or recover this as a
-    // color
+    // TODO: if intesect exist -> should calculate the next ray, to get light
+    // refraction or recover this as a color
 }
 
 Intersection ObjectManager::intersectAllObjects(const Ray &ray) {
     Intersection closest{};
 
-    // This is the basic logic
-    // TODO: should be updated with a spatial tree later
+    // This is the basic logic : loop
     for (auto &objPtr : this->objs) {
         auto intersect = objPtr->intersect(ray);
         if (intersect && intersect < closest) {
             closest = intersect;
         }
     }
-    // Throw exception if no match ?
-    // TODO: implement intersection with and ifthen logic
     return closest;
     // if intesect exist -> should calculate the next ray or recover this as a
     // color

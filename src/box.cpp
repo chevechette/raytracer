@@ -76,7 +76,7 @@ Box::Box(const Box &smallbox1, const Box &smallbox2)
 }
 
 Box::~Box() {
-    spdlog::info( "Box has been destroyed");
+    spdlog::info("{} destroyed", this->to_string());
 }
 
 Coordinates Box::getMin() const {
@@ -186,4 +186,10 @@ const std::shared_ptr<const Object> Box::getObj() const {
 
 bool Box::isValid() const {
     return this->validBox;
+}
+
+
+std::string Box::to_string() const {
+    return fmt::format("Box(Min : {} ; Max {} ; Color {})",
+                       this->minlier, this->maxlier, this->col);
 }

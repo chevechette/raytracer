@@ -47,9 +47,17 @@ std::shared_ptr<Box> BHV::getBox() const {
     return this->storage;
 }
 
-#include <iostream>
 BHV::~BHV() {
-    spdlog::info("Node has been destroyed");
+    spdlog::info("{} has been destroyed", *this);
+}
+
+int BHV::countLeaves() const {
+    int leafnb = 0;
+    for (int i = 0; i < BHV_LEAVES_NUMBER; i++) {
+        if (this->leaves[i])
+            leafnb++;
+    }
+    return leafnb;
 }
 
 Intersection BHV::intersectNodeBox(const Ray &ray) const {

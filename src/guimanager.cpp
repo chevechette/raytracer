@@ -31,12 +31,7 @@
 // TODO : Compensate for fisheye
 // TODO : Fix camera selection
 // TODO : Update Camera settings gui
-// TODO : For each camera, create the parameters
-// TODO : Go update the camera functions
-// TODO : (static) add a few objects at a specific distance
 // TODO : incorporate libraries initialisation into GUIManger
-// TODO : Object manager with lists of obj
-// TODO : Objectmanager with a binary tree (could be another class of obj leaf)
 // TODO : Error throwing in all classes
 // TODO : Error throwing from GUI Manager
 // TODO : Check the unloads and memory leaks
@@ -278,13 +273,7 @@ void GUIManager::renderBackground() {
         // throw exception ?
         return;
     }
-
-    // Render bckgrnd =
-    //     Render(main_viewport->Size.x,
-    //            main_viewport->Size.y); // TODO : make this into
-    //            property
-    // bckgrnd.renderBackgroundSin();
-
+    
     Render &background = this->bckgrnds[this->selectedCamera];
 
     GLuint g_TextureID = 0;

@@ -2,13 +2,13 @@
 
 #include <cmath>
 #include <cstdlib>
+#include <fmt/format.h>
 #include <iostream>
 
-// TODO: Default constructors ?
 #include "forward_declaration.h"
 
 // TODO : check all normalisation for vectors
-
+// TODO: Color should have a limit for alpha 0;1
 struct Color {
     float r;
     float g;
@@ -38,6 +38,20 @@ struct Color {
 
     inline static Color fromHex(unsigned int col) {
         return Color::fromHexAlpha(col * 0x100 + 0xFF);
+    }
+};
+
+template <> struct fmt::formatter<Color> {
+    constexpr auto parse(fmt::format_parse_context &ctx)
+        -> decltype(ctx.begin()) {
+        return (ctx.end());
+    }
+
+    template <typename FormatContext>
+    auto format(const Color &col, FormatContext &ctx) const
+        -> decltype(ctx.out()) {
+        return fmt::format_to(ctx.out(), "Color({} {} {} ; {}%)", col.r, col.g,
+                              col.b, col.a);
     }
 };
 
@@ -101,9 +115,6 @@ struct Coordinates {
         return (*this < check && *this == check);
     }
 
-    // #include <cmath>
-    // normalization
-
     inline double abs() {
         return sqrt(this->x * this->x + this->y * this->y + this->z * this->z);
     }
@@ -111,7 +122,6 @@ struct Coordinates {
     inline Coordinates &normalizeSelf() {
         double length =
             sqrt(this->x * this->x + this->y * this->y + this->z * this->z);
-        // std::cout << length << std::endl;
         if (length == 0)
             return *this;
         this->x = this->x / length;
@@ -137,6 +147,20 @@ struct Coordinates {
     }
 };
 
+template <> struct fmt::formatter<Coordinates> {
+    constexpr auto parse(fmt::format_parse_context &ctx)
+        -> decltype(ctx.begin()) {
+        return ctx.end();
+    }
+
+    template <typename FormatContext>
+    auto format(const Coordinates &point, FormatContext &ctx) const
+        -> decltype(ctx.out()) {
+        return fmt::format_to(ctx.out(), "Coordinates({}, {}, {})", point.x,
+                              point.y, point.z);
+    }
+};
+
 // Given all operators, maybe it should become a class;
 // No normal, or rebound calculation yet
 struct Intersection {
@@ -158,6 +182,23 @@ struct Intersection {
     bool operator==(const Intersection &i) const;
     bool operator>=(const Intersection &i) const;
     bool operator<=(const Intersection &i) const;
+};
+
+template <> struct fmt::formatter<Intersection> {
+    constexpr auto parse(fmt::format_parse_context &ctx)
+        -> decltype(ctx.begin()) {
+        return ctx.end();
+    }
+
+    template <typename FormatContext>
+    auto format(const Intersection &intersect, FormatContext &ctx)
+        -> decltype(ctx.out()) const {
+        if (intersect) {
+            // TODO:"comback to finish once an object has a formater"
+            return fmt::format_to(ctx.out(), "Intersection()");
+        }
+        return fmt::format_to(ctx.out(), "Intersection(invalid)");
+    }
 };
 
 // Create a new struct for intersections with distance and other data ?
