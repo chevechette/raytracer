@@ -15,16 +15,39 @@
 
 #include <exception>
 
-#include "main.h" // This is a co2 wasting that should fall into the abyss
-#include "version_config.h" // Disclaimer and stuff should go there
 #include "logger.h"
+#include "main.h" // This is a co2 wasting that should fall into the abyss
 #include "managers.h"
+#include "version_config.h" // Disclaimer and stuff should go there
+
+void loggingSetup() {}
 
 int main(int argc, char *argv[]) {
-    //TODO: Export this into a default logger with a file
-    spdlog::set_level(spdlog::level::debug);
-    spdlog::info("{} Version {}.{}\n", argv[0], RAYTRACER_VERSION_MAJOR,
-               RAYTRACER_VERSION_MINOR);
+    try {
+        auto consoleSink =
+            std::make_shared<spdlog::sinks::stdout_color_sink_mt>();
+        auto logfileSink =
+            std::make_shared<spdlog::sinks::basic_file_sink_mt>(LOG_FILE);
+
+        // TODO : add an option to choose either one, or both sinks. Plus if
+        // file gets overwritten or not
+        auto defaultLogger = std::make_shared<spdlog::logger>(
+            DEFAULT_LOGGER, spdlog::sinks_init_list{logfileSink, consoleSink});
+
+        spdlog::register_logger(defaultLogger);
+        spdlog::set_default_logger(defaultLogger);
+
+        spdlog::set_level(spdlog::level::debug);
+        spdlog::info("{} Version {}.{}\n", argv[0], RAYTRACER_VERSION_MAJOR,
+                     RAYTRACER_VERSION_MINOR);
+
+    } catch (const std::exception &) {
+        // GUIManager::release(); // maybe release should be part withing the
+        // inner throwing of the singleton thant to share_ptr
+        std::cout << "This sucks" << std::endl;
+        return EXIT_FAILURE;
+    }
+    // TODO: Export this into a default logger with a file
 
     try {
         GUIManager &gui = GUIManager::getInstance();

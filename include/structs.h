@@ -192,14 +192,7 @@ template <> struct fmt::formatter<Intersection> {
 
     template <typename FormatContext>
     auto format(const Intersection &intersect, FormatContext &ctx)
-        -> decltype(ctx.out()) const {
-        if (intersect) {
-            return fmt::format_to(
-                ctx.out(), "Intersection(Distance {}, Object {}, {})",
-                intersect.dist, intersect.obj->to_string, intersect.point);
-        }
-        return fmt::format_to(ctx.out(), "Intersection(invalid)");
-    }
+        -> decltype(ctx.out()) const;
 };
 
 // Create a new struct for intersections with distance and other data ?

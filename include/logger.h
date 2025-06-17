@@ -15,5 +15,12 @@
 //TODO: Keep count of all objects to check for memory leaks
 
 #include "spdlog/spdlog.h"
+#include "spdlog/sinks/stdout_color_sinks.h"
+#include "spdlog/sinks/basic_file_sink.h"
+
+#define LOG_FILE            "logs/raytracer.log"
+#define CONSOLE_LOGGER      "console"
+#define FILE_LOGGER         "filelog"
+#define DEFAULT_LOGGER      "default"
 
 #include "messages.h"
