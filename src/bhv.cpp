@@ -1,6 +1,8 @@
 #include "bhv.h"
 #include "logger.h"
 
+//TODO: note all exception throw
+
 BHV::BHV(std::shared_ptr<Sphere> obj) : storage(std::make_shared<Box>(obj)) {}
 BHV::BHV(std::shared_ptr<Triangle> obj) : storage(std::make_shared<Box>(obj)) {}
 BHV::BHV(std::shared_ptr<Box> obj) : storage(obj) {

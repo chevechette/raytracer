@@ -26,6 +26,7 @@
 
 #include "logger.h"
 
+//TODO: note all exception throw
 // TODO : One render /
 // TODO : Clean up the includes, this is a mess
 // TODO : Compensate for fisheye
@@ -125,6 +126,22 @@ void GUIManager::guiVarSetUp() {
     // GL_UNSIGNED_BYTE, nullptr);
 }
 
+void GUIManager::loadSpdlog() {
+    auto consoleSink = std::make_shared<spdlog::sinks::stdout_color_sink_mt>();
+    auto logfileSink =
+        std::make_shared<spdlog::sinks::basic_file_sink_mt>(LOG_FILE);
+
+    // TODO : add an option to choose either one, or both sinks. Plus if
+    // file gets overwritten or not
+    auto defaultLogger = std::make_shared<spdlog::logger>(
+        DEFAULT_LOGGER, spdlog::sinks_init_list{logfileSink, consoleSink});
+
+    spdlog::register_logger(defaultLogger);
+    spdlog::set_default_logger(defaultLogger);
+
+    spdlog::set_level(spdlog::level::debug);
+}
+
 // exception safe unloading before throwing
 void GUIManager::load() {
     // TODO : Clean up later
@@ -132,6 +149,8 @@ void GUIManager::load() {
     if (!glfwInit()) {
         throw std::runtime_error(RT_MESSAGE_ERR_LIBRARY_GUI);
     }
+
+    loadSpdlog();
 
     // TODO : Upgrade Error handling
     glfwSetErrorCallback(
@@ -272,7 +291,7 @@ void GUIManager::renderBackground() {
         // throw exception ?
         return;
     }
-    
+
     Render &background = this->bckgrnds[this->selectedCamera];
 
     GLuint g_TextureID = 0;

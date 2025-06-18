@@ -6,6 +6,7 @@
 #include "rtobject.h"
 #include <cmath>
 
+//TODO: note all exception throw
 // TODO: Remove the aggregation ?
 
 // class Object {

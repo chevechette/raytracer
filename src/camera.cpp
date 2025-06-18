@@ -3,6 +3,7 @@
 // adjustable cameras according to gui
 #include "camera.h"
 
+//TODO: note all exception throw
 #include "logger.h"
 
 #include <cmath> // is boost faster ? I heard not

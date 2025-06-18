@@ -3,6 +3,7 @@
 #include <algorithm>
 #include <memory>
 
+//TODO: note all exception throw
 Box::Box()
     : Object(Coordinates{0, 0, 0}, Color::random()),
       minlier(Coordinates{0, 0, 0}), maxlier(Coordinates{0, 0, 0}),

@@ -4,6 +4,7 @@
 #include <cmath>
 #include "logger.h"
 
+//TODO: note all exception throw
 Plane::Plane(Coordinates origin, Coordinates normal)
     : Object(origin, Color{1, 1, 1, 1}), normalVec{normal.normalize()},
       height{-1}, width{-1} {

@@ -1,5 +1,9 @@
 #include "structs.h"
+#include "rtobject.h"
 
+//TODO: Move all formatters here
+
+//TODO: note all exception throw
 template <typename FormatContext>
 auto fmt::formatter<Intersection>::format(const Intersection &intersect, FormatContext &ctx)
     -> decltype(ctx.out()) const {

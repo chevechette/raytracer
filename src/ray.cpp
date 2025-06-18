@@ -3,6 +3,7 @@
 #include "structs.h"
 #include "ray.h"
 
+//TODO: note all exception throw
 Ray::Ray() {
     Ray(0, 0, 0, 0, 0, 0, 0xFFFFFFFF);
 }

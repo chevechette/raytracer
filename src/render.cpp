@@ -3,6 +3,7 @@
 #include "messages.h"
 #include "render.h" // class definiton
 
+//TODO: note all exception throw
 Render::Render(int w, int h) : width(w), height(h), buffer(w * h * 4) {}
 
 Render::~Render() {}

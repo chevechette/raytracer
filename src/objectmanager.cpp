@@ -2,6 +2,7 @@
 #include "rtobject.h"
 #include "logger.h"
 
+//TODO: note all exception throw
 // TODO: make it threadsafe
 ObjectManager::ObjectManager() {}
 
