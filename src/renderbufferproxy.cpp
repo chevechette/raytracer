@@ -1,7 +1,7 @@
 
 #include "renderbufferpixelproxy.h"
 
-//TODO: note all exception throw
+//Exceptions checked
 
 RenderBufferPixelProxy::RenderBufferPixelProxy(unsigned char &r,
                                                unsigned char &g,

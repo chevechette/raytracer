@@ -26,16 +26,16 @@
 
 #include "logger.h"
 
-//TODO: note all exception throw
-// TODO : One render /
-// TODO : Clean up the includes, this is a mess
-// TODO : Compensate for fisheye
-// TODO : Fix camera selection
-// TODO : Update Camera settings gui
-// TODO : incorporate libraries initialisation into GUIManger
-// TODO : Error throwing in all classes
-// TODO : Error throwing from GUI Manager
-// TODO : Check the unloads and memory leaks
+// TODO: note all exception throw
+//  TODO : One render /
+//  TODO : Clean up the includes, this is a mess
+//  TODO : Compensate for fisheye
+//  TODO : Fix camera selection
+//  TODO : Update Camera settings gui
+//  TODO : incorporate libraries initialisation into GUIManger
+//  TODO : Error throwing in all classes
+//  TODO : Error throwing from GUI Manager
+//  TODO : Check the unloads and memory leaks
 
 // This could have been inheritance but I see no logical connection
 // and never want to bother with mixing those two nor bother with casting
@@ -67,11 +67,13 @@ GUIManager::~GUIManager() {
 }
 
 GUIManager &GUIManager::getInstance() {
+    // TODO: Not threadsafe
     static GUIManager instance = GUIManager();
 
     return instance;
 }
 
+// TODO: Remove because this seems a copy of unload
 void GUIManager::release() {
     // TODO: add unload if already init
     // GUIManager &instance::

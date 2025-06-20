@@ -12,7 +12,7 @@
 // TODO : check all header files for name harmonisation
 // TODO : Recheck the exceptions to maybe derive a type
 // TODO : catch control C for exit
-// TODO : Error throw check
+// Error throw check ok
 
 #include "messages.h"
 #include <exception>
@@ -22,7 +22,7 @@
 #include "managers.h"
 #include "version_config.h" // Disclaimer and stuff should go there
 
-//TODO: Move this into a proper object funtion
+// TODO: Move this into a proper object funtion
 void printLogStart(int argc, char *argv[]) {
     if (argc > 0)
         spdlog::info("{} Version {}.{}\n", argv[0], RAYTRACER_VERSION_MAJOR,
@@ -44,22 +44,30 @@ void objectListGeneration() {
 }
 
 int main(int argc, char *argv[]) {
-    // TODO: Export this into a default logger with a file
     try {
-        GUIManager &gui = GUIManager::getInstance();
-        gui.load(); // if load failure, the load unloads what has been init so
-                    // far
-        printLogStart(argc, argv);
         // TODO : add some parsing method for argc, argv
+        printLogStart(argc, argv);
+
+        GUIManager &gui = GUIManager::getInstance();
+        try {
+            gui.load(); // if load failure, the load unloads what has been init
+                        // so far
+        } catch (const std::exception &e) {
+            spdlog::critical("Something went wrong on library load !");
+            throw e;
+        }
+
         gui.guiVarSetUp(); // TODO : Init the menu variables
         objectListGeneration();
 
         gui.mainloop();
-        gui.unload(); // SEGFAULT IF NOT UNLOADED
+        gui.unload(); // SEGFAULT IF NOT UNLOADED -> should be handled by catch
     } catch (const std::exception &) {
+        spdlog::critical("Critical error, we are out.");
         // GUIManager::release(); // maybe release should be part withing the
         // inner throwing of the singleton thant to share_ptr
         return EXIT_FAILURE;
     }
+    spdlog::info("Successful exit");
     return EXIT_SUCCESS;
 }

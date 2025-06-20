@@ -2,7 +2,7 @@
 #include "rtobject.h"
 #include "logger.h"
 
-//TODO: note all exception throw
+// Exception checked
 // TODO: make it threadsafe
 ObjectManager::ObjectManager() {}
 
@@ -16,9 +16,10 @@ ObjectManager &ObjectManager::getInstance() {
     return instance;
 }
 
-void ObjectManager::release() {}
+void ObjectManager::release() {
+
+}
 // remove(); // pop
-// binary tree structure... later
 
 // cameras map for edition
 void ObjectManager::addObject(std::shared_ptr<Object> obj) {
@@ -31,7 +32,11 @@ void ObjectManager::addInfinityObject(std::shared_ptr<Object> obj) {
 
 void ObjectManager::addBox(std::shared_ptr<Box> box) {
     if (!box) {
-        std::cerr << "addBox was passed a null box!" << std::endl;
+        spdlog::error("ObjectManager::addBox was passed a null box. Discarding...");
+        return;
+    }
+    if (!box->isValid()) {
+        spdlog::error("ObjectManager::addBox was passed an empty box. Discarding...");
         return;
     }
     this->boxes.push_back(box);
@@ -39,9 +44,7 @@ void ObjectManager::addBox(std::shared_ptr<Box> box) {
     this->nodes.push_back(node);
 }
 
-#include <iostream>
 void ObjectManager::removeObjects() {
-
     spdlog::info("Cleaning up boxes...");
     this->boxes.clear();
     spdlog::info("Cleaning up objects...");
@@ -110,15 +113,10 @@ std::shared_ptr<BHV> ObjectManager::recursiveTreeBuid(
 }
 
 void ObjectManager::buildTree() {
-    // this->buildNodes();
     auto workingNodes = this->nodes;
     std::vector<std::shared_ptr<BHV>> emptyTree;
 
-    spdlog::info("Amount of nodes in main list {} secondary {} and empty {}",
-                 this->nodes.size(), workingNodes.size(), emptyTree.size());
     auto mainNode = recursiveTreeBuid(workingNodes, emptyTree);
-    spdlog::info("Amount of nodes in main list {} secondary {} and empty {}",
-                 this->nodes.size(), workingNodes.size(), emptyTree.size());
     this->tree = mainNode;
 }
 

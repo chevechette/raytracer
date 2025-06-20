@@ -155,7 +155,8 @@ template <> struct fmt::formatter<Coordinates> {
 
     template <typename FormatContext>
     auto format(const Coordinates &point, FormatContext &ctx) const
-        -> decltype(ctx.out()) {
+        -> decltype(ctx.out()) 
+        {
         return fmt::format_to(ctx.out(), "Coordinates({}, {}, {})", point.x,
                               point.y, point.z);
     }

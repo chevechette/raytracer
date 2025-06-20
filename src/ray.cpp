@@ -3,7 +3,6 @@
 #include "structs.h"
 #include "ray.h"
 
-//TODO: note all exception throw
 Ray::Ray() {
     Ray(0, 0, 0, 0, 0, 0, 0xFFFFFFFF);
 }
@@ -75,6 +74,7 @@ void Ray::setColor(Color col) {
     this->col = col;
 }
 
+//TODO: Light implementation
 void    Ray::setLux(float intensity) {
     this->lux = intensity;
 }
@@ -95,7 +95,7 @@ float       Ray::getLux() const {
     return this->lux;
 }
 
-// Checks
+//TODO: Check lighting, tbc
 bool    Ray::isLight() const {
     return (this->lux >= RAY_LIGHT_THRESHOLD); 
 }

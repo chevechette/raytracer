@@ -1,10 +1,11 @@
 #include "rtobject.h"
 #include "structs.h"
 
-#include <cmath>
 #include "logger.h"
+#include <cmath>
 
-//TODO: note all exception throw
+// Exception checked
+
 Plane::Plane(Coordinates origin, Coordinates normal)
     : Object(origin, Color{1, 1, 1, 1}), normalVec{normal.normalize()},
       height{-1}, width{-1} {
@@ -81,6 +82,7 @@ Intersection Plane::intersect(const Ray &ray) const {
     double coef = p0 * this->getNormal() / cosPlane;
     if (coef < EPSILON)
         return Intersection{};
+    // TODO: Add limitation
     return Intersection{this, coef, ray.getOrigin() + ray.getVector() * coef};
 }
 

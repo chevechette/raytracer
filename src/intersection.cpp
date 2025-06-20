@@ -3,7 +3,7 @@
 
 Intersection::operator bool() const {
     return (this->obj != nullptr &&
-            this->dist > 20); // TODO: check the distancem set it up as epsilon ?
+            this->dist > EPSILON);
 }
 
 Intersection &Intersection::operator=(const Intersection &other) {

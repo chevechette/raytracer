@@ -3,7 +3,8 @@
 #include "rtobject.h"
 #include <cmath>
 
-//TODO: note all exception throw
+//Exceptions checked
+
 Sphere::Sphere(Coordinates pos, float radius)
     : Object(pos, Color::random()), radius(radius) {
     spdlog::info("Sphere created as {}", this->to_string());
@@ -20,8 +21,7 @@ Sphere::~Sphere() {
 
 void Sphere::setRadius(float radius) {
     if (abs(radius) >= 0)
-        ;
-    this->radius = abs(radius);
+        this->radius = abs(radius);
 }
 
 float Sphere::getRadius() const {

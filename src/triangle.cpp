@@ -2,7 +2,8 @@
 #include "rtobject.h"
 #include "structs.h"
 
-//TODO: note all exception throw
+// Exception OK - No need here
+
 Triangle::Triangle(Coordinates a, Coordinates b, Coordinates c)
     : Object(Triangle::getCenter(a, b, c), Color{1, 1, 1, 1}), a(a), b(b),
       c(c) {
