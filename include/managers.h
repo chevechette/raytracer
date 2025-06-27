@@ -47,9 +47,9 @@ class ObjectManager {
     void buildNodes();
     void buildTree();
 
-    std::shared_ptr<BHV> recursiveTreeBuid(
-        std::vector<std::shared_ptr<BHV>> &currentNodes,
-        std::vector<std::shared_ptr<BHV>> &savedNodes);
+    std::shared_ptr<BHV>
+    recursiveTreeBuid(std::vector<std::shared_ptr<BHV>> &currentNodes,
+                      std::vector<std::shared_ptr<BHV>> &savedNodes);
 
     void createSphere(Coordinates coord, float radius, Color col);
     void createTriangle(Coordinates a, Coordinates b, Coordinates c, Color col);
@@ -101,6 +101,8 @@ class GUIManager {
 
     void guiVarSetUp(); // TODO : rename
     void load();        // TODO rename these loading functions
+
+    void loadSpdlog();
     void unloadWindow();
     void unload();
     void mainloop();

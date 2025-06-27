@@ -42,6 +42,7 @@ find_package(glad CONFIG REQUIRED)
 find_package(OpenGL REQUIRED)
 find_package(imgui CONFIG REQUIRED)
 find_package(Boost CONFIG REQUIRED COMPONENTS math)
+find_package(spdlog CONFIG REQUIRED)
 
 # Source files
 file(GLOB SRCS_FILES
@@ -63,4 +64,5 @@ target_link_libraries(helloraytracer PRIVATE
     OpenGL::GL
     imgui::imgui
     Boost::math
+    spdlog
 )

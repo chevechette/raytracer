@@ -1,8 +1,10 @@
 #include "rtobject.h"
 #include "structs.h"
 
+#include "logger.h"
 #include <cmath>
-#include <iostream>
+
+// Exception checked
 
 Plane::Plane(Coordinates origin, Coordinates normal)
     : Object(origin, Color{1, 1, 1, 1}), normalVec{normal.normalize()},
@@ -30,7 +32,7 @@ Plane::Plane(Coordinates origin, Coordinates normal, Color col, float height,
 }
 
 Plane::~Plane() {
-    std::cout << "Plane destroyed" << std::endl;
+    spdlog::info("Destroyed : {}", this->to_string());
 }
 
 void Plane::setNormal(Coordinates norm) {
@@ -80,5 +82,11 @@ Intersection Plane::intersect(const Ray &ray) const {
     double coef = p0 * this->getNormal() / cosPlane;
     if (coef < EPSILON)
         return Intersection{};
+    // TODO: Add limitation
     return Intersection{this, coef, ray.getOrigin() + ray.getVector() * coef};
+}
+
+std::string Plane::to_string() const {
+    return fmt::format("Plane(Center : {} ; Normal {} ; Color {})",
+                       this->origin, this->normalVec, this->col);
 }

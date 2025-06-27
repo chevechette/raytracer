@@ -6,3 +6,4 @@ CMakeUserPresets.json
 vcpkg-configuration.json
 vcpkg_installed
 imgui.ini
+logs/*

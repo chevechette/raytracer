@@ -1,8 +1,7 @@
 
 
-#include <iostream>
 // Faster printing and formating
-#include <fmt/core.h>
+// #include <fmt/core.h>
 // For stderr and faster better printing
 #include <cstdio>
 #include <ctime>
@@ -25,20 +24,18 @@
 #include <exception>
 #include <vector>
 
-// TODO : One render /
-// TODO : Clean up the includes, this is a mess
-// TODO : Compensate for fisheye
-// TODO : Fix camera selection
-// TODO : Update Camera settings gui
-// TODO : For each camera, create the parameters
-// TODO : Go update the camera functions
-// TODO : (static) add a few objects at a specific distance
-// TODO : incorporate libraries initialisation into GUIManger
-// TODO : Object manager with lists of obj
-// TODO : Objectmanager with a binary tree (could be another class of obj leaf)
-// TODO : Error throwing in all classes
-// TODO : Error throwing from GUI Manager
-// TODO : Check the unloads and memory leaks
+#include "logger.h"
+
+// TODO: note all exception throw
+//  TODO : One render /
+//  TODO : Clean up the includes, this is a mess
+//  TODO : Compensate for fisheye
+//  TODO : Fix camera selection
+//  TODO : Update Camera settings gui
+//  TODO : incorporate libraries initialisation into GUIManger
+//  TODO : Error throwing in all classes
+//  TODO : Error throwing from GUI Manager
+//  TODO : Check the unloads and memory leaks
 
 // This could have been inheritance but I see no logical connection
 // and never want to bother with mixing those two nor bother with casting
@@ -70,11 +67,13 @@ GUIManager::~GUIManager() {
 }
 
 GUIManager &GUIManager::getInstance() {
+    // TODO: Not threadsafe
     static GUIManager instance = GUIManager();
 
     return instance;
 }
 
+// TODO: Remove because this seems a copy of unload
 void GUIManager::release() {
     // TODO: add unload if already init
     // GUIManager &instance::
@@ -86,7 +85,7 @@ void GUIManager::release() {
 }
 
 void GUIManager::glfwErrorCallback(int error, const char *description) {
-    fmt::println(stderr, "GLFW Err code {} : {}", error, description);
+    spdlog::error("GLFW Err code {} : {}", error, description);
 }
 
 void GUIManager::guiKeyCallback(GLFWwindow *window, int key, int scancode,
@@ -94,7 +93,7 @@ void GUIManager::guiKeyCallback(GLFWwindow *window, int key, int scancode,
     // TODO : set up all one key triggers
     if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS) {
         glfwSetWindowShouldClose(window, GLFW_TRUE);
-        fmt::println(stdout, "GO THERE\n");
+        spdlog::info("The Raytracer Program has been escaped");
     }
 }
 
@@ -129,6 +128,22 @@ void GUIManager::guiVarSetUp() {
     // GL_UNSIGNED_BYTE, nullptr);
 }
 
+void GUIManager::loadSpdlog() {
+    auto consoleSink = std::make_shared<spdlog::sinks::stdout_color_sink_mt>();
+    auto logfileSink =
+        std::make_shared<spdlog::sinks::basic_file_sink_mt>(LOG_FILE);
+
+    // TODO : add an option to choose either one, or both sinks. Plus if
+    // file gets overwritten or not
+    auto defaultLogger = std::make_shared<spdlog::logger>(
+        DEFAULT_LOGGER, spdlog::sinks_init_list{logfileSink, consoleSink});
+
+    spdlog::register_logger(defaultLogger);
+    spdlog::set_default_logger(defaultLogger);
+
+    spdlog::set_level(spdlog::level::debug);
+}
+
 // exception safe unloading before throwing
 void GUIManager::load() {
     // TODO : Clean up later
@@ -136,6 +151,8 @@ void GUIManager::load() {
     if (!glfwInit()) {
         throw std::runtime_error(RT_MESSAGE_ERR_LIBRARY_GUI);
     }
+
+    loadSpdlog();
 
     // TODO : Upgrade Error handling
     glfwSetErrorCallback(
@@ -256,17 +273,14 @@ void GUIManager::renderFromCamera(int cameraNo) {
                 Intersection intersect = objmanager.treeWalk(pixRay);
                 if (intersect) {
                     // Fix the random color assignement
-                    // fmt::print(stdout, "Chosen one {}\n",intersect.dist);
+                    // ::print(stdout, "Chosen one {}\n",intersect.dist);
 
                     background[i, j] = intersect.obj->getColor();
                 } else {
                     background[i, j] = Color::fromHex(0x40102F);
                 }
-                // std::cout << "STAP" << std::endl;
             } catch (std::exception &) {
-
-                std::cout << "failwith " << i << j
-                          << std::endl; // TODO: Log error properly
+                spdlog::error("Out of bound error with {} {}", i, j);
             }
         }
     }
@@ -279,12 +293,6 @@ void GUIManager::renderBackground() {
         // throw exception ?
         return;
     }
-
-    // Render bckgrnd =
-    //     Render(main_viewport->Size.x,
-    //            main_viewport->Size.y); // TODO : make this into
-    //            property
-    // bckgrnd.renderBackgroundSin();
 
     Render &background = this->bckgrnds[this->selectedCamera];
 

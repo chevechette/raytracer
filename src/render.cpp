@@ -1,7 +1,11 @@
 #include <stdexcept>
 
+#include "logger.h"
 #include "messages.h"
-#include "render.h" // class definiton
+#include "render.h"
+//exception checked
+
+//TODO: Decide if exception thow should log within the error or not ?
 
 Render::Render(int w, int h) : width(w), height(h), buffer(w * h * 4) {}
 
@@ -24,13 +28,15 @@ int Render::getHeight() {
     return this->height;
 }
 
-void Render::renderPoint(int x, int y, Color col) {}
+void Render::renderPoint(int x, int y, Color col) {
+    this->operator[](x, y) = col;
+}
 
 // TODO: implement a [][] operator
 // maybe add a tuple for quick access ?
 RenderBufferPixelProxy Render::operator[](std::size_t i) {
     if (i < 0 || i >= height * width) {
-        // TODO : log this
+        spdlog::error(RT_MESSAGE_ERR_PIXEL_OOB);
         throw std::out_of_range(RT_MESSAGE_ERR_PIXEL_OOB);
     }
     return RenderBufferPixelProxy(this->buffer[i * 4], this->buffer[i * 4 + 1],
@@ -42,6 +48,7 @@ RenderBufferPixelProxy Render::operator[](std::size_t y, std::size_t x) {
     std::size_t i = (x * this->width) + y;
 
     if (i < 0 || i >= height * width) {
+        spdlog::error(RT_MESSAGE_ERR_PIXEL_OOB);
         throw std::out_of_range(RT_MESSAGE_ERR_PIXEL_OOB);
     }
     return RenderBufferPixelProxy(this->buffer[i * 4], this->buffer[i * 4 + 1],
@@ -64,9 +71,4 @@ void Render::renderBackgroundSin() {
             continue;
         }
     }
-    // for (int x = 0; x < this->height ; x++) {
-    //     for (int y = 0; y < this->width ; y++) {
-    //         this->operator[](x, y) = Color{1.0f, 1.0f, 1.0f};
-    //     }
-    // }
 }

@@ -39,7 +39,4 @@ class Camera {
     Coordinates &getDirectionRef();
 
     Ray createRay(std::size_t x, std::size_t y);
-    // CreateRay...
-
-    // TODO : Launch ray within the window parameter
 };

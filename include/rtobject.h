@@ -3,6 +3,7 @@
 #include "forward_declaration.h"
 #include "ray.h"
 #include "structs.h"
+#include <fmt/format.h>
 #include <memory>
 
 #define EPSILON 0.0001f
@@ -18,12 +19,26 @@ class Object {
     virtual ~Object();
 
     virtual Intersection intersect(const Ray &ray) const = 0;
+    virtual std::string to_string() const = 0;
     // TODO: virtual Box toBox() const = 0;
 
     void setColor(Color col);
     void setOrigin(Coordinates origin);
     Color getColor() const;
     Coordinates getOrigin() const;
+};
+
+template <> struct fmt::formatter<Object> {
+    constexpr auto parse(fmt::format_parse_context &ctx)
+        -> decltype(ctx.begin()) {
+        return ctx.end();
+    }
+
+    template <typename FormatContext>
+    auto format(const Object &obj, FormatContext &ctx) const
+        -> decltype(ctx.out) {
+        return fmt::format_to(ctx.out(), "{}", obj.to_string());
+    }
 };
 
 class Sphere : public Object {
@@ -38,6 +53,8 @@ class Sphere : public Object {
 
     void setRadius(float radius);
     float getRadius() const;
+
+    std::string to_string() const;
 
     Intersection intersect(const Ray &ray) const;
 };
@@ -69,6 +86,7 @@ class Triangle : public Object {
     Coordinates getVertexB() const;
     Coordinates getVertexC() const;
 
+    std::string to_string() const;
     Intersection intersect(const Ray &ray) const;
 };
 
@@ -97,6 +115,9 @@ class Plane : public Object {
     float getHeight(float x) const;
     float getwidth(float x) const;
 
+    std::string to_string() const;
+
+    // TODO : Make planes finite and add a bool function to check
     bool checkHeight(const Coordinates &v) const;
     bool checkWidth(const Coordinates &v) const;
 
@@ -140,5 +161,6 @@ class Box : public Object {
     Intersection intersectBox(const Ray &ray) const;
     Intersection intersectInnerObject(const Ray &ray) const;
 
+    std::string to_string() const;
     Intersection intersect(const Ray &ray) const;
 };

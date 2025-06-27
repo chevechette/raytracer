@@ -1,8 +1,9 @@
+#include "logger.h"
 #include "rtobject.h"
 #include "structs.h"
 
-#include <fmt/core.h>
-#include <iostream>
+// Exception OK - No need here
+
 Triangle::Triangle(Coordinates a, Coordinates b, Coordinates c)
     : Object(Triangle::getCenter(a, b, c), Color{1, 1, 1, 1}), a(a), b(b),
       c(c) {
@@ -15,7 +16,7 @@ Triangle::Triangle(Coordinates a, Coordinates b, Coordinates c, Color col)
 }
 
 Triangle::~Triangle() {
-    std::cout << "Triangle has been destroyed" << std::endl;
+    spdlog::info("Destroyed : {}", this->to_string());
 }
 
 void Triangle::setNormal() {
@@ -68,7 +69,6 @@ Coordinates Triangle::getVertexC() const {
     return this->c;
 }
 
-
 // maybe this should be using some inheritance from Plane
 Intersection Triangle::intersect(const Ray &ray) const {
     // Plane verification
@@ -93,4 +93,9 @@ Intersection Triangle::intersect(const Ray &ray) const {
     if (u < 0.0 || v < 0.0 || (u + v) > 1)
         return Intersection{};
     return Intersection{this, coef, ray.getOrigin() + ray.getVector() * coef};
+}
+
+std::string Triangle::to_string() const {
+    return fmt::format("Triange(Center {} ; {}) :\n\tA : {}\n\tB : {}\n\tC : {})",
+                          this->origin, this->col, this->a, this->b, this->c);
 }

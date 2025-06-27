@@ -35,7 +35,6 @@ Ray::Ray(Coordinates loc, Coordinates vec, float hexcolor) {
     *this = Ray(loc, vec, col);
 }
    
-#include <fmt/core.h> 
 Ray::Ray(Coordinates loc, Coordinates vec, Color col) {
     this->setColor(col);
     this->setOrigin(loc);
@@ -75,6 +74,7 @@ void Ray::setColor(Color col) {
     this->col = col;
 }
 
+//TODO: Light implementation
 void    Ray::setLux(float intensity) {
     this->lux = intensity;
 }
@@ -95,7 +95,7 @@ float       Ray::getLux() const {
     return this->lux;
 }
 
-// Checks
+//TODO: Check lighting, tbc
 bool    Ray::isLight() const {
     return (this->lux >= RAY_LIGHT_THRESHOLD); 
 }

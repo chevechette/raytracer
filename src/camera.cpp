@@ -3,8 +3,8 @@
 // adjustable cameras according to gui
 #include "camera.h"
 
-#include "fmt/core.h"
-#include <iostream>
+//TODO: note all exception throw
+#include "logger.h"
 
 #include <cmath> // is boost faster ? I heard not
 // TODO : update the create pixel for faning out the screen vectors
@@ -17,8 +17,8 @@ Camera::Camera()
 Camera::Camera(const Coordinates &pos, const Coordinates &dir)
     : position{pos}, direction{dir.normalize()} {
 
-    fmt::print("Camera Ray direction initialized at {} {} {}\n", direction.x,
-               direction.y, direction.z);
+    spdlog::info("Camera Ray direction initialized at {} {} {}", direction.x,
+                 direction.y, direction.z);
 }
 
 Camera::~Camera() {}
@@ -89,11 +89,11 @@ Ray Camera::createRay(std::size_t x, std::size_t y) {
     Coordinates rayPosition = this->position;
     Coordinates rayDirection = pixelPosition;
     rayDirection.normalizeSelf();
-    // if (((x == 0 || x == width - 1) && (y == 0 || y == height - 1)) ||
-    //     (x == width / 2 && y == height / 2)) {
-    //     fmt::print("Ray direction at pixel {} {}: {} {} {}\n", x, y,
-    //                rayDirection.x, rayDirection.y, rayDirection.z);
-    // }
+    if (((x == 0 || x == width - 1) && (y == 0 || y == height - 1)) ||
+        (x == width / 2 && y == height / 2)) {
+        spdlog::trace("Ray direction at pixel {} {}: {}", x, y,
+                   rayDirection);
+    }
     Ray ray = Ray(rayPosition, rayDirection);
     return ray;
 }

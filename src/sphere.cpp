@@ -1,21 +1,27 @@
 #include "boost/math/tools/roots.hpp"
+#include "logger.h"
 #include "rtobject.h"
 #include <cmath>
-#include <fmt/core.h>
+
+//Exceptions checked
+
 Sphere::Sphere(Coordinates pos, float radius)
-    : Object(pos, Color::random()), radius(radius) {}
+    : Object(pos, Color::random()), radius(radius) {
+    spdlog::info("Sphere created as {}", this->to_string());
+}
 
 Sphere::Sphere(Coordinates pos, float radius, Color col)
-    : Object(pos, col), radius(radius) {}
+    : Object(pos, col), radius(radius) {
+    spdlog::info("Sphere created as {}", this->to_string());
+}
 
 Sphere::~Sphere() {
-    std::cout << "Sphere destroyed" << std::endl;
+    spdlog::info("Destroyed : {}", this->to_string());
 }
 
 void Sphere::setRadius(float radius) {
     if (abs(radius) >= 0)
-        ;
-    this->radius = abs(radius);
+        this->radius = abs(radius);
 }
 
 float Sphere::getRadius() const {
@@ -47,4 +53,9 @@ Intersection Sphere::intersect(const Ray &ray) const {
         return Intersection{};
     }
     return Intersection{};
+}
+
+std::string Sphere::to_string() const {
+    return fmt::format("Sphere(Center : {} ; Radius {} ; Color {})",
+                       this->origin, this->radius, this->col);
 }
