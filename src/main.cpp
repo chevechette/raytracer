@@ -37,8 +37,9 @@ void objectListGeneration() {
     objs.createSphere(Coordinates{-20, -20, 20}, 10.0, Color::random());
     objs.createTriangle(Coordinates{-20, 0, 20}, Coordinates{20, 20, 20},
                         Coordinates{-20, -20, 20}, Color::random());
-    objs.createPlane(Coordinates{0, 3, 0}, Coordinates{0.5, 0.5, 0},
-                     Color::random());
+    // objs.createPlane(Coordinates{0, 3, 0}, Coordinates{0.5, 0.5, 0},
+    //                  Color::random());
+    objs.createDistantLight(Coordinates{0.5, 0.5, 0}, Color{1, 1, 1, 1});
 
     objs.buildTree();
 }

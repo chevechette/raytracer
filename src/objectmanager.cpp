@@ -1,6 +1,7 @@
+#include "logger.h"
 #include "managers.h"
 #include "rtobject.h"
-#include "logger.h"
+#include "light.h"
 
 // Exception checked
 // TODO: make it threadsafe
@@ -8,6 +9,7 @@ ObjectManager::ObjectManager() {}
 
 ObjectManager::~ObjectManager() {
     this->removeNodes();
+    this->removeLights();
     this->removeObjects();
 }
 
@@ -16,14 +18,16 @@ ObjectManager &ObjectManager::getInstance() {
     return instance;
 }
 
-void ObjectManager::release() {
-
-}
+void ObjectManager::release() {}
 // remove(); // pop
 
 // cameras map for edition
 void ObjectManager::addObject(std::shared_ptr<Object> obj) {
     this->objs.push_back(obj);
+}
+
+void ObjectManager::addLight(std::shared_ptr<Light> light) {
+    this->lights.push_back(light);
 }
 
 void ObjectManager::addInfinityObject(std::shared_ptr<Object> obj) {
@@ -32,11 +36,13 @@ void ObjectManager::addInfinityObject(std::shared_ptr<Object> obj) {
 
 void ObjectManager::addBox(std::shared_ptr<Box> box) {
     if (!box) {
-        spdlog::error("ObjectManager::addBox was passed a null box. Discarding...");
+        spdlog::error(
+            "ObjectManager::addBox was passed a null box. Discarding...");
         return;
     }
     if (!box->isValid()) {
-        spdlog::error("ObjectManager::addBox was passed an empty box. Discarding...");
+        spdlog::error(
+            "ObjectManager::addBox was passed an empty box. Discarding...");
         return;
     }
     this->boxes.push_back(box);
@@ -57,6 +63,11 @@ void ObjectManager::removeNodes() {
 
     spdlog::info("Cleaning up nodes...");
     this->nodes.clear();
+}
+
+void ObjectManager::removeLights() {
+    spdlog::info("Cleaning up lights...");
+    this->lights.clear();
 }
 
 void ObjectManager::buildNodes() {
@@ -143,6 +154,13 @@ void ObjectManager::createPlane(Coordinates o, Coordinates n, Color col) {
 
     this->addInfinityObject(ptr);
     this->addObject(ptr);
+}
+
+void ObjectManager::createDistantLight(Coordinates dir, Color col) {
+    DistantLight *sun = new DistantLight(dir, col);
+
+    std::shared_ptr<Light> ptr = std::shared_ptr<Light>(sun);
+    this->addLight(ptr);
 }
 
 Intersection ObjectManager::treeWalk(const Ray &ray) {

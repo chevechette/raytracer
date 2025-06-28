@@ -39,6 +39,36 @@ struct Color {
     inline static Color fromHex(unsigned int col) {
         return Color::fromHexAlpha(col * 0x100 + 0xFF);
     }
+
+    // TODO: make it more elegant
+    inline Color ceil() {
+        if (this->r > 1.0)
+            this->r = 1;
+        if (this->g > 1.0)
+            this->g = 1;
+        if (this->b > 1.0)
+            this->b = 1;
+        if (this->a > 1.0)
+            this->a = 1;
+
+        if (this->r < 0)
+            this->r = 0;
+        if (this->g < 0)
+            this->g = 0;
+        if (this->b < 0)
+            this->b = 0;
+        if (this->a < 0)
+            this->a = 0;
+
+            return *this;
+    }
+
+    inline Color operator*(const Color &mix) const {
+        return Color{this->r * this->a + mix.r * mix.a,
+                     this->g * this->a + mix.g * mix.a,
+                     this->b * this->a + mix.b * mix.a, 1.0}
+            .ceil();
+    }
 };
 
 template <> struct fmt::formatter<Color> {
@@ -155,8 +185,7 @@ template <> struct fmt::formatter<Coordinates> {
 
     template <typename FormatContext>
     auto format(const Coordinates &point, FormatContext &ctx) const
-        -> decltype(ctx.out()) 
-        {
+        -> decltype(ctx.out()) {
         return fmt::format_to(ctx.out(), "Coordinates({}, {}, {})", point.x,
                               point.y, point.z);
     }
@@ -168,6 +197,7 @@ struct Intersection {
     const Object *obj = nullptr;
     double dist = -1;
     Coordinates point = Coordinates{0, 0, 0};
+    Color col = Color{0, 0, 0, 0};
 
     // Intersection();
     // Intersection(const Object *obj, double dist, Coordinates p);

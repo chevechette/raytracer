@@ -18,6 +18,7 @@ class ObjectManager {
     std::vector<std::shared_ptr<Box>> boxes;
     std::vector<std::shared_ptr<Object>> infinityObjs;
     std::vector<std::shared_ptr<BHV>> nodes;
+    std::vector<std::shared_ptr<Light>> lights;
     std::shared_ptr<BHV> tree = nullptr;
 
   private:
@@ -39,10 +40,13 @@ class ObjectManager {
     void addInfinityObject(std::shared_ptr<Object> obj);
     // binary tree structure... later
     void addBox(std::shared_ptr<Box> box);
+    // same with light
+    void addLight(std::shared_ptr<Light> light);
 
     // remove(); // pop
     void removeObjects();
     void removeNodes();
+    void removeLights();
 
     void buildNodes();
     void buildTree();
@@ -59,10 +63,15 @@ class ObjectManager {
     // TODO: add a group of objects
     // TODO: update object tree
 
+    void createDistantLight(Coordinates dir, Color col);
+
     Intersection intersectAllObjects(const Ray &ray);
     Intersection treeWalk(const Ray &ray);
 
     // TODO: override some fmt for printability
+    // TODO: Light stuff
+
+    void intersectIllumination(Intersection &intersect) const;
 };
 
 // TODO : throw errors EVERYWHERE

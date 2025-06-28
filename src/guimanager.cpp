@@ -257,7 +257,20 @@ void GUIManager::mainloop() {
     }
 }
 
-// TODO : Complete rework
+#include "light.h"
+
+void ObjectManager::intersectIllumination(Intersection &intersect) const {
+    for (auto it = this->lights.begin(); it != this->lights.end(); ++it) {
+        bool islight = (*it)->illuminate(intersect.point);
+        // Check any intersection with any object
+        if (islight) {
+            // spdlog::info("light is good");
+            intersect.col = Color{1, 1, 1, 1};//intersect.col * (*it)->getColor();
+        }
+    }
+}
+
+// TODO : Add light
 void GUIManager::renderFromCamera(int cameraNo) {
     Camera &camera = this->cams[cameraNo]; // Does this need to be init here ?
 
@@ -272,10 +285,14 @@ void GUIManager::renderFromCamera(int cameraNo) {
                 Ray pixRay = camera.createRay(i, j);
                 Intersection intersect = objmanager.treeWalk(pixRay);
                 if (intersect) {
+                    intersect.col = intersect.obj->getColor();
+                    objmanager.intersectIllumination(intersect);
+                    // get all lights
+
                     // Fix the random color assignement
                     // ::print(stdout, "Chosen one {}\n",intersect.dist);
 
-                    background[i, j] = intersect.obj->getColor();
+                    background[i, j] = intersect.col;
                 } else {
                     background[i, j] = Color::fromHex(0x40102F);
                 }
