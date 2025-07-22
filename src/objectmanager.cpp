@@ -1,7 +1,7 @@
+#include "light.h"
 #include "logger.h"
 #include "managers.h"
 #include "rtobject.h"
-#include "light.h"
 
 // Exception checked
 // TODO: make it threadsafe
@@ -79,46 +79,49 @@ void ObjectManager::buildNodes() {
 std::shared_ptr<BHV> ObjectManager::recursiveTreeBuid(
     std::vector<std::shared_ptr<BHV>> &currentNodes,
     std::vector<std::shared_ptr<BHV>> &savedNodes) {
-    size_t i = 0;
+    int i = 0;
     size_t currentNodesSize = currentNodes.size();
 
-    for (i = 0; i + 3 < currentNodesSize; i += 4) {
+    for (i = 0; i + 4 < currentNodesSize; i += 4) {
         auto node =
             std::make_shared<BHV>(currentNodes[i], currentNodes[i + 1],
                                   currentNodes[i + 2], currentNodes[i + 3]);
         savedNodes.push_back(node);
     }
+    spdlog::debug("i {} to has poped", i);
     while (i-- > 0) {
         currentNodes.pop_back();
     }
     currentNodesSize = currentNodes.size();
     spdlog::info("This is the node amount {}.", currentNodesSize);
     if (currentNodesSize > 0 && currentNodesSize <= 4) {
-        spdlog::info("This is the node amount {}.", currentNodesSize);
         auto node = std::make_shared<BHV>(
-            currentNodes[currentNodesSize],
-            (currentNodes.size() > 1) ? currentNodes[currentNodesSize - 1]
+            currentNodes[currentNodesSize - 1],
+            (currentNodes.size() > 1) ? currentNodes[currentNodesSize - 2]
                                       : nullptr,
-            (currentNodes.size() > 2) ? currentNodes[currentNodesSize - 2]
+            (currentNodes.size() > 2) ? currentNodes[currentNodesSize - 3]
                                       : nullptr,
-            (currentNodes.size() > 3) ? currentNodes[currentNodesSize - 3]
+            (currentNodes.size() > 3) ? currentNodes[currentNodesSize - 4]
                                       : nullptr);
         savedNodes.push_back(node);
         for (int i = 0; i < currentNodesSize; i++) {
             currentNodes.pop_back();
         }
     }
+
     currentNodesSize = currentNodes.size();
-    spdlog::info("This is the node amount {}.", currentNodesSize);
 
     if (currentNodesSize <= 0) { // should always be true
         if (savedNodes.size() <= 0)
             return nullptr;
         if (savedNodes.size() == 1)
             return savedNodes[0];
+
+        spdlog::debug("GO TO RECURSIVE RIGHT.");
         return recursiveTreeBuid(savedNodes, currentNodes);
     }
 
+    spdlog::debug("GO TO RECURSIVE.", currentNodesSize);
     return recursiveTreeBuid(currentNodes,
                              savedNodes); // should never get there
 }
@@ -126,6 +129,8 @@ std::shared_ptr<BHV> ObjectManager::recursiveTreeBuid(
 void ObjectManager::buildTree() {
     auto workingNodes = this->nodes;
     std::vector<std::shared_ptr<BHV>> emptyTree;
+
+    spdlog::debug("Amount of BHV Nodes : {}", workingNodes.size());
 
     auto mainNode = recursiveTreeBuid(workingNodes, emptyTree);
     this->tree = mainNode;
@@ -172,7 +177,9 @@ Intersection ObjectManager::treeWalk(const Ray &ray) {
     }
     for (auto &objPtr : this->infinityObjs) {
         auto intersect = objPtr->intersect(ray);
-        if (intersect && intersect < closest) {
+        if (!closest && intersect)
+            closest = intersect;
+        else if (intersect && intersect < closest) {
             closest = intersect;
         }
     }
@@ -187,7 +194,9 @@ Intersection ObjectManager::intersectAllObjects(const Ray &ray) {
     // This is the basic logic : loop
     for (auto &objPtr : this->objs) {
         auto intersect = objPtr->intersect(ray);
-        if (intersect && intersect < closest) {
+        if (!closest && intersect)
+            closest = intersect;
+        else if (intersect && intersect < closest) {
             closest = intersect;
         }
     }

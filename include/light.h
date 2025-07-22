@@ -8,9 +8,9 @@ class Light {
     Color col;
     float lux = 1.0; // Lux power, could be an int or a 0-1 range.
     // If spot importnat, if sun, then this is a dir ? Complicated
+    
+    protected:
     Coordinates posdir; // useless for ambiant
-
-  protected:
     LightType ltype = LightType::None;
 
     double getLightDist(const Coordinates &point) const;

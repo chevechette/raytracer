@@ -6,7 +6,7 @@
 #include <fmt/format.h>
 #include <memory>
 
-#define EPSILON 0.0001f
+#define EPSILON 0.001f
 
 class Object {
   protected:

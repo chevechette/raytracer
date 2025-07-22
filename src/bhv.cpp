@@ -11,7 +11,7 @@ BHV::BHV(std::shared_ptr<Box> obj) : storage(obj) {
                      obj->getOrigin().y, obj->getOrigin().z);
     } else {
         spdlog::info("Null box received!");
-        //TODO: Decide if error throw
+        // TODO: Decide if error throw
     }
 }
 
@@ -44,9 +44,11 @@ BHV::~BHV() {
 }
 
 std::string BHV::to_string() const {
-    std::string innerBox = (this->storage) ? this->storage->to_string() : std::string("No Box");
+    std::string innerBox =
+        (this->storage) ? this->storage->to_string() : std::string("No Box");
 
-    return fmt::format("BHV Node ({} leaves :\n\tInner {})", this->countLeaves(), innerBox);
+    return fmt::format("BHV Node ({} leaves :\n\tInner {})",
+                       this->countLeaves(), innerBox);
 }
 
 int BHV::countLeaves() const {
@@ -81,7 +83,9 @@ Intersection BHV::intersectSubNodes(const Ray &ray) const {
         auto leafPtr = this->leaves[i];
         if (leafPtr != nullptr) {
             auto leafIntersect = leafPtr->intersectNodeBox(ray);
-            if (leafIntersect && leafIntersect < innerClosest) {
+            if (!innerClosest && leafIntersect)
+                innerClosest = leafIntersect;
+            else if (leafIntersect && leafIntersect < innerClosest) {
                 innerClosest = leafIntersect;
             }
         }

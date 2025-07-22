@@ -80,10 +80,10 @@ Intersection Plane::intersect(const Ray &ray) const {
     }
     Coordinates p0 = this->getOrigin() - ray.getOrigin();
     double coef = p0 * this->getNormal() / cosPlane;
-    if (coef < EPSILON)
+    if (coef <= EPSILON)
         return Intersection{};
     // TODO: Add limitation
-    return Intersection{this, coef, ray.getOrigin() + ray.getVector() * coef};
+    return Intersection{this, coef, ray.getOrigin() + ray.getVector() * (coef - EPSILON)};
 }
 
 std::string Plane::to_string() const {

@@ -16,7 +16,7 @@ Ray::Ray(float x, float y, float z, float a, float b, float c, float hexcolor) {
 }
 
 Ray::Ray(Coordinates loc, Coordinates vec) {
-    *this = Ray(loc, vec, Color{1, 1, 1, 1});
+    *this = Ray(loc, vec.normalize(), Color{1, 1, 1, 1});
 }
 
 Ray::Ray(Coordinates loc, Coordinates vec, float hexcolor) {

@@ -63,18 +63,24 @@ DistantLight::~DistantLight() {}
 
 #include "logger.h"
 
-//TODO: fix this
+// TODO: fix this
 bool DistantLight::illuminate(const Coordinates &from) const {
-    Coordinates dir = this->getLightDir(from);
-    double maxdist = this->getLightDist(from);
+    Coordinates dir = -this->posdir;
+    // dir = Coordinates{0, 0, 1};
+    // double maxdist = this->getLightDist(from);
     Ray ray = Ray(from, dir);
 
     ObjectManager &objmanager = ObjectManager::getInstance();
     Intersection intersect = objmanager.treeWalk(ray);
     if (intersect) {
-        spdlog::info("No lighting");
+        // spdlog::info("No lighting");
+        // spdlog::debug("DISTANCE no light {}", intersect.dist);
         return false;
     }
+    // if (intersect.dist <= EPSILON)
+    //     return false;
     //  && intersect.dist < maxdist)
+    // spdlog::debug("distance {} from point {} light dir {}", intersect.dist,
+    //               from, dir);
     return true;
 }

@@ -41,10 +41,10 @@ Intersection Sphere::intersect(const Ray &ray) const {
         auto [x0, x1] = boost::math::tools::quadratic_roots(a, b, c);
 
         // check which is shorter
-        if (x0 > 0 && (x1 <= 0 || x0 <= x1)) {
+        if (x0 > EPSILON && (x1 <= EPSILON || x0 <= x1)) {
             return Intersection{this, x0,
                                 ray.getOrigin() + ray.getVector() * x0};
-        } else if (x1 > 0 && (x0 <= 0 || x1 <= x0)) {
+        } else if (x1 > EPSILON && (x0 <= EPSILON || x1 <= x0)) {
             return Intersection{this, x1,
                                 ray.getOrigin() + ray.getVector() * x1};
         }

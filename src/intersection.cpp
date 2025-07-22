@@ -2,8 +2,7 @@
 #include "rtobject.h"
 
 Intersection::operator bool() const {
-    return (this->obj != nullptr &&
-            this->dist > EPSILON);
+    return (this->obj != nullptr && this->dist >= EPSILON);
 }
 
 Intersection &Intersection::operator=(const Intersection &other) {
@@ -16,13 +15,9 @@ Intersection &Intersection::operator=(const Intersection &other) {
 }
 
 bool Intersection::operator<(const Intersection &i) const {
-    if (this->obj == nullptr)
+    if (!*this || !i)
         return false;
-    if (this->obj != nullptr && this->dist < 20)
-        return false;
-    if (i)
-        return this->dist < i.dist;
-    return true;
+    return this->dist < i.dist;
 }
 
 bool Intersection::operator>(const Intersection &i) const {
@@ -30,13 +25,9 @@ bool Intersection::operator>(const Intersection &i) const {
 }
 
 bool Intersection::operator==(const Intersection &i) const {
-
-    if (this->obj != nullptr && this->dist > 20)
+    if (!*this || !i)
         return false;
-    if (this->obj != nullptr && i) {
-        return (this->dist == i.dist);
-    }
-    return false;
+    return this->dist == i.dist;
 }
 
 bool Intersection::operator>=(const Intersection &i) const {

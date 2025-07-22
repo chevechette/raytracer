@@ -90,9 +90,9 @@ Intersection Triangle::intersect(const Ray &ray) const {
     double u = (ray.getOrigin() - this->a) * (ray.getVector() ^ edgeA) * det;
     double v = (ray.getVector() * ((ray.getOrigin() - this->a) ^ edgeB)) * det;
 
-    if (u < 0.0 || v < 0.0 || (u + v) > 1)
+    if (u < 0.0 || v < 0.0 || (u + v) > 1 || coef <= EPSILON)
         return Intersection{};
-    return Intersection{this, coef, ray.getOrigin() + ray.getVector() * coef};
+    return Intersection{this, coef, ray.getOrigin() + ray.getVector() * (coef - EPSILON)};
 }
 
 std::string Triangle::to_string() const {
