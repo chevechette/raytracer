@@ -69,6 +69,20 @@ struct Color {
                      this->b * this->a + mix.b * mix.a, 1.0}
             .ceil();
     }
+
+    inline Color operator+(const Color &add) const {
+        return Color{this->r * this->a + add.r * add.a,
+                     this->g * this->a + add.g * add.a,
+                     this->b * this->a + add.b * add.a, 1.0}
+            .ceil();
+    }
+    
+    inline Color operator-(const Color &add) const {
+        return Color{this->r * this->a - add.r * add.a,
+                     this->g * this->a - add.g * add.a,
+                     this->b * this->a - add.b * add.a, 1.0}
+            .ceil();
+    }
 };
 
 template <> struct fmt::formatter<Color> {

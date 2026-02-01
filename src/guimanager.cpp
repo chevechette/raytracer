@@ -265,6 +265,8 @@ void ObjectManager::intersectIllumination(Intersection &intersect) const {
         // Check any intersection with any object
         if (islight) {
             // spdlog::info("light is good");
+            // How to add and blend color ?
+            // intersect.col = intersect.col + (*it)->getColor();
             intersect.col = Color{1, 1, 1, 1};//intersect.col * (*it)->getColor();
         }
     }
