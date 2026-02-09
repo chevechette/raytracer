@@ -39,7 +39,7 @@ void objectListGeneration() {
                         Coordinates{-20, -20, 20}, Color::random());
     objs.createPlane(Coordinates{0, 3, 0}, Coordinates{0.5, 0.5, 0},
                      Color::random());
-    objs.createDistantLight(Coordinates{0, 0.5, 0.5}, Color{1, 1, 1, 1});
+    objs.createDistantLight(Coordinates{0, 1, 0}, Color{1, 1, 1, 1});
 
     objs.buildTree();
     spdlog::info("Tree has been built");

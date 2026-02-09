@@ -24,6 +24,10 @@ void Light::setCoordinates(const Coordinates &pos) {
     this->posdir = pos;
 }
 
+Coordinates Light::getCoordinates() const {
+    return this->posdir;
+}
+
 Color Light::getColor() const {
     return this->col;
 }

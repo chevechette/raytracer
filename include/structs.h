@@ -64,9 +64,9 @@ struct Color {
     }
 
     inline Color operator*(const Color &mix) const {
-        return Color{this->r * this->a + mix.r * mix.a,
-                     this->g * this->a + mix.g * mix.a,
-                     this->b * this->a + mix.b * mix.a, 1.0}
+        return Color{this->r * this->a * mix.r * mix.a,
+                     this->g * this->a * mix.g * mix.a,
+                     this->b * this->a * mix.b * mix.a, 1.0}
             .ceil();
     }
 

@@ -25,6 +25,7 @@ class Light {
     void setLux(float luxpower);
     void setCoordinates(const Coordinates &pos);
 
+    Coordinates getCoordinates() const;
     Color getColor() const;
     Color getLuxedColor() const; // this could be automatised.
     float getLux() const;

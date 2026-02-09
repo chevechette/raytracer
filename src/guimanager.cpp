@@ -260,14 +260,23 @@ void GUIManager::mainloop() {
 #include "light.h"
 
 void ObjectManager::intersectIllumination(Intersection &intersect) const {
+    Color objcol = intersect.col;
+    intersect.col = Color{0, 0, 0, 1};
     for (auto it = this->lights.begin(); it != this->lights.end(); ++it) {
+
+        Coordinates cord = (*it)->getCoordinates();
+        // spdlog::info("Checking light at coordinates {} {} {}", cord.x, cord.y, cord.z );
         bool islight = (*it)->illuminate(intersect.point);
         // Check any intersection with any object
         if (islight) {
             // spdlog::info("light is good");
             // How to add and blend color ?
-            // intersect.col = intersect.col + (*it)->getColor();
-            intersect.col = Color{1, 1, 1, 1};//intersect.col * (*it)->getColor();
+            //intersect.col = intersect.col + (*it)->getColor();
+            //intersect.col = (*it)->getColor();
+            intersect.col = intersect.col + (objcol * (*it)->getColor());
+            //intersect.col * (*it)->getColor();
+        } else {
+            // intersect.col = Color{0, 0, 0, 1};
         }
     }
 }
