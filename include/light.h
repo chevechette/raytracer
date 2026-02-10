@@ -1,7 +1,9 @@
 #pragma once
 #include "structs.h"
 
-enum LightType { Ambiant, Spot, Distant, None };
+//Floating is like a floating ball of light (suntype)
+//Spotlight directs like a cone its light
+enum LightType { Ambiant, Spot, Distant, Floating, None };
 
 class Light {
   private:
@@ -37,7 +39,13 @@ class Light {
 };
 
 class AmbiantLight : protected Light {
+  protected:
+    LightType ltype = LightType::Ambiant;
+
   public:
+    AmbiantLight(const Color &col, float lux);
+    AmbiantLight(const Color &col);
+    ~AmbiantLight();
     bool illuminate(const Coordinates &from) const;
 };
 
@@ -51,5 +59,16 @@ class DistantLight : public Light {
     DistantLight(const Coordinates &posdir, const Color &col, float lux);
     DistantLight(const Coordinates &posdir, const Color &col);
     ~DistantLight();
+    bool illuminate(const Coordinates &from) const;
+};
+
+class FloatingLight : public Light {
+  protected:
+    LightType ltype = LightType::Floating;
+
+  public:
+    FloatingLight(const Coordinates &posdir, const Color &col, float lux);
+    FloatingLight(const Coordinates &postdir,const Color &col);
+    ~FloatingLight();
     bool illuminate(const Coordinates &from) const;
 };

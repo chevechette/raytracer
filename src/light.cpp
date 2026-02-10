@@ -56,6 +56,16 @@ double Light::getLightDist(const Coordinates &point) const {
     return distance.abs();
 }
 
+AmbiantLight::AmbiantLight(const Color &col, float lux)
+    : Light(Coordinates{0, 0, 0}, col, lux) {}
+AmbiantLight::AmbiantLight(const Color &col)
+    : Light(Coordinates{0, 0, 0}, col) {}
+AmbiantLight::~AmbiantLight() {}
+
+bool AmbiantLight::illuminate(const Coordinates &from) const {
+    // always able to light up
+    return true;
+}
 DistantLight::DistantLight(const Coordinates &posdir, const Color &col,
                            float lux)
     : Light(posdir, col, lux) {}
@@ -70,6 +80,34 @@ DistantLight::~DistantLight() {}
 // TODO: fix this
 bool DistantLight::illuminate(const Coordinates &from) const {
     Coordinates dir = -this->posdir;
+    // dir = Coordinates{0, 0, 1};
+    // double maxdist = this->getLightDist(from);
+    Ray ray = Ray(from, dir);
+
+    ObjectManager &objmanager = ObjectManager::getInstance();
+    Intersection intersect = objmanager.treeWalk(ray);
+    if (intersect) {
+        // spdlog::info("No lighting");
+        // spdlog::debug("DISTANCE no light {}", intersect.dist);
+        return false;
+    }
+    // if (intersect.dist <= EPSILON)
+    //     return false;
+    //  && intersect.dist < maxdist)
+    // spdlog::debug("distance {} from point {} light dir {}", intersect.dist,
+    //               from, dir);
+    return true;
+}
+
+FloatingLight::FloatingLight(const Coordinates &posdir, const Color &col,
+                             float lux)
+    : Light(posdir, col, lux) {}
+FloatingLight::FloatingLight(const Coordinates &postdir, const Color &col)
+    : Light(posdir, col) {}
+FloatingLight::~FloatingLight() {}
+
+bool FloatingLight::illuminate(const Coordinates &from) const {
+    Coordinates dir = (this->posdir - from).normalize();
     // dir = Coordinates{0, 0, 1};
     // double maxdist = this->getLightDist(from);
     Ray ray = Ray(from, dir);
