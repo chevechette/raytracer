@@ -64,6 +64,8 @@ class ObjectManager {
     // TODO: update object tree
 
     void createDistantLight(Coordinates dir, Color col);
+    void createAmbiantLight(Color col);
+    void createFloatingLight(Coordinates dir, Color col);
 
     Intersection intersectAllObjects(const Ray &ray);
     Intersection treeWalk(const Ray &ray);

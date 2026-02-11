@@ -168,6 +168,22 @@ void ObjectManager::createDistantLight(Coordinates dir, Color col) {
     this->addLight(ptr);
 }
 
+void ObjectManager::createAmbiantLight(Color col) {
+    AmbiantLight *sun = new AmbiantLight(col);
+
+    std::shared_ptr<Light> ptr = std::shared_ptr<Light>(sun);
+    this->addLight(ptr);
+}
+
+void ObjectManager::createFloatingLight(Coordinates dir, Color col) {
+    FloatingLight *sun = new FloatingLight(dir, col);
+
+    std::shared_ptr<Light> ptr = std::shared_ptr<Light>(sun);
+    this->addLight(ptr);
+}
+
+
+
 Intersection ObjectManager::treeWalk(const Ray &ray) {
     auto node = this->tree;
 

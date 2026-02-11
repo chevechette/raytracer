@@ -38,7 +38,7 @@ class Light {
     virtual bool illuminate(const Coordinates &from) const = 0;
 };
 
-class AmbiantLight : protected Light {
+class AmbiantLight : public Light {
   protected:
     LightType ltype = LightType::Ambiant;
 
