@@ -39,14 +39,14 @@ void objectListGeneration() {
                         Coordinates{-20, -20, 20}, Color::random());
     objs.createPlane(Coordinates{0, 3, 0}, Coordinates{0.5, 0.5, 0},
                      Color::random());
-    objs.createDistantLight(Coordinates{0, 1, 0}, Color{1, 1, 1, 0.5});
-    objs.createFloatingLight(Coordinates{-100, 00, -80}, Color{1, 1, 1, 0.5});
-    objs.createAmbiantLight(Color{1, 0.8, 1, 0.3});
+    // objs.createDistantLight(Coordinates{0, 1, 0}, Color{1, 1, 1, 0.5});
+    objs.createFloatingLight(Coordinates{-100, -10, 0}, Color{1, 1, 1, 0.5});
+    // objs.createAmbiantLight(Color{1, 0.8, 1, 0.3});
 
     objs.buildTree();
     spdlog::info("Tree has been built");
 }
-
+//TODO catch any event that has been triggering an image, see if it is over or not
 int main(int argc, char *argv[]) {
     try {
         // TODO : add some parsing method for argc, argv
